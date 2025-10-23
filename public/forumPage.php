@@ -1,0 +1,138 @@
+<?php
+session_start();
+include_once('../backend/controllers/ForumController.php');
+
+// Pastikan pengguna sudah login
+if (!isset($_SESSION['username'])) {
+    header("Location: login-register.php");
+    exit();
+}
+
+// PRG Post (Publish a new thread)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-thread'])) {
+    $title   = htmlspecialchars(trim($_POST['title']));
+    $content = htmlspecialchars(trim($_POST['content']));
+    $author  = $_SESSION['username'];
+    $ok = addThread($title, $content, $author);
+    header("Location: forumPage.php?posted=" . ($ok ? '1' : '0'));
+    exit();
+}
+
+// Search Threads
+$search  = isset($_GET['search']) ? trim($_GET['search']) : '';
+$threads = getThreads($search);
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Forum - FretNotes</title>
+    <link rel="icon" href="assets/images/guitarlogo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/cursor.css">
+    <style>
+        .menu-toggle { display: none; width: 26px; height: 20px; flex-direction: column; justify-content: space-between; }
+        .menu-toggle span { display: block; height: 3px; background: #fff; border-radius: 3px; }
+        @media (max-width: 768px) { .navbar .nav-links { display: none; flex-direction: column; width: 100%; position: absolute; top: 56px; left: 0; background: #b17457; padding: 12px 16px; } .navbar.active .nav-links { display: flex; } .menu-toggle { display: flex; } }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="logo"><a href="homepage.php">FretNotes</a></div>
+        <div class="menu-toggle" id="mobile-menu" aria-label="Toggle menu">
+            <span></span><span></span><span></span><span></span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="browse-songs.php">Browse Songs</a></li>
+            <li><a href="tunerguitar.php" class="cta-btn">Tuner</a></li>
+            <li><a href="forumPage.php" class="active">Forum</a></li>
+            <li><a href="favorites.php">Favorites</a></li>
+            <li><a href="addsong.php">Add Song</a></li>
+            <li><a href="logout.php">Logout</a></li>
+        </ul>
+    </nav>
+
+    <!-- Hero Section -->
+    <header class="hero">
+        <h1>Start a New Discussion</h1>
+        <p>Share your question, tip, or tab idea with the community.</p>
+    </header>
+
+    <main class="forum-container">
+        <!-- Search Section -->
+        <section class="search-section">
+            <form method="GET" action="forumPage.php">
+                <input type="text" name="search" placeholder="Search discussions by title, content, or author..."
+                    value="<?php echo htmlspecialchars($search); ?>" />
+                <button type="submit">Search</button>
+            </form>
+        </section>
+
+        <!-- New Thread Form -->
+        <section class="forum-form">
+            <h2>Start a New Discussion</h2>
+            <p>Share your question, tip, or tab idea with the community.</p>
+
+            <?php if (isset($_GET['posted'])): ?>
+            <div class="notification <?php echo $_GET['posted'] === '1' ? 'success' : 'error'; ?>">
+                <?php echo $_GET['posted'] === '1' ? 'Thread successfully posted!' : 'Failed to post thread.'; ?>
+            </div>
+            <?php endif; ?>
+
+            <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST" enctype="multipart/form-data">
+                <input type="text" name="title" placeholder="Thread title" required>
+                <textarea name="content" placeholder="Write something..." rows="4" required></textarea>
+                <input type="file" name="thread_image" accept="image/*" style="margin-bottom:12px;">
+                <button type="submit" name="submit-thread">Post Thread</button>
+            </form>
+        </section>
+
+        <!-- Thread List Section -->
+        <section class="forum-list">
+            <h3><?php echo $search ? 'Search Results' : 'Recent Discussions'; ?></h3>
+
+            <?php if (!empty($threads)): ?>
+            <div class="thread-grid">
+                <?php foreach ($threads as $t): ?>
+                <div class="thread-card">
+                    <?php if (!empty($t['image_path'])): ?>
+                    <img src="<?php echo htmlspecialchars($t['image_path']); ?>" alt="Thread image" class="thread-image">
+                    <?php endif; ?>
+
+                    <h4><a href="thread.php?id=<?php echo $t['id']; ?>"><?php echo htmlspecialchars($t['title']); ?></a></h4>
+                    <p class="meta">By <?php echo htmlspecialchars($t['author']); ?> • <?php echo htmlspecialchars($t['date'] ?? ''); ?></p>
+                    <p class="excerpt"><?php echo nl2br(htmlspecialchars(substr($t['content'], 0, 160))); ?>…</p>
+
+                    <!-- Edit and Delete Buttons (only visible for thread author) -->
+                    <?php if ($t['author'] === $_SESSION['username']): ?>
+                    <div class="actions">
+                        <a href="editThread.php?id=<?php echo $t['id']; ?>" class="btn-edit">Edit</a>
+                        <a href="deleteThread.php?id=<?php echo $t['id']; ?>" onclick="return confirm('Are you sure you want to delete this thread?');" class="btn-delete">Delete</a>
+                    </div>
+                    <?php endif; ?>
+                </div>
+                <?php endforeach; ?>
+            </div>
+            <?php else: ?>
+            <p>No discussions found<?php echo $search ? ' for “' . htmlspecialchars($search) . '”' : ''; ?>.</p>
+            <?php endif; ?>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 FretNotes. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        // Hamburger toggle
+        const mobileMenu = document.getElementById("mobile-menu");
+        const navbar = document.querySelector(".navbar");
+        mobileMenu?.addEventListener("click", () => {
+            navbar.classList.toggle("active");
+        });
+    </script>
+</body>
+</html>

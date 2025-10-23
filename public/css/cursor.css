@@ -1,0 +1,9 @@
+body {
+  cursor: url("../assets/cursor/cursorguitar.png"), auto;
+}
+
+a:hover,
+button:hover,
+.hover-area:hover {
+  cursor: url("../assets/cursor/hoverguitarcursor.png"), auto;
+}

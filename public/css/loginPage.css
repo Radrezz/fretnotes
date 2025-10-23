@@ -1,0 +1,325 @@
+/* =========================
+   FretNotes Auth Page Styles (Compact Non-Responsive)
+   Palette: #FAF7F0 #D8D2C2 #B17457 #4A4947 #FFFFFF
+   ========================= */
+
+:root {
+  --bg-cream: #faf7f0;
+  --bg-beige: #d8d2c2;
+  --brand: #b17457;
+  --ink: #4a4947;
+  --white: #ffffff;
+
+  --radius-lg: 30px;
+  --shadow-1: 0 8px 28px rgba(0, 0, 0, 0.18);
+  --focus: 0 0 0 3px rgba(177, 116, 87, 0.35);
+  --input-bg: #faf7f0;
+  --input-border: #d8d2c2;
+  --input-ink: #4a4947;
+}
+
+/* Reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+html,
+body {
+  height: 100%;
+}
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* ====== BODY + BACKGROUND ====== */
+body {
+  color: var(--ink);
+  background: var(--bg-cream);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Montserrat", system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+  line-height: 1.5;
+  position: relative;
+  overflow: hidden;
+  padding: 40px; /* jarak dari layar */
+}
+
+/* Background Image 50% Transparansi */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background-image: url("../assets/images/bgFretNotes.gif");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 1;
+  z-index: -2;
+  filter: saturate(0.9) contrast(1.05);
+}
+
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(250, 247, 240, 0.574), rgba(250, 247, 240, 0.274));
+  z-index: -1;
+}
+
+/* ====== CONTAINER ====== */
+.container {
+  background-color: var(--white);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-1);
+  position: relative;
+  overflow: hidden;
+  width: 780px;
+  min-height: 480px;
+  isolation: isolate;
+}
+
+/* ====== TYPO & LINKS ====== */
+.container h1 {
+  color: var(--ink);
+  letter-spacing: 0.3px;
+  font-size: 22px;
+}
+
+.container p {
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 12px 0;
+  color: var(--ink);
+  opacity: 0.85;
+}
+
+.container span {
+  font-size: 11px;
+  color: var(--ink);
+  opacity: 0.7;
+}
+
+.container a {
+  color: var(--brand);
+  font-size: 12px;
+  text-decoration: none;
+  margin: 10px 0 6px;
+}
+.container a:hover,
+.container a:focus {
+  text-decoration: underline;
+}
+
+/* ====== BUTTONS ====== */
+.container button {
+  background-color: var(--brand);
+  color: var(--white);
+  font-size: 11.5px;
+  padding: 10px 36px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-weight: 700;
+  text-transform: uppercase;
+  margin-top: 8px;
+  cursor: pointer;
+  transition: transform 0.1s ease, background-color 0.2s ease;
+  box-shadow: 0 2px 8px rgba(177, 116, 87, 0.25);
+}
+.container button:hover {
+  transform: translateY(-1px);
+  background-color: #9b6046;
+}
+.container button.hidden {
+  background-color: transparent;
+  border: 1px solid var(--white);
+  color: var(--white);
+}
+
+/* ====== FORM ====== */
+.container form {
+  background-color: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0 36px;
+  height: 100%;
+  text-align: center;
+}
+
+/* Input Text Compact */
+.container input {
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  color: var(--input-ink);
+  margin-top: 6px;
+  margin-bottom: 6px;
+  padding: 8px 12px;
+  font-size: 13px;
+  border-radius: 8px;
+  width: 100%;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.container input::placeholder {
+  color: #7a7a7a;
+  opacity: 0.8;
+}
+.container input:focus {
+  border-color: var(--brand);
+  box-shadow: var(--focus);
+  background-color: #fffdf9;
+}
+
+/* ====== FORM CONTAINERS ====== */
+.form-container {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  transition: all 0.6s ease-in-out;
+  width: 50%;
+}
+.sign-in {
+  left: 0;
+  z-index: 2;
+}
+.container.active .sign-in {
+  transform: translateX(100%);
+}
+.sign-up {
+  left: 0;
+  opacity: 0;
+  z-index: 1;
+}
+.container.active .sign-up {
+  transform: translateX(100%);
+  opacity: 1;
+  z-index: 5;
+  animation: move 0.6s both;
+}
+@keyframes move {
+  0%,
+  49.99% {
+    opacity: 0;
+    z-index: 1;
+  }
+  50%,
+  100% {
+    opacity: 1;
+    z-index: 5;
+  }
+}
+
+/* ====== SOCIAL ICONS ====== */
+.social-icons {
+  margin: 10px 0;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  justify-content: center;
+}
+.social-icons a {
+  border: 1px solid var(--input-border);
+  background: var(--bg-cream);
+  border-radius: 10px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  color: var(--ink);
+  transition: all 0.15s ease;
+}
+.social-icons a:hover {
+  transform: translateY(-1px);
+  border-color: var(--brand);
+  box-shadow: 0 4px 10px rgba(177, 116, 87, 0.18);
+  background: #fff;
+}
+
+/* ====== TOGGLE AREA ====== */
+.toggle-container {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: 50%;
+  height: 100%;
+  overflow: hidden;
+  transition: all 0.6s ease-in-out;
+  border-radius: 160px 0 0 120px;
+  z-index: 1000;
+  box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.08);
+}
+.container.active .toggle-container {
+  transform: translateX(-100%);
+  border-radius: 0 160px 120px 0;
+}
+.toggle {
+  background: linear-gradient(135deg, #b17457 0%, #8a5b45 50%, #4a4947 100%);
+  color: var(--white);
+  position: relative;
+  left: -100%;
+  height: 100%;
+  width: 200%;
+  transform: translateX(0);
+  transition: all 0.6s ease-in-out;
+}
+.container.active .toggle {
+  transform: translateX(50%);
+}
+.toggle-panel {
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 0 28px;
+  text-align: center;
+  top: 0;
+  transition: all 0.6s ease-in-out;
+}
+.toggle h1,
+.toggle p {
+  color: var(--white);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+}
+.toggle-left {
+  transform: translateX(-200%);
+}
+.container.active .toggle-left {
+  transform: translateX(0);
+}
+.toggle-right {
+  right: 0;
+  transform: translateX(0);
+}
+.container.active .toggle-right {
+  transform: translateX(200%);
+}
+
+/* ====== FEEDBACK ====== */
+.error,
+.success {
+  font-size: 12px;
+  margin-top: 8px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  width: min(340px, 100%);
+  text-align: center;
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.05);
+}
+.error {
+  color: #7a1a16;
+  background: #fbeaea;
+  border: 1px solid #f3c2c1;
+}
+.success {
+  color: #155724;
+  background: #e6f6ea;
+  border: 1px solid #bfe3c6;
+}
