@@ -54,7 +54,7 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
                 <p>Genre: <?php echo htmlspecialchars($song['genre']); ?></p>
                 <p>Version: <?php echo htmlspecialchars($song['version_name']); ?></p>
                 <a href="chord-viewer.php?song_id=<?php echo $song['id']; ?>" class="cta-btn">View Chords</a>
-                <a href="add-to-favorites.php?song_id=<?php echo $song['id']; ?>" class="cta-btn">Add to Favorites</a>
+                <a href="favorites.php?add_to_favorites=true&song_id=<?php echo $song['id']; ?>" class="cta-btn">Add to Favorites</a>
             </div>
         <?php endforeach; ?>
     </section>

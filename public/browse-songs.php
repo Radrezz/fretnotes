@@ -79,7 +79,7 @@ $songs = isset($_GET['search']) && !empty($_GET['search'])
 
                     <!-- Tombol seperti di homepage -->
                     <a href="chord-viewer.php?song_id=<?php echo $song['id']; ?>" class="cta-btn">View Chords</a>
-                    <a href="add-to-favorites.php?song_id=<?php echo $song['id']; ?>" class="cta-btn">Add to Favorites</a>
+                    <a href="favorites.php?add_to_favorites=true&song_id=<?php echo $song['id']; ?>" class="cta-btn">Add to Favorites</a>
                 </div>
             <?php endforeach; ?>
         <?php else: ?>

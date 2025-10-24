@@ -10,6 +10,7 @@ session_start();
     <title>Guitar Tuner - FretNotes</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.23/Tone.js"></script>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/cursor.css">
     <link rel="icon" href="assets/images/guitarlogo.ico" type="image/x-icon">
 </head>
 <body>
