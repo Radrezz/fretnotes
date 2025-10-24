@@ -67,6 +67,7 @@ function addSongToFavorites($userId, $songId) {
             <a href="homepage.php">FretNotes</a>
         </div>
         <ul class="nav-links">
+            <li><a href="account.php" class="cta-btn">Account</a></li>
             <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
             <li><a href="tunerguitar.php" class="cta-btn">Tuner</a></li>
             <li><a href="forumPage.php" class="cta-btn">Forum</a></li>

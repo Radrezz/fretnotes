@@ -46,12 +46,13 @@ $threads = getThreads($search);
             <span></span><span></span><span></span><span></span>
         </div>
         <ul class="nav-links">
-            <li><a href="browse-songs.php">Browse Songs</a></li>
+           <li><a href="account.php" class="cta-btn">Account</a></li>
+            <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
             <li><a href="tunerguitar.php" class="cta-btn">Tuner</a></li>
-            <li><a href="forumPage.php" class="active">Forum</a></li>
-            <li><a href="favorites.php">Favorites</a></li>
-            <li><a href="addsong.php">Add Song</a></li>
-            <li><a href="logout.php">Logout</a></li>
+            <li><a href="forumPage.php" class="cta-btn">Forum</a></li>
+            <li><a href="favorites.php" class="cta-btn">Favorites</a></li>
+            <li><a href="addsong.php" class="cta-btn">Add Song</a></li>
+            <li><a href="logout.php" class="cta-btn">Logout</a></li> 
         </ul>
     </nav>
 

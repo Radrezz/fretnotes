@@ -21,12 +21,16 @@ body {
 /* 🧭 NAVBAR                                      */
 /* ============================================= */
 .navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000; /* Pastikan navbar tetap berada di atas konten */
   background-color: #c58060;
   padding: 15px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  position: relative;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Shadow kontras */
+  transition: box-shadow 0.3s ease-in-out; /* Efek transisi saat navbar bergeser */
 }
 
 .navbar .logo a {
@@ -60,6 +64,10 @@ body {
   text-underline-offset: 5px;
 }
 
+.navbar:hover {
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.5); /* Shadow lebih tajam saat hover */
+}
+
 /* Hamburger menu */
 .menu-toggle {
   display: none;
@@ -71,6 +79,81 @@ body {
   width: 25px;
   height: 3px;
   margin: 5px 0;
+}
+
+/* ============================================= */
+/* 🧑‍💻 ACCOUNT PAGE STYLE                       */
+/* ============================================= */
+.account-info {
+  padding: 30px;
+  margin-top: 50px;
+  background-color: #ffffff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  max-width: 600px;
+  margin: 50px auto;
+}
+
+.account-info h2 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-bottom: 20px;
+  color: #4a4947;
+}
+
+.account-info form {
+  display: flex;
+  flex-direction: column;
+}
+
+.account-info label {
+  font-size: 1rem;
+  margin-bottom: 5px;
+  color: #4a4947;
+}
+
+.account-info input {
+  padding: 10px;
+  font-size: 1rem;
+  margin-bottom: 15px;
+  border: 1px solid #d8d2c2;
+  border-radius: 8px;
+  background-color: #f5efe3;
+}
+
+.account-info button {
+  background-color: #b17457;
+  color: white;
+  font-size: 16px;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: background-color 0.3s ease-in-out;
+}
+
+.account-info button:hover {
+  background-color: #4a4947;
+}
+
+.notification {
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 500;
+  margin-bottom: 12px;
+  text-align: center;
+}
+
+.notification.success {
+  background: #eaf6ec;
+  color: #2e7d32;
+  border: 1px solid #b8e0bc;
+}
+
+.notification.error {
+  background: #fdecea;
+  color: #b71c1c;
+  border: 1px solid #f5c6cb;
 }
 
 /* ============================================= */
@@ -420,17 +503,10 @@ footer p {
     padding: 12px 0;
   }
 }
+
 /* ============================================= */
 /* 💬 FORUM PAGE STYLES (scoped & with search)  */
 /* ============================================= */
-
-.forum-container {
-  max-width: 1000px;
-  margin: 60px auto;
-  padding: 0 20px;
-  flex-grow: 1;
-  box-sizing: border-box; /* Menambahkan box-sizing agar padding tidak menyebabkan overflow */
-}
 
 /* Forum Search */
 .forum-container .search-section {

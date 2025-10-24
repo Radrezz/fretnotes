@@ -13,21 +13,18 @@ if (!isset($_SESSION['user_id']) || $_SESSION['role'] !== 'admin') {
 // CRUD Lagu
 if (isset($_POST['add_song'])) {
     addSong($_POST['title'], $_POST['artist'], $_POST['genre'], $_POST['version_name']);
-    header("Location: admin-panel.php?songs=added");
-    exit;
+    $notification = "Song added successfully!";
 }
 
 if (isset($_POST['edit_song'])) {
     $stmt = $pdo->prepare("UPDATE songs SET title=?, artist=?, genre=?, version_name=? WHERE id=?");
     $stmt->execute([$_POST['title'], $_POST['artist'], $_POST['genre'], $_POST['version_name'], $_POST['id']]);
-    header("Location: admin-panel.php?songs=updated");
-    exit;
+    $notification = "Song updated successfully!";
 }
 
 if (isset($_GET['delete_song'])) {
     deleteSongById($_GET['delete_song']);
-    header("Location: admin-panel.php?songs=deleted");
-    exit;
+    $notification = "Song deleted successfully!";
 }
 
 // CRUD User
@@ -35,8 +32,7 @@ if (isset($_POST['add_user'])) {
     $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
     $stmt = $pdo->prepare("INSERT INTO users (username, password, role) VALUES (?, ?, ?)");
     $stmt->execute([$_POST['username'], $password, $_POST['role']]);
-    header("Location: admin-panel.php?users=added");
-    exit;
+    $notification = "User added successfully!";
 }
 
 if (isset($_POST['edit_user'])) {
@@ -45,31 +41,34 @@ if (isset($_POST['edit_user'])) {
     $role = $_POST['role'];
 
     if (!empty($_POST['password'])) {
+        // Password di-hash sebelum disimpan
         $password = password_hash($_POST['password'], PASSWORD_BCRYPT);
-        $stmt = $pdo->prepare("UPDATE users SET username=?, password=?, role=? WHERE id=?");
+        // Update user dengan password baru
+        $stmt = $pdo->prepare("UPDATE users SET username=?, password_hash=?, role=? WHERE id=?");
         $stmt->execute([$username, $password, $role, $id]);
     } else {
+        // Jika password tidak diubah, cukup update username dan role
         $stmt = $pdo->prepare("UPDATE users SET username=?, role=? WHERE id=?");
         $stmt->execute([$username, $role, $id]);
     }
 
+    $notification = "User updated successfully!";
     header("Location: admin-panel.php?users=updated");
     exit;
 }
 
+
 if (isset($_GET['delete_user'])) {
     $stmt = $pdo->prepare("DELETE FROM users WHERE id=?");
     $stmt->execute([$_GET['delete_user']]);
-    header("Location: admin-panel.php?users=deleted");
-    exit;
+    $notification = "User deleted successfully!";
 }
 
-// CRUD Forum (hapus saja)
+// CRUD Forum
 if (isset($_GET['delete_thread'])) {
     $stmt = $pdo->prepare("DELETE FROM threads WHERE id=?");
     $stmt->execute([$_GET['delete_thread']]);
-    header("Location: admin-panel.php?threads=deleted");
-    exit;
+    $notification = "Thread deleted successfully!";
 }
 
 // Fetch data
@@ -120,6 +119,13 @@ $threads = getAllThreads();
 
   <main class="max-w-6xl mx-auto px-6 py-10 flex-grow">
     <h2 class="text-3xl font-bold mb-8 text-terracotta">Welcome, Admin!</h2>
+
+    <!-- Notifikasi Toast -->
+    <?php if (isset($notification)): ?>
+      <div class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-terracotta text-white px-6 py-3 rounded-lg shadow-md">
+        <span><?php echo $notification; ?></span>
+      </div>
+    <?php endif; ?>
 
     <!-- ========== SONGS CRUD ========== -->
     <section class="mb-12">

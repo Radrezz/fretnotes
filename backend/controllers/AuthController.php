@@ -84,4 +84,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
         }
     }
 }
+
+// Function to get user info
+function getUserInfo($user_id) {
+    global $pdo;
+    $stmt = $pdo->prepare("SELECT username, email FROM users WHERE id = ?");
+    $stmt->execute([$user_id]);
+    return $stmt->fetch(PDO::FETCH_ASSOC);
+}
+
+// Function to update user account
+function updateUserAccount($user_id, $new_username, $new_email, $new_password) {
+    global $pdo;
+    $password_hash = password_hash($new_password, PASSWORD_DEFAULT);
+    $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, password_hash = ? WHERE id = ?");
+    $stmt->execute([$new_username, $new_email, $password_hash, $user_id]);
+}
+
 ?>

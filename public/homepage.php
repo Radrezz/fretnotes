@@ -24,6 +24,7 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
             <a href="homepage.php">FretNotes</a>
         </div>
         <ul class="nav-links">
+            <li><a href="account.php" class="cta-btn">Account</a></li>
             <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
             <li><a href="tunerguitar.php" class="cta-btn">Tuner</a></li>
             <li><a href="forumPage.php" class="cta-btn">Forum</a></li>
@@ -39,10 +40,10 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
     </nav>
 
     <!-- Hero Section -->
-    <header class="hero">
-        <h1>Welcome to Your Dashboard, <?php echo $_SESSION['username']; ?></h1>
-        <p>Your one-stop destination for guitar chords, tabs, and more.</p>
-    </header>
+     <header class="hero">
+    <h1>Welcome to Your Dashboard, <?php echo $_SESSION['username']; ?></h1>
+    <p>Your one-stop destination for guitar chords, tabs, and more.</p>
+</header>
 
     <!-- Songs Preview Section -->
     <section id="songs-list">

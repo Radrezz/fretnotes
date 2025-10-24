@@ -102,14 +102,15 @@ $username  = $_SESSION['username'] ?? null;
     </div>
     <ul class="nav-links">
       <?php if ($logged_in): ?>
-        <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
-        <li><a href="tunerguitar.php" class="cta-btn">Tuner</a></li>
-        <li><a href="forumPage.php" class="cta-btn">Forum</a></li>
-        <li><a href="favorites.php" class="cta-btn">Favorites</a></li>
-        <li><a href="addsong.php" class="cta-btn">Add Song</a></li>
-        <li><a href="logout.php" class="cta-btn">Logout</a></li>
+        <li><a href="account.php" class="cta-btn">Account</a></li>
+            <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
+            <li><a href="tunerguitar.php" class="cta-btn">Tuner</a></li>
+            <li><a href="forumPage.php" class="cta-btn">Forum</a></li>
+            <li><a href="favorites.php" class="cta-btn">Favorites</a></li>
+            <li><a href="addsong.php" class="cta-btn">Add Song</a></li>
+            <li><a href="logout.php" class="cta-btn">Logout</a></li> 
       <?php else: ?>
-        <li><a href="login-register.php" class="cta-btn">Login / Register</a></li>
+        <li><a href="login-register.php" class="cta-btn">Login</a></li>
         <li><a href="browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
         <li><a href="tunerguitar.php" class="cta-btn">Tuner</a></li>
       <?php endif; ?>

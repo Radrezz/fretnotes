@@ -25,11 +25,11 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
             <a href="index.php">FretNotes</a>
         </div>
         <ul class="nav-links">
-            <li><a href="login-register.php" class="cta-btn">Login / Register</a></li>
             <li><a href="browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
             <li><a href="tunerguitar.php" class="cta-btn">Tuner</a></li>
             <li><a href="#songs-list" class="cta-btn">Preview Songs</a></li>  <!-- Menu untuk Preview Songs -->
-            <li><a href="login-register.php" class="cta-btn">Forum</a></li>         
+            <li><a href="login-register.php" class="cta-btn">Forum</a></li>       
+            <li><a href="login-register.php" class="cta-btn">Login</a></li>  
         </ul>
         <!-- Menu Toggle untuk mobile view -->
         <div class="menu-toggle" id="mobile-menu">
