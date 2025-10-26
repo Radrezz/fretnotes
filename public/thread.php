@@ -79,7 +79,7 @@ if (isset($_POST['submit-comment'])) {
     </div>
     <ul class="nav-links">
       <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
-      <li><a href="tunerguitar.php" class="cta-btn">Tuner</a></li>
+      <li><a href="homepage.php #tuner" class="cta-btn">Tuner</a></li>
       <li><a href="forumPage.php" class="cta-btn">Forum</a></li>
       <li><a href="favorites.php" class="cta-btn">Favorites</a></li>
       <li><a href="addsong.php" class="cta-btn">Add Song</a></li>
@@ -172,6 +172,15 @@ if (isset($_POST['submit-comment'])) {
       &copy; 2025 FretNotes. All Rights Reserved.
     </div>
   </footer>
+
+  <script>
+    // Toggle Menu (Hamburger) untuk mobile
+    const mobileMenu = document.getElementById("mobile-menu");
+    const navbar = document.querySelector(".navbar");
+    mobileMenu.addEventListener("click", () => {
+      navbar.classList.toggle("active");
+    });
+  </script>
 
 </body>
 

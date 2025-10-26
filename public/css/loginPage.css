@@ -96,6 +96,12 @@ body::after {
   opacity: 0.85;
 }
 
+@media (max-width: 768px) {
+  .container h1 {
+    letter-spacing: 0;
+  }
+}
+
 .container span {
   font-size: 11px;
   color: var(--ink);

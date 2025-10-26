@@ -2,6 +2,11 @@
 // View login/register — logic ditangani di AuthController
 // Pastikan path ini benar relatif terhadap file ini
 include(__DIR__ . '/../backend/controllers/AuthController.php');
+
+// (Opsional) Hindari Notice saat variabel belum diset oleh controller
+$login_error = $login_error ?? null;
+$registration_error = $registration_error ?? null;
+$registration_success = $registration_success ?? null;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -23,20 +28,14 @@ include(__DIR__ . '/../backend/controllers/AuthController.php');
         <!-- ================== SIGN UP ================== -->
         <div class="form-container sign-up">
             <form method="POST" id="signup-form" autocomplete="off">
-                <h1 class="createAccount">Create Account</h1>
-
-                <div class="social-icons">
-                    <a href="#" class="icon" aria-label="Google"><i class="fa-brands fa-google-plus-g"></i></a>
-                    <a href="#" class="icon" aria-label="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
-                </div>
+                <h1>Create Account</h1>
 
                 <span>or use your email for registration</span>
 
-                <input type="text" name="username" placeholder="Name" required />
+                <input type="text" name="username" placeholder="Username" required />
                 <input type="email" name="email" placeholder="Email" required id="email" />
                 <input type="password" name="password" placeholder="Password" required minlength="6" />
                 <input type="password" name="confirm_password" placeholder="Confirm Password" required minlength="6" />
-                <input type="text" name="admin_code" placeholder="Enter Admin Code (for admin only)" />
 
                 <button type="submit" name="register">Sign Up</button>
             </form>

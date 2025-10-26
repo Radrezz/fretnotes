@@ -17,7 +17,7 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="assets/images/guitarlogo.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.23/Tone.js"></script>
 </head>
 
 <body>
@@ -30,11 +30,10 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
         <ul class="nav-links">
             <li><a href="browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
             <li><a href="#songs-list" class="cta-btn">Preview Song</a></li>
-            <li><a href="#tuner-guitar" class="cta-btn">Tuner</a></li>
+            <li><a href="#tuner" class="cta-btn">Tuner</a></li>
             <!-- Cek apakah user sudah login sebelum menampilkan link Forum -->
             <li><a href="<?php echo isset($_SESSION['user_id']) ? 'forumPage.php' : 'login-register.php?redirect=forumPage.php'; ?>"
                     class="cta-btn">Forum</a></li>
-
         </ul>
 
         <!-- Menu Account akan diposisikan di luar list item navbar -->
@@ -50,12 +49,21 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
         </div>
     </nav>
 
-
     <!-- Hero Section -->
     <header class="hero">
         <h1>Welcome to FretNotes</h1>
         <p>Your one-stop destination for guitar chords and tabs.</p>
     </header>
+
+    <!-- About FretNotes Section -->
+    <section id="about-fretnotes">
+        <h2>About FretNotes</h2>
+        <p><strong>FretNotes - Collaborative Platform for Guitar Chords & Tabs</strong></p>
+        <p>FretNotes is a community website for guitarists to search, add, edit, and share chords and song tablatures.
+            Users can also create their own versions, save their collection, and play songs with the auto-scroll
+            feature. FretNotes aims to connect guitarists from around the world on a platform that makes it easier to
+            share musical knowledge and provides a more interactive guitar playing experience</p>
+    </section>
 
     <!-- Preview Songs Section -->
     <section id="songs-list">
@@ -66,10 +74,40 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
                 <p>Artist: <?php echo htmlspecialchars($song['artist']); ?></p>
                 <p>Genre: <?php echo htmlspecialchars($song['genre']); ?></p>
                 <a href="chord-viewer.php?song_id=<?php echo $song['id']; ?>" class="cta-btn">View Chords</a>
-                <a href="add-to-favorites.php?song_id=<?php echo $song['id']; ?>" class="cta-btn">Add to Favorites</a>
+                <a href="favorites.php" class="cta-btn">Add to Favorites</a>
             </div>
         <?php endforeach; ?>
     </section>
+
+    <section id="tuner">
+        <h2>Guitar Tuner</h2>
+        <div class="tuning-display">
+            <h3>Tune Your Guitar</h3>
+            <div id="note">E</div>
+            <div id="tuningBar">
+                <div id="tuningProgress"></div>
+                <div id="indicator"></div>
+            </div>
+            <div id="accuracyIndicator">
+                Correct <span class="check-icon">&#10003;</span>
+            </div>
+        </div>
+
+        <button id="startButton">Start</button>
+
+        <div id="selectedTuning">
+            <label for="tuning">Choose:</label>
+            <select id="tuning" name="tuning">
+                <option value="Standard" <?php if (isset($_SESSION['preferred_tuning']) && $_SESSION['preferred_tuning'] == 'Standard')
+                    echo 'selected'; ?>>Standard (EADGBE)</option>
+                <option value="Drop D" <?php if (isset($_SESSION['preferred_tuning']) && $_SESSION['preferred_tuning'] == 'Drop D')
+                    echo 'selected'; ?>>Drop D</option>
+                <option value="Chromatic" <?php if (isset($_SESSION['preferred_tuning']) && $_SESSION['preferred_tuning'] == 'Chromatic')
+                    echo 'selected'; ?>>Chromatic Tuner</option>
+            </select>
+        </div>
+    </section>
+
 
     <!-- Footer -->
     <footer>
@@ -84,6 +122,73 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
         mobileMenu.addEventListener("click", () => {
             navbar.classList.toggle("active");
         });
+
+
+        //TunerMenu
+        const startButton = document.getElementById('startButton');
+        const noteDisplay = document.getElementById('note');
+        const tuningSelect = document.getElementById('tuning');
+        const tuningProgress = document.getElementById('tuningProgress');
+        const indicator = document.getElementById('indicator');
+        const accuracyIndicator = document.getElementById('accuracyIndicator');
+
+        let audioContext = new (window.AudioContext || window.webkitAudioContext)();
+        let analyser = audioContext.createAnalyser();
+        let microphone;
+
+        const getPitch = () => {
+            Tone.context.resume().then(() => {
+                navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
+                    microphone = audioContext.createMediaStreamSource(stream);
+                    microphone.connect(analyser);
+                    analyser.fftSize = 2048;
+                    let bufferLength = analyser.frequencyBinCount;
+                    let dataArray = new Uint8Array(bufferLength);
+
+                    function detectPitch() {
+                        analyser.getByteFrequencyData(dataArray);
+                        let maxIndex = dataArray.indexOf(Math.max(...dataArray));
+                        let frequency = maxIndex * audioContext.sampleRate / analyser.fftSize;
+                        updatePitchDisplay(frequency);
+                        requestAnimationFrame(detectPitch);
+                    }
+
+                    detectPitch();
+                });
+            });
+        };
+
+        const updatePitchDisplay = (frequency) => {
+            let noteName = getNoteName(frequency);
+            noteDisplay.innerHTML = noteName;
+
+            if (isTuningCorrect(noteName)) {
+                tuningProgress.style.width = '100%';
+                indicator.style.left = '100%';
+                accuracyIndicator.style.display = 'inline-block';
+            } else {
+                tuningProgress.style.width = '50%';
+                indicator.style.left = '50%';
+                accuracyIndicator.style.display = 'none';
+            }
+        };
+
+        const getNoteName = (frequency) => {
+            const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+            let noteIndex = Math.round(12 * Math.log2(frequency / 432)) + 9;
+            return notes[noteIndex % 12];
+        };
+
+        const isTuningCorrect = (noteName) => {
+            const tuning = tuningSelect.value;
+            const standardTuning = ['E', 'A', 'D', 'G', 'B', 'E'];
+            const dropDTuning = ['D', 'A', 'D', 'G', 'B', 'E'];
+            if (tuning === 'Standard') return standardTuning.includes(noteName);
+            if (tuning === 'Drop D') return dropDTuning.includes(noteName);
+            return false;
+        };
+
+        startButton.addEventListener('click', getPitch);
     </script>
 
 </body>

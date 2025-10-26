@@ -31,7 +31,7 @@ $songs = isset($_GET['search']) && !empty($_GET['search'])
         </div>
         <ul class="nav-links">
             <li><a href="browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
-            <li><a href="#songs-list" class="cta-btn">Preview Song</a></li>
+            <li><a href="index.php #songs-list" class="cta-btn">Preview Song</a></li>
             <li><a href="#tuner-guitar" class="cta-btn">Tuner</a></li>
             <li><a href="login-register.php" class="cta-btn">Forum</a></li>
 

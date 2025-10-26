@@ -17,7 +17,7 @@ $baseUrl .= "/fretNotes/public/";
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
     // input bernama "email" di form tapi bisa berisi username ATAU email
     $login_input = trim($_POST['email']);
-    $password    = $_POST['password'];
+    $password = $_POST['password'];
 
     // Tentukan pencarian berdasarkan format
     if (filter_var($login_input, FILTER_VALIDATE_EMAIL)) {
@@ -31,9 +31,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
 
     if ($user && password_verify($password, $user['password_hash'])) {
         // Set session
-        $_SESSION['user_id']  = $user['id'];
+        $_SESSION['user_id'] = $user['id'];
         $_SESSION['username'] = $user['username'];
-        $_SESSION['role']     = $user['role'];
+        $_SESSION['role'] = $user['role'];
 
         // Redirect berdasarkan role
         if ($user['role'] === 'admin') {
@@ -52,11 +52,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
 // =================== REGISTER USER ========================
 // =========================================================
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
-    $username         = trim($_POST['username']);
-    $email            = trim($_POST['email']);
-    $password         = $_POST['password'];
+    $username = trim($_POST['username']);
+    $email = trim($_POST['email']);
+    $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
-    $admin_code       = isset($_POST['admin_code']) ? trim($_POST['admin_code']) : '';
+    $admin_code = isset($_POST['admin_code']) ? trim($_POST['admin_code']) : '';
 
     // Validasi dasar
     if ($password !== $confirm_password) {
@@ -86,7 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['register'])) {
 }
 
 // Function to get user info
-function getUserInfo($user_id) {
+function getUserInfo($user_id)
+{
     global $pdo;
     $stmt = $pdo->prepare("SELECT username, email FROM users WHERE id = ?");
     $stmt->execute([$user_id]);
@@ -94,7 +95,8 @@ function getUserInfo($user_id) {
 }
 
 // Function to update user account
-function updateUserAccount($user_id, $new_username, $new_email, $new_password) {
+function updateUserAccount($user_id, $new_username, $new_email, $new_password)
+{
     global $pdo;
     $password_hash = password_hash($new_password, PASSWORD_DEFAULT);
     $stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, password_hash = ? WHERE id = ?");

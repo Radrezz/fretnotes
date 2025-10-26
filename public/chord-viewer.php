@@ -222,19 +222,36 @@ $username = $_SESSION['username'] ?? null;
     </div>
     <ul class="nav-links">
       <?php if ($logged_in): ?>
-        <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
-        <li><a href="tunerguitar.php" class="cta-btn">Tuner</a></li>
-        <li><a href="forumPage.php" class="cta-btn">Forum</a></li>
-        <li><a href="favorites.php" class="cta-btn">Favorites</a></li>
-        <li><a href="addsong.php" class="cta-btn">Add Song</a></li>
-        <li><a href="account.php" class="cta-btn"><span class="material-icons">account_circle</span></a></li>
+        <ul class="nav-links">
+          <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
+          <li><a href="homepage.php #tuner" class="cta-btn">Tuner</a></li>
+          <li><a href="forumPage.php" class="cta-btn">Forum</a></li>
+          <li><a href="favorites.php" class="cta-btn">Favorites</a></li>
+          <li><a href="addsong.php" class="cta-btn">Add Song</a></li>
+        </ul>
       <?php else: ?>
         <li><a href="login-register.php" class="cta-btn">Login</a></li>
         <li><a href="browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
-        <li><a href="tunerguitar.php" class="cta-btn">Tuner</a></li>
+        <li><a href="index.php #tuner" class="cta-btn">Tuner</a></li>
       <?php endif; ?>
     </ul>
+    <!-- Menu Account akan diposisikan di luar list item navbar -->
+    <div class="menu-account">
+      <a href="account.php" class="cta-btn account-icon"><span class="material-icons">account_circle</span></a>
+    </div>
+
+    <!-- Hamburger Menu Toggle -->
+    <div class="menu-toggle" id="mobile-menu">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
   </nav>
+
+  <header class="hero">
+    <h1>Take Your Guitar</h1>
+    <p>Play, learn, and enjoy the songs.</p>
+  </header>
 
   <main class="chord-viewer-wrap">
     <div class="chord-header">
@@ -456,6 +473,13 @@ $username = $_SESSION['username'] ?? null;
       if (e.key === ' ') { e.preventDefault(); toggleScroll.click(); }
       if (e.key === '+') { transposeUpBtn.click(); }
       if (e.key === '-') { transposeDownBtn.click(); }
+    });
+
+    // Toggle Menu (Hamburger) untuk mobile
+    const mobileMenu = document.getElementById("mobile-menu");
+    const navbar = document.querySelector(".navbar");
+    mobileMenu.addEventListener("click", () => {
+      navbar.classList.toggle("active");
     });
   </script>
 </body>

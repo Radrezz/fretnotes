@@ -59,7 +59,7 @@ footer p {
   background-color: #c58060;
   padding: 15px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* Membuat jarak antar elemen navbar */
   align-items: center;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
   transition: box-shadow 0.3s ease-in-out;
@@ -110,11 +110,6 @@ footer p {
   margin: 5px 0;
 }
 
-/* Account Menu */
-.navbar .menu-account {
-  right: 10px; /* Menempatkan menu Account di samping hamburger */
-}
-
 .navbar .menu-account a {
   color: #ffffff; /* Pastikan warna ikon Account putih */
   background: transparent;
@@ -130,13 +125,20 @@ footer p {
 
 /* Responsif untuk mobile */
 @media (max-width: 768px) {
+  .navbar {
+    display: flex;
+    justify-content: space-between; /* Membuat jarak antar elemen navbar */
+    align-items: center;
+    position: relative; /* Menyesuaikan posisi anak */
+  }
+
   .navbar .nav-links {
-    display: none;
+    display: none; /* Menyembunyikan menu links di layar kecil */
     flex-direction: column;
-    width: 100%;
     position: absolute;
     top: 50px;
     left: 0;
+    width: 100%;
     background-color: #b17457;
     padding: 15px;
   }
@@ -145,21 +147,29 @@ footer p {
     text-align: center;
   }
 
+  /* Mengatur menu Account dan hamburger untuk tidak bertumpukan */
   .navbar .menu-toggle {
     display: block;
-    cursor: pointer;
+    z-index: 10; /* Agar hamburger tetap di atas */
+  }
+
+  .navbar .menu-account {
+    display: flex;
+    align-items: center;
+    position: absolute;
+    left: 78%; /* Menempatkan menu Account di kiri hamburger */
+    top: 53%;
+    transform: translateY(-50%); /* Menempatkan menu akun di tengah */
+    z-index: 5; /* Agar menu akun tidak menutupi elemen lain */
+  }
+
+  .navbar .menu-toggle {
+    display: block; /* Menampilkan hamburger */
   }
 
   /* Menampilkan menu links saat hamburger menu diaktifkan */
   .navbar.active .nav-links {
     display: flex;
-  }
-}
-
-/* Tampilan untuk Desktop (Lebih besar dari 768px) */
-@media (min-width: 769px) {
-  .navbar .menu-account {
-    display: block;
   }
 }
 
@@ -197,6 +207,95 @@ footer p {
 
   .subTitleGuitar {
     font-size: 1.7em;
+  }
+}
+
+/* ============================================= */
+/* 🎵 ABOUT FRENOTES SECTION                          */
+/* ============================================= */
+#about-fretnotes {
+  background: linear-gradient(180deg, #faf7f0, #d8d2c2); /* Soft background color blending with hero */
+  padding: 40px 20px;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  margin-top: 0;
+  position: relative;
+  overflow: hidden;
+  animation: fadeIn 1.5s ease-out; /* Animasi fade */
+}
+
+/* Fade-in animasi */
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+#about-fretnotes h2 {
+  font-size: 2em;
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: #4a4947; /* Dark brown color for text */
+}
+
+#about-fretnotes p {
+  font-size: 1.1em;
+  line-height: 1.6;
+  color: #4a4947;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+#about-fretnotes p strong {
+  color: #b17457; /* Highlighting the key part of the description */
+  font-weight: bold;
+}
+
+/* Efek Gradien Bergerak */
+#about-fretnotes::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(45deg, #702502, #d8d2c282, #faf7f0);
+  opacity: 0.2;
+  transform: translateX(-100%);
+  animation: moveGradient 5s ease-in-out infinite;
+  pointer-events: none; /* Prevent it from blocking interactions */
+}
+
+/* Animasi untuk Gradien Bergerak */
+@keyframes moveGradient {
+  0% {
+    transform: translateX(-100%);
+  }
+  50% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
+}
+
+#about-fretnotes:hover {
+  box-shadow: 0px 12px 30px #3a322d6b; /* Shadow dengan warna #b17457 */
+  background-color: #b17457; /* Mengubah warna latar belakang menjadi lebih gelap */
+  transition: background-color 0.4s ease, box-shadow 0.7s ease;
+}
+
+/* Responsif untuk tampilan mobile */
+@media (max-width: 768px) {
+  #about-fretnotes {
+    padding: 30px;
+  }
+
+  #about-fretnotes p {
+    font-size: 1em;
   }
 }
 
@@ -269,19 +368,38 @@ footer p {
 }
 
 .song-item {
-  background-color: #d8d2c2;
+  background-color: #d8d2c2; /* Warna coklat muda untuk latar belakang */
   padding: 15px;
   border-radius: 8px;
   box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s, box-shadow 0.3s;
+  transition: transform 0.3s, box-shadow 0.3s, background-color 0.3s;
   text-align: center;
+  position: relative; /* Untuk animasi gradien */
+  overflow: hidden; /* Menyembunyikan animasi gradien yang keluar */
 }
 
 .song-item:hover {
   transform: translateY(-5px);
-  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
-  background-color: #b17457;
-  color: white;
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.743);
+  color: rgb(255, 255, 255);
+  background-color: #b17457; /* Coklat kemerahan saat di-hover */
+}
+
+/* Efek Gradien Animasi berjalan hanya ke bawah */
+.song-item::after {
+  content: "";
+  position: absolute;
+  top: -100%; /* Posisi awal gradien di atas */
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(55, 40, 22, 0.651), rgba(119, 71, 3, 0.164)); /* Warna coklat sesuai palette */
+  transition: top 0.6s ease; /* Gradien bergerak turun dengan transisi */
+  pointer-events: none; /* Agar animasi tidak mengganggu interaksi */
+}
+
+.song-item:hover::after {
+  top: 0%; /* Gradien bergerak turun ketika dihover */
 }
 
 .song-item h3 {
@@ -296,18 +414,45 @@ footer p {
 }
 
 .song-item .cta-btn {
-  background-color: #4a4947;
-  color: white;
+  background-color: #4a4947; /* Warna gelap untuk latar belakang tombol */
+  color: #faf7f0; /* Warna teks cerah agar kontras dengan latar belakang gelap */
   padding: 8px 15px;
   text-decoration: none;
   border-radius: 5px;
   margin-top: 10px;
   display: inline-block;
-  transition: background-color 0.3s ease;
+  border: 2px solid transparent; /* Border transparan untuk tampilan awal */
+  transition: all 0.4s ease; /* Transisi yang halus */
+  position: relative;
+  overflow: hidden; /* Menyembunyikan ripple effect */
 }
 
 .song-item .cta-btn:hover {
-  background-color: #b17457;
+  background: linear-gradient(45deg, #b17457, #d8d2c2); /* Efek gradasi warna terang saat hover */
+  transform: scale(1.1); /* Membesarkan tombol saat hover */
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4); /* Efek bayangan lebih dalam untuk tema gelap */
+  border-color: #b17457; /* Warna border yang lebih terang saat hover */
+  color: #ffffff; /* Warna teks lebih cerah saat hover untuk kontras lebih tinggi */
+}
+
+/* Efek Ripple */
+.song-item .cta-btn::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 300%;
+  height: 300%;
+  background-color: #1108033d; /* Warna ripple lebih transparan dengan tema gelap */
+  border-radius: 50%;
+  transform: translate(-50%, -50%) scale(1);
+  transition: all 0.6s ease;
+  pointer-events: none; /* Agar ripple tidak mengganggu interaksi */
+}
+
+.song-item .cta-btn:hover::before {
+  transform: translate(-50%, -50%) scale(0); /* Efek ripple mengecil saat hover berakhir */
+  transition: all 0.6s ease;
 }
 
 /* Responsive for mobile */
@@ -324,11 +469,17 @@ footer p {
 /* ============================================= */
 /* 🎸 GUITAR TUNER PAGE                           */
 /* ============================================= */
-.tuner-container {
+#tuner {
   margin: 40px auto;
   text-align: center;
   width: 80%;
   max-width: 600px;
+}
+#tuner h2 {
+  font-size: 2em;
+  margin-bottom: 20px;
+  font-weight: bold;
+  color: #4a4947; /* Dark brown color for text */
 }
 
 .tuning-display {
@@ -400,7 +551,7 @@ footer p {
   border: 2px solid #b17457;
 }
 
-.tuner-container button {
+#tuner button {
   background-color: #b17457;
   color: white;
   border: none;
@@ -413,22 +564,22 @@ footer p {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-.tuner-container button:hover {
+#tuner button:hover {
   background-color: #4a4947;
   transform: translateY(-5px);
 }
 
-.tuner-container button:active {
+#tuner button:active {
   transform: translateY(2px);
 }
 
 /* Mobile responsive */
 @media (max-width: 768px) {
-  .tuner-container {
+  #tuner {
     width: 90%;
   }
 
-  .tuner-container button {
+  #tuner button {
     width: 100%;
     padding: 12px 0;
   }
