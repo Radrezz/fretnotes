@@ -32,13 +32,14 @@ $songs = isset($_GET['search']) && !empty($_GET['search'])
     : getFavoriteSongs($userId);
 
 // Fungsi untuk menambahkan lagu ke favorit
-function addSongToFavorites($userId, $songId) {
+function addSongToFavorites($userId, $songId)
+{
     global $pdo;
     // Cek apakah lagu sudah ada di favorit
     $query = "SELECT * FROM favorites WHERE user_id = ? AND song_id = ?";
     $stmt = $pdo->prepare($query);
     $stmt->execute([$userId, $songId]);
-    
+
     if ($stmt->rowCount() == 0) {
         // Jika belum ada, tambahkan ke favorit
         $query = "INSERT INTO favorites (user_id, song_id) VALUES (?, ?)";
@@ -51,6 +52,7 @@ function addSongToFavorites($userId, $songId) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -58,7 +60,9 @@ function addSongToFavorites($userId, $songId) {
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/cursor.css">
     <link rel="icon" href="assets/images/guitarlogo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
+
 <body>
 
     <!-- Navbar -->
@@ -67,14 +71,19 @@ function addSongToFavorites($userId, $songId) {
             <a href="homepage.php">FretNotes</a>
         </div>
         <ul class="nav-links">
-            <li><a href="account.php" class="cta-btn">Account</a></li>
             <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
             <li><a href="tunerguitar.php" class="cta-btn">Tuner</a></li>
             <li><a href="forumPage.php" class="cta-btn">Forum</a></li>
             <li><a href="favorites.php" class="cta-btn">Favorites</a></li>
             <li><a href="addsong.php" class="cta-btn">Add Song</a></li>
-            <li><a href="logout.php" class="cta-btn">Logout</a></li> 
         </ul>
+
+        <!-- Menu Account akan diposisikan di luar list item navbar -->
+        <div class="menu-account">
+            <a href="account.php" class="cta-btn account-icon"><span class="material-icons">account_circle</span></a>
+        </div>
+
+        <!-- Hamburger Menu Toggle -->
         <div class="menu-toggle" id="mobile-menu">
             <span></span>
             <span></span>
@@ -96,12 +105,8 @@ function addSongToFavorites($userId, $songId) {
     <!-- Search Section -->
     <section class="search-section">
         <form method="GET" action="favorites.php">
-            <input 
-                type="text" 
-                name="search" 
-                placeholder="Search your favorite songs..." 
-                value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>"
-            />
+            <input type="text" name="search" placeholder="Search your favorite songs..."
+                value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>" />
             <button type="submit">Search</button>
         </form>
     </section>
@@ -122,11 +127,9 @@ function addSongToFavorites($userId, $songId) {
                     <a href="chord-viewer.php?song_id=<?php echo $song['id']; ?>" class="cta-btn">View Chords</a>
 
                     <!-- Tombol Hapus dengan konfirmasi -->
-                    <a href="favorites.php?delete_favorite=true&song_id=<?php echo $song['id']; ?>" 
-                       class="cta-btn" 
-                       style="background-color: #e57373;" 
-                       onclick="return confirmDeletion();">
-                       Delete
+                    <a href="favorites.php?delete_favorite=true&song_id=<?php echo $song['id']; ?>" class="cta-btn"
+                        style="background-color: #e57373;" onclick="return confirmDeletion();">
+                        Delete
                     </a>
                 </div>
             <?php endforeach; ?>
@@ -155,4 +158,5 @@ function addSongToFavorites($userId, $songId) {
     </script>
 
 </body>
+
 </html>

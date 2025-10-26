@@ -8,6 +8,7 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,8 +16,10 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
     <link rel="stylesheet" href="css/cursor.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="assets/images/guitarlogo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 
 </head>
+
 <body>
 
     <!-- Navbar -->
@@ -26,18 +29,27 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
         </div>
         <ul class="nav-links">
             <li><a href="browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
-            <li><a href="tunerguitar.php" class="cta-btn">Tuner</a></li>
-            <li><a href="#songs-list" class="cta-btn">Preview Songs</a></li>  <!-- Menu untuk Preview Songs -->
-            <li><a href="login-register.php" class="cta-btn">Forum</a></li>       
-            <li><a href="login-register.php" class="cta-btn">Login</a></li>  
+            <li><a href="#songs-list" class="cta-btn">Preview Song</a></li>
+            <li><a href="#tuner-guitar" class="cta-btn">Tuner</a></li>
+            <!-- Cek apakah user sudah login sebelum menampilkan link Forum -->
+            <li><a href="<?php echo isset($_SESSION['user_id']) ? 'forumPage.php' : 'login-register.php?redirect=forumPage.php'; ?>"
+                    class="cta-btn">Forum</a></li>
+
         </ul>
-        <!-- Menu Toggle untuk mobile view -->
+
+        <!-- Menu Account akan diposisikan di luar list item navbar -->
+        <div class="menu-account">
+            <a href="account.php" class="cta-btn account-icon"><span class="material-icons">account_circle</span></a>
+        </div>
+
+        <!-- Hamburger Menu Toggle -->
         <div class="menu-toggle" id="mobile-menu">
             <span></span>
             <span></span>
             <span></span>
         </div>
     </nav>
+
 
     <!-- Hero Section -->
     <header class="hero">
@@ -75,4 +87,5 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
     </script>
 
 </body>
+
 </html>

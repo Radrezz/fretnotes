@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update-thread'])) {
     // Jika gambar harus dihapus
     if ($removeImage) {
         // Hapus gambar lama jika ada
-        deleteUploadedFile($imagePath); 
+        deleteUploadedFile($imagePath);
         $imagePath = null; // Menghapus gambar lama
     }
 
@@ -53,6 +53,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update-thread'])) {
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -98,7 +99,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update-thread'])) {
                 <!-- Thread Title -->
                 <label class="block mb-2 font-medium">Thread Title</label>
                 <input type="text" name="title" value="<?php echo htmlspecialchars($thread['title']); ?>"
-                    class="w-full rounded-lg border border-beige bg-cream p-4 focus:outline-none focus:border-terracotta mb-6 text-lg" required>
+                    class="w-full rounded-lg border border-beige bg-cream p-4 focus:outline-none focus:border-terracotta mb-6 text-lg"
+                    required>
 
                 <!-- Content -->
                 <label class="block mb-2 font-medium">Content</label>
@@ -125,8 +127,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update-thread'])) {
 
                 <!-- Buttons -->
                 <div class="flex justify-end gap-6">
-                    <a href="forumPage.php" class="px-6 py-3 bg-beige text-charcoal rounded-lg hover:bg-[#c9c3b3]">Cancel</a>
-                    <button type="submit" name="update-thread" class="px-6 py-3 bg-terracotta text-purewhite rounded-lg hover:bg-[#9e6047]">Save Changes</button>
+                    <a href="forumPage.php"
+                        class="px-6 py-3 bg-beige text-charcoal rounded-lg hover:bg-[#c9c3b3]">Cancel</a>
+                    <button type="submit" name="update-thread"
+                        class="px-6 py-3 bg-terracotta text-purewhite rounded-lg hover:bg-[#9e6047]">Save
+                        Changes</button>
                 </div>
             </form>
         </div>
@@ -137,4 +142,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update-thread'])) {
         &copy; 2025 FretNotes. All Rights Reserved.
     </footer>
 </body>
+
 </html>

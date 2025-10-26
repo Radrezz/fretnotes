@@ -28,11 +28,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $error_message = "Username dan email tidak boleh kosong!";
     } elseif (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
         $error_message = "Email tidak valid!";
-    } 
+    }
     // Validasi password jika diubah
     elseif ($new_password !== '' && $new_password !== $confirm_password) {
         $error_message = "Password dan konfirmasi password tidak cocok!";
-    } 
+    }
     // Jika password diubah dan valid
     elseif ($new_password !== '' && $new_password === $confirm_password) {
         $new_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $update_stmt->execute([$new_username, $new_email, $new_password_hash, $user_id]);
         $_SESSION['username'] = $new_username; // Update session username
         $success_message = "Akun berhasil diperbarui!";
-    } 
+    }
     // Jika password tidak diubah, hanya update email dan username
     elseif ($new_password === '') {
         $update_stmt = $pdo->prepare("UPDATE users SET username = ?, email = ? WHERE id = ?");
@@ -52,27 +52,38 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FretNotes - Account Information</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/cursor.css">
+    <link rel="icon" href="assets/images/guitarlogo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
 </head>
+
 <body>
+
     <!-- Navbar -->
     <nav class="navbar">
         <div class="logo">
             <a href="homepage.php">FretNotes</a>
         </div>
         <ul class="nav-links">
-            <li><a href="account.php" class="cta-btn">Account</a></li>
             <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
             <li><a href="tunerguitar.php" class="cta-btn">Tuner</a></li>
             <li><a href="forumPage.php" class="cta-btn">Forum</a></li>
             <li><a href="favorites.php" class="cta-btn">Favorites</a></li>
             <li><a href="addsong.php" class="cta-btn">Add Song</a></li>
-            <li><a href="logout.php" class="cta-btn">Logout</a></li> 
         </ul>
+
+        <!-- Menu Account akan diposisikan di luar list item navbar -->
+        <div class="menu-account">
+            <a href="account.php" class="cta-btn account-icon"><span class="material-icons">account_circle</span></a>
+        </div>
+
+        <!-- Hamburger Menu Toggle -->
         <div class="menu-toggle" id="mobile-menu">
             <span></span>
             <span></span>
@@ -93,10 +104,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <form action="account.php" method="POST">
             <label for="username">Username</label>
-            <input type="text" name="username" id="username" value="<?php echo htmlspecialchars($user['username']); ?>" required>
+            <input type="text" name="username" id="username" value="<?php echo htmlspecialchars($user['username']); ?>"
+                required>
 
             <label for="email">Email</label>
-            <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($user['email']); ?>" required>
+            <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($user['email']); ?>"
+                required>
 
             <label for="password">New Password (Leave blank to keep the same)</label>
             <input type="password" name="password" id="password" placeholder="Enter new password">
@@ -106,6 +119,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             <button type="submit" class="cta-btn">Update Account</button>
         </form>
+
+        <!-- Tombol Logout -->
+        <a href="logout.php" class="cta-btn logout-btn">Logout</a> <!-- Logout button here -->
+
     </section>
 
     <!-- Footer -->
@@ -115,16 +132,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <script>
         // Validasi form sebelum dikirim
-        document.querySelector("form").addEventListener("submit", function(event) {
+        document.querySelector("form").addEventListener("submit", function (event) {
             // Tampilkan konfirmasi sebelum submit form
             const confirmation = confirm("Are you sure you want to update your account?");
-            
+
             // Jika pengguna menekan "Cancel", cegah pengiriman form
             if (!confirmation) {
                 event.preventDefault();  // Cegah form untuk dikirim
                 return false;
             }
-            
+
             // Validasi username dan email
             let username = document.getElementById("username").value.trim();
             let email = document.getElementById("email").value.trim();
@@ -159,4 +176,5 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     </script>
 
 </body>
+
 </html>

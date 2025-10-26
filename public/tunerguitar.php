@@ -4,6 +4,7 @@ session_start();
 
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -13,6 +14,7 @@ session_start();
     <link rel="stylesheet" href="css/cursor.css">
     <link rel="icon" href="assets/images/guitarlogo.ico" type="image/x-icon">
 </head>
+
 <body>
     <!-- Navbar (pakai gaya global dari style.css) -->
     <nav class="navbar">
@@ -48,9 +50,12 @@ session_start();
         <div id="selectedTuning">
             <label for="tuning">Pilih Tuning:</label>
             <select id="tuning" name="tuning">
-                <option value="Standard" <?php if (isset($_SESSION['preferred_tuning']) && $_SESSION['preferred_tuning'] == 'Standard') echo 'selected'; ?>>Standard (EADGBE)</option>
-                <option value="Drop D" <?php if (isset($_SESSION['preferred_tuning']) && $_SESSION['preferred_tuning'] == 'Drop D') echo 'selected'; ?>>Drop D</option>
-                <option value="Chromatic" <?php if (isset($_SESSION['preferred_tuning']) && $_SESSION['preferred_tuning'] == 'Chromatic') echo 'selected'; ?>>Chromatic Tuner</option>
+                <option value="Standard" <?php if (isset($_SESSION['preferred_tuning']) && $_SESSION['preferred_tuning'] == 'Standard')
+                    echo 'selected'; ?>>Standard (EADGBE)</option>
+                <option value="Drop D" <?php if (isset($_SESSION['preferred_tuning']) && $_SESSION['preferred_tuning'] == 'Drop D')
+                    echo 'selected'; ?>>Drop D</option>
+                <option value="Chromatic" <?php if (isset($_SESSION['preferred_tuning']) && $_SESSION['preferred_tuning'] == 'Chromatic')
+                    echo 'selected'; ?>>Chromatic Tuner</option>
             </select>
         </div>
     </section>
@@ -126,4 +131,5 @@ session_start();
         startButton.addEventListener('click', getPitch);
     </script>
 </body>
+
 </html>

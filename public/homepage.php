@@ -8,14 +8,17 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - FretNotes</title>
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/cursor.css">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="icon" href="assets/images/guitarlogo.ico" type="image/x-icon">
 </head>
+
 <body>
 
     <!-- Navbar -->
@@ -24,14 +27,19 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
             <a href="homepage.php">FretNotes</a>
         </div>
         <ul class="nav-links">
-            <li><a href="account.php" class="cta-btn">Account</a></li>
             <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
             <li><a href="tunerguitar.php" class="cta-btn">Tuner</a></li>
             <li><a href="forumPage.php" class="cta-btn">Forum</a></li>
             <li><a href="favorites.php" class="cta-btn">Favorites</a></li>
             <li><a href="addsong.php" class="cta-btn">Add Song</a></li>
-            <li><a href="logout.php" class="cta-btn">Logout</a></li> 
         </ul>
+
+        <!-- Menu Account akan diposisikan di luar list item navbar -->
+        <div class="menu-account">
+            <a href="account.php" class="cta-btn account-icon"><span class="material-icons">account_circle</span></a>
+        </div>
+
+        <!-- Hamburger Menu Toggle -->
         <div class="menu-toggle" id="mobile-menu">
             <span></span>
             <span></span>
@@ -40,10 +48,10 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
     </nav>
 
     <!-- Hero Section -->
-     <header class="hero">
-    <h1>Welcome to Your Dashboard, <?php echo $_SESSION['username']; ?></h1>
-    <p>Your one-stop destination for guitar chords, tabs, and more.</p>
-</header>
+    <header class="hero">
+        <h1>Welcome to Your Dashboard, <?php echo $_SESSION['username']; ?></h1>
+        <p class="subTitleGuitar">Your one-stop destination for guitar chords, tabs, and more.</p>
+    </header>
 
     <!-- Songs Preview Section -->
     <section id="songs-list">
@@ -55,7 +63,8 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
                 <p>Genre: <?php echo htmlspecialchars($song['genre']); ?></p>
                 <p>Version: <?php echo htmlspecialchars($song['version_name']); ?></p>
                 <a href="chord-viewer.php?song_id=<?php echo $song['id']; ?>" class="cta-btn">View Chords</a>
-                <a href="favorites.php?add_to_favorites=true&song_id=<?php echo $song['id']; ?>" class="cta-btn">Add to Favorites</a>
+                <a href="favorites.php?add_to_favorites=true&song_id=<?php echo $song['id']; ?>" class="cta-btn">Add to
+                    Favorites</a>
             </div>
         <?php endforeach; ?>
     </section>
@@ -76,4 +85,5 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
     </script>
 
 </body>
+
 </html>

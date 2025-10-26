@@ -10,6 +10,7 @@ $songs = isset($_GET['search']) && !empty($_GET['search'])
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,20 +18,31 @@ $songs = isset($_GET['search']) && !empty($_GET['search'])
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/cursor.css">
     <link rel="icon" href="assets/images/guitarlogo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
 </head>
+
 <body>
-   <!-- Navbar -->
-   <nav class="navbar">
+
+    <!-- Navbar -->
+    <nav class="navbar">
         <div class="logo">
             <a href="index.php">FretNotes</a>
         </div>
         <ul class="nav-links">
             <li><a href="browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
-            <li><a href="tunerguitar.php" class="cta-btn">Tuner</a></li>
-            <li><a href="index.php" class="cta-btn">Preview Songs</a></li>
+            <li><a href="#songs-list" class="cta-btn">Preview Song</a></li>
+            <li><a href="#tuner-guitar" class="cta-btn">Tuner</a></li>
             <li><a href="login-register.php" class="cta-btn">Forum</a></li>
-            <li><a href="login-register.php" class="cta-btn">Login</a></li>
+
         </ul>
+
+        <!-- Menu Account akan diposisikan di luar list item navbar -->
+        <div class="menu-account">
+            <a href="account.php" class="cta-btn account-icon"><span class="material-icons">account_circle</span></a>
+        </div>
+
+        <!-- Hamburger Menu Toggle -->
         <div class="menu-toggle" id="mobile-menu">
             <span></span>
             <span></span>
@@ -47,12 +59,8 @@ $songs = isset($_GET['search']) && !empty($_GET['search'])
     <!-- Search Bar -->
     <section class="search-section">
         <form method="GET" action="browse-songs-before.php">
-            <input 
-                type="text" 
-                name="search" 
-                placeholder="Search songs..." 
-                value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>"
-            />
+            <input type="text" name="search" placeholder="Search songs..."
+                value="<?php echo isset($_GET['search']) ? htmlspecialchars($_GET['search']) : ''; ?>" />
             <button type="submit">Search</button>
         </form>
     </section>
@@ -94,4 +102,5 @@ $songs = isset($_GET['search']) && !empty($_GET['search'])
         });
     </script>
 </body>
+
 </html>

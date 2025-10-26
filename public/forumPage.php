@@ -10,21 +10,22 @@ if (!isset($_SESSION['username'])) {
 
 // PRG Post (Publish a new thread)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-thread'])) {
-    $title   = htmlspecialchars(trim($_POST['title']));
+    $title = htmlspecialchars(trim($_POST['title']));
     $content = htmlspecialchars(trim($_POST['content']));
-    $author  = $_SESSION['username'];
+    $author = $_SESSION['username'];
     $ok = addThread($title, $content, $author);
     header("Location: forumPage.php?posted=" . ($ok ? '1' : '0'));
     exit();
 }
 
 // Search Threads
-$search  = isset($_GET['search']) ? trim($_GET['search']) : '';
+$search = isset($_GET['search']) ? trim($_GET['search']) : '';
 $threads = getThreads($search);
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -32,28 +33,35 @@ $threads = getThreads($search);
     <link rel="icon" href="assets/images/guitarlogo.ico" type="image/x-icon">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/cursor.css">
-    <style>
-        .menu-toggle { display: none; width: 26px; height: 20px; flex-direction: column; justify-content: space-between; }
-        .menu-toggle span { display: block; height: 3px; background: #fff; border-radius: 3px; }
-        @media (max-width: 768px) { .navbar .nav-links { display: none; flex-direction: column; width: 100%; position: absolute; top: 56px; left: 0; background: #b17457; padding: 12px 16px; } .navbar.active .nav-links { display: flex; } .menu-toggle { display: flex; } }
-    </style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+
 </head>
+
 <body>
     <!-- Navbar -->
     <nav class="navbar">
-        <div class="logo"><a href="homepage.php">FretNotes</a></div>
-        <div class="menu-toggle" id="mobile-menu" aria-label="Toggle menu">
-            <span></span><span></span><span></span><span></span>
+        <div class="logo">
+            <a href="homepage.php">FretNotes</a>
         </div>
         <ul class="nav-links">
-           <li><a href="account.php" class="cta-btn">Account</a></li>
             <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
             <li><a href="tunerguitar.php" class="cta-btn">Tuner</a></li>
             <li><a href="forumPage.php" class="cta-btn">Forum</a></li>
             <li><a href="favorites.php" class="cta-btn">Favorites</a></li>
             <li><a href="addsong.php" class="cta-btn">Add Song</a></li>
-            <li><a href="logout.php" class="cta-btn">Logout</a></li> 
         </ul>
+
+        <!-- Menu Account akan diposisikan di luar list item navbar -->
+        <div class="menu-account">
+            <a href="account.php" class="cta-btn account-icon"><span class="material-icons">account_circle</span></a>
+        </div>
+
+        <!-- Hamburger Menu Toggle -->
+        <div class="menu-toggle" id="mobile-menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
     </nav>
 
     <!-- Hero Section -->
@@ -78,12 +86,13 @@ $threads = getThreads($search);
             <p>Share your question, tip, or tab idea with the community.</p>
 
             <?php if (isset($_GET['posted'])): ?>
-            <div class="notification <?php echo $_GET['posted'] === '1' ? 'success' : 'error'; ?>">
-                <?php echo $_GET['posted'] === '1' ? 'Thread successfully posted!' : 'Failed to post thread.'; ?>
-            </div>
+                <div class="notification <?php echo $_GET['posted'] === '1' ? 'success' : 'error'; ?>">
+                    <?php echo $_GET['posted'] === '1' ? 'Thread successfully posted!' : 'Failed to post thread.'; ?>
+                </div>
             <?php endif; ?>
 
-            <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST" enctype="multipart/form-data">
+            <form action="<?php echo htmlspecialchars($_SERVER['PHP_SELF']); ?>" method="POST"
+                enctype="multipart/form-data">
                 <input type="text" name="title" placeholder="Thread title" required>
                 <textarea name="content" placeholder="Write something..." rows="4" required></textarea>
                 <input type="file" name="thread_image" accept="image/*" style="margin-bottom:12px;">
@@ -96,29 +105,35 @@ $threads = getThreads($search);
             <h3><?php echo $search ? 'Search Results' : 'Recent Discussions'; ?></h3>
 
             <?php if (!empty($threads)): ?>
-            <div class="thread-grid">
-                <?php foreach ($threads as $t): ?>
-                <div class="thread-card">
-                    <?php if (!empty($t['image_path'])): ?>
-                    <img src="<?php echo htmlspecialchars($t['image_path']); ?>" alt="Thread image" class="thread-image">
-                    <?php endif; ?>
+                <div class="thread-grid">
+                    <?php foreach ($threads as $t): ?>
+                        <div class="thread-card">
+                            <?php if (!empty($t['image_path'])): ?>
+                                <img src="<?php echo htmlspecialchars($t['image_path']); ?>" alt="Thread image"
+                                    class="thread-image">
+                            <?php endif; ?>
 
-                    <h4><a href="thread.php?id=<?php echo $t['id']; ?>"><?php echo htmlspecialchars($t['title']); ?></a></h4>
-                    <p class="meta">By <?php echo htmlspecialchars($t['author']); ?> • <?php echo htmlspecialchars($t['date'] ?? ''); ?></p>
-                    <p class="excerpt"><?php echo nl2br(htmlspecialchars(substr($t['content'], 0, 160))); ?>…</p>
+                            <h4><a href="thread.php?id=<?php echo $t['id']; ?>"><?php echo htmlspecialchars($t['title']); ?></a>
+                            </h4>
+                            <p class="meta">By <?php echo htmlspecialchars($t['author']); ?> •
+                                <?php echo htmlspecialchars($t['date'] ?? ''); ?>
+                            </p>
+                            <p class="excerpt"><?php echo nl2br(htmlspecialchars(substr($t['content'], 0, 160))); ?>…</p>
 
-                    <!-- Edit and Delete Buttons (only visible for thread author) -->
-                    <?php if ($t['author'] === $_SESSION['username']): ?>
-                    <div class="actions">
-                        <a href="editThread.php?id=<?php echo $t['id']; ?>" class="btn-edit">Edit</a>
-                        <a href="deleteThread.php?id=<?php echo $t['id']; ?>" onclick="return confirm('Are you sure you want to delete this thread?');" class="btn-delete">Delete</a>
-                    </div>
-                    <?php endif; ?>
+                            <!-- Edit and Delete Buttons (only visible for thread author) -->
+                            <?php if ($t['author'] === $_SESSION['username']): ?>
+                                <div class="actions">
+                                    <a href="editThread.php?id=<?php echo $t['id']; ?>" class="btn-edit">Edit</a>
+                                    <a href="deleteThread.php?id=<?php echo $t['id']; ?>"
+                                        onclick="return confirm('Are you sure you want to delete this thread?');"
+                                        class="btn-delete">Delete</a>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    <?php endforeach; ?>
                 </div>
-                <?php endforeach; ?>
-            </div>
             <?php else: ?>
-            <p>No discussions found<?php echo $search ? ' for “' . htmlspecialchars($search) . '”' : ''; ?>.</p>
+                <p>No discussions found<?php echo $search ? ' for “' . htmlspecialchars($search) . '”' : ''; ?>.</p>
             <?php endif; ?>
         </section>
     </main>
@@ -136,4 +151,5 @@ $threads = getThreads($search);
         });
     </script>
 </body>
+
 </html>

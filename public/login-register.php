@@ -2,11 +2,6 @@
 // View login/register — logic ditangani di AuthController
 // Pastikan path ini benar relatif terhadap file ini
 include(__DIR__ . '/../backend/controllers/AuthController.php');
-
-// (Opsional) Hindari Notice saat variabel belum diset oleh controller
-$login_error           = $login_error           ?? null;
-$registration_error    = $registration_error    ?? null;
-$registration_success  = $registration_success  ?? null;
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -48,10 +43,13 @@ $registration_success  = $registration_success  ?? null;
 
             <!-- Messages for register -->
             <?php if ($registration_error): ?>
-                <p class="error" style="color:#e74c3c;margin-top:10px;"><?php echo htmlspecialchars($registration_error); ?></p>
+                <p class="error" style="color:#e74c3c;margin-top:10px;"><?php echo htmlspecialchars($registration_error); ?>
+                </p>
             <?php endif; ?>
             <?php if ($registration_success): ?>
-                <p class="success" style="color:#2ecc71;margin-top:10px;"><?php echo htmlspecialchars($registration_success); ?></p>
+                <p class="success" style="color:#2ecc71;margin-top:10px;">
+                    <?php echo htmlspecialchars($registration_success); ?>
+                </p>
             <?php endif; ?>
         </div>
 
@@ -111,8 +109,9 @@ $registration_success  = $registration_success  ?? null;
 
         // Fokuskan email saat ada error registrasi
         <?php if ($registration_error): ?>
-        document.addEventListener('DOMContentLoaded', () => { emailInput?.focus(); });
+            document.addEventListener('DOMContentLoaded', () => { emailInput?.focus(); });
         <?php endif; ?>
     </script>
 </body>
+
 </html>

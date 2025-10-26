@@ -13,12 +13,12 @@ if (!isset($_GET['id'])) {
 }
 
 $threadId = intval($_GET['id']);
-$thread   = getThreadById($threadId);
+$thread = getThreadById($threadId);
 $comments = getCommentsByThread($threadId);
 
 if (isset($_POST['submit-comment'])) {
   $content = htmlspecialchars(trim($_POST['content']));
-  $author  = $_SESSION['username'];
+  $author = $_SESSION['username'];
 
   // Handle image upload for comment
   $imagePath = null;
@@ -44,6 +44,8 @@ if (isset($_POST['submit-comment'])) {
   <title><?php echo htmlspecialchars($thread['title']); ?> - FretNotes Forum</title>
   <link rel="icon" href="assets/images/guitarlogo.ico" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <script src="https://cdn.tailwindcss.com"></script>
   <script>
     tailwind.config = {
@@ -71,15 +73,28 @@ if (isset($_POST['submit-comment'])) {
 <body class="bg-cream text-charcoal min-h-screen flex flex-col font-sans">
 
   <!-- Navbar -->
-  <nav class="w-full bg-terracotta text-purewhite">
-    <div class="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
-      <a href="homepage.php" class="text-2xl font-semibold tracking-wide">FretNotes</a>
-      <ul class="hidden md:flex gap-6 text-[15px] font-medium">
-        <li><a class="hover:opacity-90" href="browse-songs.php">Browse Songs</a></li>
-        <li><a class="hover:opacity-90" href="forumPage.php">Forum</a></li>
-        <li><a class="hover:opacity-90" href="favorites.php">Favorites</a></li>
-        <li><a class="hover:opacity-90" href="logout.php">Logout</a></li>
-      </ul>
+  <nav class="navbar">
+    <div class="logo">
+      <a href="homepage.php">FretNotes</a>
+    </div>
+    <ul class="nav-links">
+      <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
+      <li><a href="tunerguitar.php" class="cta-btn">Tuner</a></li>
+      <li><a href="forumPage.php" class="cta-btn">Forum</a></li>
+      <li><a href="favorites.php" class="cta-btn">Favorites</a></li>
+      <li><a href="addsong.php" class="cta-btn">Add Song</a></li>
+    </ul>
+
+    <!-- Menu Account akan diposisikan di luar list item navbar -->
+    <div class="menu-account">
+      <a href="account.php" class="cta-btn account-icon"><span class="material-icons">account_circle</span></a>
+    </div>
+
+    <!-- Hamburger Menu Toggle -->
+    <div class="menu-toggle" id="mobile-menu">
+      <span></span>
+      <span></span>
+      <span></span>
     </div>
   </nav>
 
@@ -87,7 +102,8 @@ if (isset($_POST['submit-comment'])) {
   <header class="bg-terracotta/10 border-b border-beige">
     <div class="max-w-6xl mx-auto px-6 py-6">
       <a href="forumPage.php" class="text-sm text-charcoal/70 hover:underline">&larr; Back to Forum</a>
-      <h1 class="mt-2 text-3xl md:text-4xl font-bold text-charcoal"><?php echo htmlspecialchars($thread['title']); ?></h1>
+      <h1 class="mt-2 text-3xl md:text-4xl font-bold text-charcoal"><?php echo htmlspecialchars($thread['title']); ?>
+      </h1>
       <p class="text-sm text-charcoal/70 mt-1">
         By <?php echo htmlspecialchars($thread['author']); ?> • <?php echo htmlspecialchars($thread['date']); ?>
       </p>
@@ -112,10 +128,13 @@ if (isset($_POST['submit-comment'])) {
 
               <!-- Display comment image if it exists -->
               <?php if (!empty($c['image_path'])): ?>
-                <img src="<?php echo htmlspecialchars($c['image_path']); ?>" alt="Comment image" class="comment-img mt-3 rounded-xl border border-beige/70 shadow-soft" />
+                <img src="<?php echo htmlspecialchars($c['image_path']); ?>" alt="Comment image"
+                  class="comment-img mt-3 rounded-xl border border-beige/70 shadow-soft" />
               <?php endif; ?>
 
-              <p class="text-sm text-charcoal/60 mt-2">— <?php echo htmlspecialchars($c['author']); ?>, <?php echo htmlspecialchars($c['created_at']); ?></p>
+              <p class="text-sm text-charcoal/60 mt-2">— <?php echo htmlspecialchars($c['author']); ?>,
+                <?php echo htmlspecialchars($c['created_at']); ?>
+              </p>
             </div>
           <?php endforeach; ?>
         </div>
@@ -126,18 +145,22 @@ if (isset($_POST['submit-comment'])) {
 
     <!-- Add comment -->
     <section class="mt-8">
-      <form method="POST" enctype="multipart/form-data" class="bg-purewhite rounded-xl2 border border-beige p-6 shadow-soft">
+      <form method="POST" enctype="multipart/form-data"
+        class="bg-purewhite rounded-xl2 border border-beige p-6 shadow-soft">
         <h3 class="text-xl font-semibold text-terracotta mb-3">Add a Comment</h3>
         <?php if (isset($error)): ?>
           <div class="mb-3 text-red-700 bg-red-100 border border-red-200 rounded-lg px-4 py-2"><?php echo $error; ?></div>
         <?php endif; ?>
 
-        <textarea name="content" rows="4" required placeholder="Share your thoughts…" class="w-full rounded-2xl bg-cream border border-beige px-4 py-3 focus:outline-none focus:border-terracotta mb-3"></textarea>
+        <textarea name="content" rows="4" required placeholder="Share your thoughts…"
+          class="w-full rounded-2xl bg-cream border border-beige px-4 py-3 focus:outline-none focus:border-terracotta mb-3"></textarea>
 
         <!-- Image upload for comment -->
-        <input type="file" name="comment_image" accept="image/*" class="block w-full rounded-2xl bg-cream border border-beige px-4 py-2 text-sm mb-4 file:mr-4 file:py-2 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-terracotta file:text-purewhite hover:file:bg-[#9e6047]">
+        <input type="file" name="comment_image" accept="image/*"
+          class="block w-full rounded-2xl bg-cream border border-beige px-4 py-2 text-sm mb-4 file:mr-4 file:py-2 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-terracotta file:text-purewhite hover:file:bg-[#9e6047]">
 
-        <button type="submit" name="submit-comment" class="rounded-full bg-terracotta text-purewhite px-6 py-2.5 font-semibold shadow-soft hover:shadow-softHover hover:bg-[#9e6047] transition">
+        <button type="submit" name="submit-comment"
+          class="rounded-full bg-terracotta text-purewhite px-6 py-2.5 font-semibold shadow-soft hover:shadow-softHover hover:bg-[#9e6047] transition">
           Post Comment
         </button>
       </form>
