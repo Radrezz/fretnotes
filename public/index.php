@@ -127,7 +127,8 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
                                     class="fab fa-instagram"></i> Instagram</a></li>
                         <li><a href="https://www.youtube.com/@artudieii" target="_blank"><i class="fab fa-youtube"></i>
                                 YouTube</a></li>
-                        <li><a href="https://wa.me/" target="_blank"><i class="fab fa-whatsapp"></i> Whatsapp</a></li>
+                        <li><a href="https://wa.me/+62895337858815" target="_blank"><i class="fab fa-whatsapp"></i>
+                                Whatsapp</a></li>
                     </ul>
                 </div>
             </div>
