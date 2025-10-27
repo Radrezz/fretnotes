@@ -127,60 +127,84 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2025 FretNotes</p>
-    </footer>
+        <footer>
+            <div class="footer-content">
+                <p>&copy; 2025 PremiumPortal</p>
+                <div class="footer-nav">
+                    <div class="nav-column">
+                        <h3>FretNotes.id</h3>
+                        <p>Guitar Platform and Community</p>
+                    </div>
 
-    <script>
-        // Validasi form sebelum dikirim
-        document.querySelector("form").addEventListener("submit", function (event) {
-            // Tampilkan konfirmasi sebelum submit form
-            const confirmation = confirm("Are you sure you want to update your account?");
+                    <div class="nav-socialmedia">
+                        <h3>Contact & Social Media</h3>
+                        <ul>
+                            <li><a href="https://www.instagram.com/artudiei/" target="_blank"><i
+                                        class="fab fa-instagram"></i> Instagram</a></li>
+                            <li><a href="https://www.youtube.com/@artudieii" target="_blank"><i
+                                        class="fab fa-youtube"></i>
+                                    YouTube</a></li>
+                            <li><a href="https://wa.me/" target="_blank"><i class="fab fa-whatsapp"></i> Whatsapp</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <!-- Audio Wave Animation -->
+            <div class="audio-wave"></div>
+        </footer>
 
-            // Jika pengguna menekan "Cancel", cegah pengiriman form
-            if (!confirmation) {
-                event.preventDefault();  // Cegah form untuk dikirim
-                return false;
-            }
+        <script>
+            // Validasi form sebelum dikirim
+            document.querySelector("form").addEventListener("submit", function (event) {
+                // Tampilkan konfirmasi sebelum submit form
+                const confirmation = confirm("Are you sure you want to update your account?");
 
-            // Validasi username dan email
-            let username = document.getElementById("username").value.trim();
-            let email = document.getElementById("email").value.trim();
-            let password = document.getElementById("password").value.trim();
-            let confirm_password = document.getElementById("confirm_password").value.trim();
+                // Jika pengguna menekan "Cancel", cegah pengiriman form
+                if (!confirmation) {
+                    event.preventDefault();  // Cegah form untuk dikirim
+                    return false;
+                }
 
-            // Validasi username dan email
-            if (username === "" || email === "") {
-                alert("Username dan Email tidak boleh kosong!");
-                event.preventDefault(); // Cegah form dikirim
-                return false;
-            }
+                // Validasi username dan email
+                let username = document.getElementById("username").value.trim();
+                let email = document.getElementById("email").value.trim();
+                let password = document.getElementById("password").value.trim();
+                let confirm_password = document.getElementById("confirm_password").value.trim();
 
-            // Validasi format email
-            let emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-            if (!emailPattern.test(email)) {
-                alert("Email tidak valid!");
-                event.preventDefault();
-                return false;
-            }
+                // Validasi username dan email
+                if (username === "" || email === "") {
+                    alert("Username dan Email tidak boleh kosong!");
+                    event.preventDefault(); // Cegah form dikirim
+                    return false;
+                }
 
-            // Validasi password
-            if (password !== "" && password !== confirm_password) {
-                alert("Password dan konfirmasi password tidak cocok!");
-                event.preventDefault();
-                return false;
-            }
+                // Validasi format email
+                let emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+                if (!emailPattern.test(email)) {
+                    alert("Email tidak valid!");
+                    event.preventDefault();
+                    return false;
+                }
 
-            // Jika semua validasi berhasil, form akan dikirim
-            return true;
-        });
+                // Validasi password
+                if (password !== "" && password !== confirm_password) {
+                    alert("Password dan konfirmasi password tidak cocok!");
+                    event.preventDefault();
+                    return false;
+                }
 
-        // Toggle Menu (Hamburger) untuk mobile
-        const mobileMenu = document.getElementById("mobile-menu");
-        const navbar = document.querySelector(".navbar");
-        mobileMenu.addEventListener("click", () => {
-            navbar.classList.toggle("active");
-        });
-    </script>
+                // Jika semua validasi berhasil, form akan dikirim
+                return true;
+            });
+
+            // Toggle Menu (Hamburger) untuk mobile
+            const mobileMenu = document.getElementById("mobile-menu");
+            const navbar = document.querySelector(".navbar");
+            mobileMenu.addEventListener("click", () => {
+                navbar.classList.toggle("active");
+            });
+        </script>
 
 </body>
 

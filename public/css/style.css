@@ -20,17 +20,122 @@ body {
 /* ============================================= */
 /* 🦶 FOOTER                                      */
 /* ============================================= */
+/* Footer Styles */
 footer {
-  text-align: center;
-  padding: 20px;
   background-color: #4a4947;
   color: white;
-  margin-top: auto;
-  font-weight: 500;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+footer .footer-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
 }
 
 footer p {
-  margin: 0;
+  font-size: 1.2rem;
+}
+
+footer .footer-nav {
+  display: flex;
+  justify-content: space-around;
+  width: 100%;
+  margin-top: 30px;
+  gap: 40px;
+}
+
+footer .nav-column {
+  text-align: left;
+}
+
+footer .nav-column h3 {
+  font-size: 1.8rem;
+  color: #d8d2c2;
+}
+
+footer .nav-column p {
+  font-size: 1.2rem;
+  color: #d8d2c2;
+}
+
+footer .nav-socialmedia {
+  text-align: left;
+}
+
+footer .nav-socialmedia h3 {
+  font-size: 1.2rem;
+  color: #d8d2c2;
+}
+
+footer .nav-socialmedia ul {
+  list-style: none;
+  padding: 0;
+}
+
+footer .nav-socialmedia ul li {
+  margin: 10px 0;
+}
+
+footer .nav-socialmedia ul li a {
+  color: #ffffff;
+  text-decoration: none;
+  font-size: 1.2rem;
+  transition: color 0.3s ease;
+}
+
+footer .nav-socialmedia ul li a:hover {
+  color: #b17457;
+}
+
+footer .nav-socialmedia ul li a i {
+  margin-right: 10px; /* Space between icon and text */
+}
+
+footer .audio-wave {
+  width: 100%;
+  height: 20px;
+  background: linear-gradient(to right, black 10%, transparent 10%, transparent 50%, black 50%, black 60%, transparent 60%, transparent);
+  background-size: 50px 100%;
+  animation: wave 1.5s infinite linear;
+  position: relative;
+  margin-top: 20px;
+}
+
+@keyframes wave {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: -50px 0;
+  }
+}
+
+/* Social Links Hover Animation */
+footer .nav-socialmedia ul li a {
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+footer .nav-socialmedia ul li a:hover {
+  transform: scale(1.1);
+  color: #b17457;
+}
+
+/* Responsive for Mobile */
+@media (max-width: 768px) {
+  footer .footer-nav {
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+  }
+
+  footer .nav-column {
+    text-align: center;
+  }
 }
 
 /* ============================================= */
@@ -214,7 +319,7 @@ footer p {
 /* 🎵 ABOUT FRENOTES SECTION                          */
 /* ============================================= */
 #about-fretnotes {
-  background: linear-gradient(180deg, #faf7f0, #d8d2c2); /* Soft background color blending with hero */
+  background: linear-gradient(180deg, #faf7f072, #d8d2c273); /* Soft background color blending with hero */
   padding: 40px 20px;
   box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.1);
   text-align: center;
@@ -284,7 +389,7 @@ footer p {
 
 #about-fretnotes:hover {
   box-shadow: 0px 12px 30px #3a322d6b; /* Shadow dengan warna #b17457 */
-  background-color: #b17457; /* Mengubah warna latar belakang menjadi lebih gelap */
+  background-color: #b1745742; /* Mengubah warna latar belakang menjadi lebih gelap */
   transition: background-color 0.4s ease, box-shadow 0.7s ease;
 }
 
@@ -311,27 +416,24 @@ footer p {
   margin-bottom: 20px;
 }
 
-/* Modifikasi input untuk konsistensi dengan Forum Page */
 .search-section input {
   flex: 1;
   padding: 11px 14px;
   font-size: 14px;
-  border: 1.5px solid #d8d2c2; /* Sesuaikan border dengan Forum */
-  border-radius: 12px; /* Sama dengan Forum Page */
-  background-color: #fffdf8; /* Warna latar belakang yang konsisten dengan Forum */
+  border: 1.5px solid #d8d2c2;
+  border-radius: 12px;
+  background-color: #fffdf8;
   color: #4a4947;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
 }
 
-/* Focus effect untuk input, sesuaikan dengan Forum */
 .search-section input:focus {
   border-color: #b17457;
   box-shadow: 0 0 0 3px rgba(177, 116, 87, 0.2);
   background: #ffffff;
 }
 
-/* Modifikasi button agar mirip dengan Forum Page */
 .search-section button {
   background: #b17457;
   color: #fff;
@@ -343,7 +445,6 @@ footer p {
   transition: background-color 0.15s ease, transform 0.1s ease;
 }
 
-/* Hover effect for button */
 .search-section button:hover {
   background: #4a4947;
   transform: translateY(-1px);
@@ -616,6 +717,7 @@ footer p {
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease, background-color 0.2s ease;
   width: 100%; /* Tambahkan ini agar input text mengisi 100% lebar container */
+  margin-left: 12px;
 }
 .forum-container .search-section input[type="text"]:focus {
   border-color: #b17457;
@@ -631,6 +733,7 @@ footer p {
   border: 1px solid transparent;
   cursor: pointer;
   transition: background-color 0.15s ease, transform 0.1s ease;
+  margin-right: 10px;
 }
 .forum-container .search-section button:hover {
   background: #4a4947;
@@ -644,6 +747,8 @@ footer p {
   padding: 28px 24px;
   box-shadow: 0 6px 24px rgba(0, 0, 0, 0.1);
   margin-bottom: 44px;
+  margin-left: 12px;
+  margin-right: 12px;
   border: 1px solid #d8d2c2;
   transition: transform 0.2s ease, box-shadow 0.3s ease;
   box-sizing: border-box; /* Menambahkan box-sizing untuk memperbaiki masalah overflow */
@@ -717,6 +822,9 @@ footer p {
 .forum-form button:active {
   transform: translateY(1px);
 }
+.forum-list h3 {
+  margin-left: 10px;
+}
 
 /* Notifications */
 .notification {
@@ -756,6 +864,9 @@ footer p {
   border: 1px solid #e0dbcc;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
   transition: all 0.25s ease;
+  margin-left: 8px;
+  margin-right: 8px;
+  margin-bottom: 8px;
 }
 .thread-card:hover {
   transform: translateY(-2px);
@@ -1083,7 +1194,7 @@ footer p {
   }
 
   .hero p {
-    font-size: 0.5em;
+    font-size: 0.9em;
     font-weight: 400;
   }
 

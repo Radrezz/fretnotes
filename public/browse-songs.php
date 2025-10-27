@@ -95,7 +95,28 @@ $songs = isset($_GET['search']) && !empty($_GET['search'])
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2025 FretNotes</p>
+        <div class="footer-content">
+            <p>&copy; 2025 PremiumPortal</p>
+            <div class="footer-nav">
+                <div class="nav-column">
+                    <h3>FretNotes.id</h3>
+                    <p>Guitar Platform and Community</p>
+                </div>
+
+                <div class="nav-socialmedia">
+                    <h3>Contact & Social Media</h3>
+                    <ul>
+                        <li><a href="https://www.instagram.com/artudiei/" target="_blank"><i
+                                    class="fab fa-instagram"></i> Instagram</a></li>
+                        <li><a href="https://www.youtube.com/@artudieii" target="_blank"><i class="fab fa-youtube"></i>
+                                YouTube</a></li>
+                        <li><a href="https://wa.me/" target="_blank"><i class="fab fa-whatsapp"></i> Whatsapp</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Audio Wave Animation -->
+        <div class="audio-wave"></div>
     </footer>
 
     <script>

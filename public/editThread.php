@@ -59,6 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update-thread'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Edit Thread - FretNotes</title>
     <link rel="stylesheet" href="css/cursor.css">
+    <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="icon" href="assets/images/guitarlogo.ico" type="image/x-icon">
     <script src="https://cdn.tailwindcss.com"></script>
@@ -138,8 +139,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update-thread'])) {
     </main>
 
     <!-- Footer -->
-    <footer class="bg-charcoal text-purewhite text-center py-4">
-        &copy; 2025 FretNotes. All Rights Reserved.
+    <footer>
+        <div class="footer-content">
+            <p>&copy; 2025 PremiumPortal</p>
+            <div class="footer-nav">
+                <div class="nav-column">
+                    <h3>FretNotes.id</h3>
+                    <p>Guitar Platform and Community</p>
+                </div>
+
+                <div class="nav-socialmedia">
+                    <h3>Contact & Social Media</h3>
+                    <ul>
+                        <li><a href="https://www.instagram.com/artudiei/" target="_blank"><i
+                                    class="fab fa-instagram"></i> Instagram</a></li>
+                        <li><a href="https://www.youtube.com/@artudieii" target="_blank"><i class="fab fa-youtube"></i>
+                                YouTube</a></li>
+                        <li><a href="https://wa.me/" target="_blank"><i class="fab fa-whatsapp"></i> Whatsapp</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Audio Wave Animation -->
+        <div class="audio-wave"></div>
     </footer>
 </body>
 

@@ -17,6 +17,7 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
     <link rel="stylesheet" href="css/style.css">
     <link rel="icon" href="assets/images/guitarlogo.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.23/Tone.js"></script>
 </head>
 
@@ -29,7 +30,7 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
         </div>
         <ul class="nav-links">
             <li><a href="browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
-            <li><a href="#songs-list" class="cta-btn">Preview Song</a></li>
+            <li><a href="#songs-list" class="cta-btn">Preview Songs</a></li>
             <li><a href="#tuner" class="cta-btn">Tuner</a></li>
             <!-- Cek apakah user sudah login sebelum menampilkan link Forum -->
             <li><a href="<?php echo isset($_SESSION['user_id']) ? 'forumPage.php' : 'login-register.php?redirect=forumPage.php'; ?>"
@@ -111,8 +112,31 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2025 FretNotes</p>
+        <div class="footer-content">
+            <p>&copy; 2025 PremiumPortal</p>
+            <div class="footer-nav">
+                <div class="nav-column">
+                    <h3>FretNotes.id</h3>
+                    <p>Guitar Platform and Community</p>
+                </div>
+
+                <div class="nav-socialmedia">
+                    <h3>Contact & Social Media</h3>
+                    <ul>
+                        <li><a href="https://www.instagram.com/artudiei/" target="_blank"><i
+                                    class="fab fa-instagram"></i> Instagram</a></li>
+                        <li><a href="https://www.youtube.com/@artudieii" target="_blank"><i class="fab fa-youtube"></i>
+                                YouTube</a></li>
+                        <li><a href="https://wa.me/" target="_blank"><i class="fab fa-whatsapp"></i> Whatsapp</a></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Audio Wave Animation -->
+        <div class="audio-wave"></div>
     </footer>
+
+
 
     <script>
         // Toggle Menu (Hamburger) untuk mobile

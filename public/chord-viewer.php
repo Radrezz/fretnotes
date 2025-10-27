@@ -230,9 +230,10 @@ $username = $_SESSION['username'] ?? null;
           <li><a href="addsong.php" class="cta-btn">Add Song</a></li>
         </ul>
       <?php else: ?>
-        <li><a href="login-register.php" class="cta-btn">Login</a></li>
         <li><a href="browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
+        <li><a href="index.php #songs-list" class="cta-btn">Preview Songs</a></li>
         <li><a href="index.php #tuner" class="cta-btn">Tuner</a></li>
+        <li><a href="forumPage.php" class="cta-btn">Tuner</a></li>
       <?php endif; ?>
     </ul>
     <!-- Menu Account akan diposisikan di luar list item navbar -->
@@ -324,8 +325,31 @@ $username = $_SESSION['username'] ?? null;
     </div>
   </main>
 
+  <!-- Footer -->
+
   <footer>
-    <p>&copy; 2025 FretNotes</p>
+    <div class="footer-content">
+      <p>&copy; 2025 PremiumPortal</p>
+      <div class="footer-nav">
+        <div class="nav-column">
+          <h3>FretNotes.id</h3>
+          <p>Guitar Platform and Community</p>
+        </div>
+
+        <div class="nav-socialmedia">
+          <h3>Contact & Social Media</h3>
+          <ul>
+            <li><a href="https://www.instagram.com/artudiei/" target="_blank"><i class="fab fa-instagram"></i>
+                Instagram</a></li>
+            <li><a href="https://www.youtube.com/@artudieii" target="_blank"><i class="fab fa-youtube"></i>
+                YouTube</a></li>
+            <li><a href="https://wa.me/" target="_blank"><i class="fab fa-whatsapp"></i> Whatsapp</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+    <!-- Audio Wave Animation -->
+    <div class="audio-wave"></div>
   </footer>
 
   <script>
