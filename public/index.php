@@ -29,8 +29,8 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
             <a href="index.php">FretNotes</a>
         </div>
         <ul class="nav-links">
-            <li><a href="browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
             <li><a href="#songs-list" class="cta-btn">Preview Songs</a></li>
+            <li><a href="browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
             <li><a href="#tuner" class="cta-btn">Tuner</a></li>
             <!-- Cek apakah user sudah login sebelum menampilkan link Forum -->
             <li><a href="<?php echo isset($_SESSION['user_id']) ? 'forumPage.php' : 'login-register.php?redirect=forumPage.php'; ?>"
@@ -113,7 +113,7 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
     <!-- Footer -->
     <footer>
         <div class="footer-content">
-            <p>&copy; 2025 PremiumPortal</p>
+            <p>&copy; 2025 FretNotes</p>
             <div class="footer-nav">
                 <div class="nav-column">
                     <h3>FretNotes.id</h3>

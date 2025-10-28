@@ -31,9 +31,9 @@ $songs = isset($_GET['search']) && !empty($_GET['search'])
             <a href="index.php">FretNotes</a>
         </div>
         <ul class="nav-links">
-            <li><a href="browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
             <li><a href="index.php #songs-list" class="cta-btn">Preview Songs</a></li>
-            <li><a href="#tuner-guitar" class="cta-btn">Tuner</a></li>
+            <li><a href="browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
+            <li><a href="index.php #tuner" class="cta-btn">Tuner</a></li>
             <li><a href="login-register.php" class="cta-btn">Forum</a></li>
 
         </ul>
@@ -91,7 +91,7 @@ $songs = isset($_GET['search']) && !empty($_GET['search'])
     <!-- Footer -->
     <footer>
         <div class="footer-content">
-            <p>&copy; 2025 PremiumPortal</p>
+            <p>&copy; 2025 FretNotes</p>
             <div class="footer-nav">
                 <div class="nav-column">
                     <h3>FretNotes.id</h3>

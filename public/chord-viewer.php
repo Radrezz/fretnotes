@@ -231,8 +231,8 @@ $username = $_SESSION['username'] ?? null;
           <li><a href="addsong.php" class="cta-btn">Add Song</a></li>
         </ul>
       <?php else: ?>
-        <li><a href="browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
         <li><a href="index.php #songs-list" class="cta-btn">Preview Songs</a></li>
+        <li><a href="browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
         <li><a href="index.php #tuner" class="cta-btn">Tuner</a></li>
         <li><a href="forumPage.php" class="cta-btn">Tuner</a></li>
       <?php endif; ?>
@@ -330,7 +330,7 @@ $username = $_SESSION['username'] ?? null;
 
   <footer>
     <div class="footer-content">
-      <p>&copy; 2025 PremiumPortal</p>
+      <p>&copy; 2025 FretNotes</p>
       <div class="footer-nav">
         <div class="nav-column">
           <h3>FretNotes.id</h3>

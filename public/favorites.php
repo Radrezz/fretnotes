@@ -142,7 +142,7 @@ function addSongToFavorites($userId, $songId)
     <!-- Footer -->
     <footer>
         <div class="footer-content">
-            <p>&copy; 2025 PremiumPortal</p>
+            <p>&copy; 2025 FretNotes</p>
             <div class="footer-nav">
                 <div class="nav-column">
                     <h3>FretNotes.id</h3>
