@@ -7,12 +7,14 @@ include_once('../backend/models/Comment.php');
 include_once('../backend/helpers/Upload.php');
 
 // Fungsi untuk mendapatkan semua thread
-function getAllThreads() {
+function getAllThreads()
+{
     return fetchAllThreads();
 }
 
 // Fungsi untuk mengambil thread berdasarkan pencarian
-function getThreads($q = null) {
+function getThreads($q = null)
+{
     if ($q !== null && trim($q) !== '') {
         return searchThreads(trim($q));
     }
@@ -20,12 +22,14 @@ function getThreads($q = null) {
 }
 
 // Fungsi untuk mengambil thread berdasarkan ID
-function getThreadById($id) {
+function getThreadById($id)
+{
     return fetchThreadById($id);
 }
 
 // Fungsi untuk menambahkan thread baru
-function addThread($title, $content, $author) {
+function addThread($title, $content, $author, $imagePath)
+{
     if (empty($title) || empty($content) || empty($author)) {
         return false;
     }
@@ -37,7 +41,8 @@ function addThread($title, $content, $author) {
 }
 
 // Fungsi untuk mengambil thread untuk keperluan pengeditan
-function getThreadForEdit($id, $author) {
+function getThreadForEdit($id, $author)
+{
     $thread = fetchThreadById($id);
     if ($thread && $thread['author'] === $author) {
         return $thread;
@@ -46,7 +51,9 @@ function getThreadForEdit($id, $author) {
 }
 
 // Fungsi untuk memperbarui thread
-function updateThread($id, $title, $content, $author) {
+// Fungsi untuk memperbarui thread
+function updateThread($id, $title, $content, $author, $imagePath)
+{
     $conn = connectDB();
 
     // Cek apakah ada gambar baru yang di-upload
@@ -57,13 +64,17 @@ function updateThread($id, $title, $content, $author) {
 
     // Cek apakah gambar lama harus dihapus
     if (isset($_POST['remove_image']) && $_POST['remove_image'] == 1) {
-        $imagePath = null; // Menghapus gambar lama
+        // Hapus gambar lama jika ada
+        $oldThread = fetchThreadById($id);
+        if ($oldThread['image_path']) {
+            deleteUploadedFile($oldThread['image_path']);  // Hapus gambar lama
+        }
+        $imagePath = null; // Menghapus gambar lama dari database
     }
 
     // Update query untuk thread
-    // Corrected the bind_param to ensure 6 values are passed
     $stmt = $conn->prepare("UPDATE threads SET title = ?, content = ?, image_path = ? WHERE id = ? AND author = ?");
-    $stmt->bind_param("sssis", $title, $content, $imagePath, $id, $author);  // Note: Corrected the bind_param
+    $stmt->bind_param("sssis", $title, $content, $imagePath, $id, $author);
     $stmt->execute();
 
     $affected = $stmt->affected_rows > 0;
@@ -72,8 +83,10 @@ function updateThread($id, $title, $content, $author) {
     return $affected;
 }
 
+
 // Fungsi untuk menghapus thread
-function deleteThread($id, $author) {
+function deleteThread($id, $author)
+{
     $conn = connectDB();
     $stmt = $conn->prepare("DELETE FROM threads WHERE id = ? AND author = ?");
     $stmt->bind_param("is", $id, $author);
@@ -87,6 +100,7 @@ function deleteThread($id, $author) {
 /* ====== Komentar (opsional di controller ini) ====== */
 
 // Fungsi untuk mendapatkan komentar pada sebuah thread
-function getComments($threadId) {
-    return fetchCommentsByThread((int)$threadId);
+function getComments($threadId)
+{
+    return fetchCommentsByThread((int) $threadId);
 }

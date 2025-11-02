@@ -1,12 +1,13 @@
 <?php
 // backend/helpers/Upload.php
 
-function saveUploadedImage(string $field, string $destSubdir, int $maxSizeMB = 2): ?string {
-    if (!isset($_FILES[$field]) || $_FILES[$field]['error'] === UPLOAD_ERR_NO_FILE) {
+function saveUploadedImage($inputName, $folder, $maxSizeMB = 2): ?string
+{
+    if (!isset($_FILES[$inputName]) || $_FILES[$inputName]['error'] === UPLOAD_ERR_NO_FILE) {
         return null; // jika tidak ada file yang diupload
     }
 
-    $file = $_FILES[$field];
+    $file = $_FILES[$inputName];
 
     // Cek error upload umum
     if ($file['error'] !== UPLOAD_ERR_OK) {
@@ -21,11 +22,11 @@ function saveUploadedImage(string $field, string $destSubdir, int $maxSizeMB = 2
 
     // Validasi MIME type (format gambar)
     $finfo = new finfo(FILEINFO_MIME_TYPE);
-    $mime  = $finfo->file($file['tmp_name']);
+    $mime = $finfo->file($file['tmp_name']);
     $allowed = [
         'image/jpeg' => 'jpg',
-        'image/png'  => 'png',
-        'image/gif'  => 'gif',
+        'image/png' => 'png',
+        'image/gif' => 'gif',
         'image/webp' => 'webp',
     ];
     if (!isset($allowed[$mime])) {
@@ -38,9 +39,9 @@ function saveUploadedImage(string $field, string $destSubdir, int $maxSizeMB = 2
 
     // Tentukan folder tujuan penyimpanan
     $baseDir = __DIR__ . '/../../public/uploads';
-    $targetDir = $baseDir . '/' . trim($destSubdir, '/');
+    $targetDir = $baseDir . '/' . trim($folder, '/');
     if (!is_dir($targetDir)) {
-        @mkdir($targetDir, 0775, true);
+        @mkdir($targetDir, 0775, true); // Membuat folder jika belum ada
     }
 
     // Pindahkan file yang di-upload ke folder tujuan
@@ -50,7 +51,7 @@ function saveUploadedImage(string $field, string $destSubdir, int $maxSizeMB = 2
     }
 
     // Path relatif yang akan disimpan di database
-    $publicPath = 'uploads/' . trim($destSubdir, '/') . '/' . $safe;
+    $publicPath = 'uploads/' . trim($folder, '/') . '/' . $safe;
     return $publicPath;
 }
 

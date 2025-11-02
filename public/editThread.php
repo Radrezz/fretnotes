@@ -30,6 +30,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update-thread'])) {
 
     // Jika ada gambar baru yang di-upload
     if (isset($_FILES['thread_image']) && $_FILES['thread_image']['error'] === 0) {
+        // Simpan gambar baru
         $imagePath = saveUploadedImage('thread_image', 'threads', 3); // Fungsi upload gambar
     }
 

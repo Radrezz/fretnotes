@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-thread'])) {
     $title = htmlspecialchars(trim($_POST['title']));
     $content = htmlspecialchars(trim($_POST['content']));
     $author = $_SESSION['username'];
-    $ok = addThread($title, $content, $author);
+    $ok = addThread($title, $content, $author, $imagePath);
     header("Location: forumPage.php?posted=" . ($ok ? '1' : '0'));
     exit();
 }
