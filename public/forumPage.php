@@ -13,7 +13,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-thread'])) {
     $title = htmlspecialchars(trim($_POST['title']));
     $content = htmlspecialchars(trim($_POST['content']));
     $author = $_SESSION['username'];
-    $ok = addThread($title, $content, $author, $imagePath);
+    $ok = addThread($title, $content, $author);
     header("Location: forumPage.php?posted=" . ($ok ? '1' : '0'));
     exit();
 }
@@ -96,7 +96,6 @@ $threads = getThreads($search);
                 enctype="multipart/form-data">
                 <input type="text" name="title" placeholder="Thread title" required>
                 <textarea name="content" placeholder="Write something..." rows="4" required></textarea>
-                <input type="file" name="thread_image" accept="image/*" style="margin-bottom:12px;">
                 <button type="submit" name="submit-thread">Post Thread</button>
             </form>
         </section>
@@ -109,10 +108,6 @@ $threads = getThreads($search);
                 <div class="thread-grid">
                     <?php foreach ($threads as $t): ?>
                         <div class="thread-card">
-                            <?php if (!empty($t['image_path'])): ?>
-                                <img src="<?php echo htmlspecialchars($t['image_path']); ?>" alt="Thread image"
-                                    class="thread-image">
-                            <?php endif; ?>
 
                             <h4><a href="thread.php?id=<?php echo $t['id']; ?>"><?php echo htmlspecialchars($t['title']); ?></a>
                             </h4>

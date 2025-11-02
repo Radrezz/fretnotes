@@ -20,7 +20,7 @@ function connectDB()
 function fetchAllThreads()
 {
     $conn = connectDB();
-    $sql = "SELECT id, title, content, image_path, author, date
+    $sql = "SELECT id, title, content, author, date
              FROM threads
              ORDER BY date DESC";
     $res = $conn->query($sql);
@@ -34,7 +34,7 @@ function fetchAllThreads()
 function fetchThreadById($id)
 {
     $conn = connectDB();
-    $stmt = $conn->prepare("SELECT id, title, content, image_path, author, date FROM threads WHERE id = ?");
+    $stmt = $conn->prepare("SELECT id, title, content, author, date FROM threads WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $data = $stmt->get_result()->fetch_assoc();
@@ -69,24 +69,24 @@ function findSimilarRecentThread($author, $title, $content, $seconds = 60)
  * Sekarang mendukung image_path (nullable).
  * Jika duplikat (errno 1062), fungsi mengembalikan false tanpa error fatal.
  */
-function insertThread($title, $content, $author, $imagePath = null)
+function insertThread($title, $content, $author)
 {
     $conn = connectDB();
 
-    // hash untuk uniqueness
+    // hash untuk uniqueness (tambahkan trim agar stabil)
     $hash = md5($author . '|' . trim($title) . '|' . trim($content));
 
     $stmt = $conn->prepare(
-        "INSERT INTO threads (title, content, image_path, author, content_hash)
+        "INSERT INTO threads (title, content, author, content_hash)
          VALUES (?, ?, ?, ?, ?)"
     );
-    $stmt->bind_param("sssss", $title, $content, $imagePath, $author, $hash);
+    $stmt->bind_param("sssss", $title, $content, $author, $hash);
 
     $ok = true;
     try {
         $stmt->execute();
     } catch (mysqli_sql_exception $e) {
-        // Handle duplicates and other errors
+        // 1062: duplicate key (UNIQUE constraint)
         if ($e->getCode() === 1062) {
             $ok = false;
         } else {
@@ -101,18 +101,6 @@ function insertThread($title, $content, $author, $imagePath = null)
     return $ok;
 }
 
-
-
-
-// Fungsi untuk menghapus file yang sudah di-upload
-function deleteUploadedFile($filePath)
-{
-    if ($filePath && file_exists($filePath)) {
-        unlink($filePath);  // Menghapus file dari server
-    }
-}
-
-
 /* ============================
  * NEW: Pencarian thread simple
  * ============================ */
@@ -122,7 +110,7 @@ function searchThreads($q)
     $like = '%' . $q . '%';
 
     $stmt = $conn->prepare(
-        "SELECT id, title, content, image_path, author, date
+        "SELECT id, title, content, author, date
            FROM threads
           WHERE title   LIKE ?
              OR content LIKE ?
@@ -141,3 +129,10 @@ function searchThreads($q)
     $conn->close();
     return $rows;
 }
+
+/* -------------- OPSIONAL (lebih cepat, Fulltext)
+-- Tambah FULLTEXT index (sekali saja di DB):
+-- ALTER TABLE threads ADD FULLTEXT ft_threads_title_content (title, content);
+
+-- Lalu ubah searchThreads() jadi MATCH ... AGAINST
+*/

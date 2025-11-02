@@ -20,13 +20,8 @@ if (isset($_POST['submit-comment'])) {
   $content = htmlspecialchars(trim($_POST['content']));
   $author = $_SESSION['username'];
 
-  // Handle image upload for comment
-  $imagePath = null;
-  if (isset($_FILES['comment_image']) && $_FILES['comment_image']['error'] === 0) {
-    $imagePath = saveUploadedImage('comment_image', 'comments', 3); // Save uploaded image
-  }
 
-  if (addComment($threadId, $content, $author, $imagePath)) {
+  if (addComment($threadId, $content, $author)) {
     header("Location: thread.php?id=" . $threadId);
     exit();
   } else {

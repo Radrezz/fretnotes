@@ -24,25 +24,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update-thread'])) {
     $content = htmlspecialchars(trim($_POST['content']));
     $author = $_SESSION['username'];
 
-    // Cek apakah ada gambar yang dihapus
-    $removeImage = isset($_POST['remove_image']) ? $_POST['remove_image'] : 0;
-    $imagePath = $thread['image_path']; // Default image jika tidak diganti
 
-    // Jika ada gambar baru yang di-upload
-    if (isset($_FILES['thread_image']) && $_FILES['thread_image']['error'] === 0) {
-        // Simpan gambar baru
-        $imagePath = saveUploadedImage('thread_image', 'threads', 3); // Fungsi upload gambar
-    }
-
-    // Jika gambar harus dihapus
-    if ($removeImage) {
-        // Hapus gambar lama jika ada
-        deleteUploadedFile($imagePath);
-        $imagePath = null; // Menghapus gambar lama
-    }
 
     // Update thread ke database
-    if (updateThread($id, $title, $content, $author, $imagePath)) {
+    if (updateThread($id, $title, $content, $author)) {
         header("Location: forumPage.php?updated=1");
         exit();
     } else {
@@ -111,22 +96,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update-thread'])) {
                     class="w-full rounded-lg border border-beige bg-cream p-4 focus:outline-none focus:border-terracotta mb-6 text-lg"
                     required><?php echo htmlspecialchars($thread['content']); ?></textarea>
 
-                <!-- Current Image -->
-                <?php if (!empty($thread['image_path'])): ?>
-                    <div class="mb-6">
-                        <p class="text-sm">Current Image:</p>
-                        <img src="<?php echo htmlspecialchars($thread['image_path']); ?>" alt="Current thread image"
-                            class="max-w-full h-auto rounded-lg mb-3" />
-                        <label for="remove_image" class="text-sm">
-                            <input type="checkbox" name="remove_image" value="1"> Remove this image
-                        </label>
-                    </div>
-                <?php endif; ?>
-
-                <!-- Upload New Image -->
-                <label class="block mb-2 font-medium">Upload New Image (optional)</label>
-                <input type="file" name="thread_image" accept="image/*"
-                    class="w-full rounded-lg border border-beige bg-cream p-4 focus:outline-none focus:border-terracotta mb-6">
 
                 <!-- Buttons -->
                 <div class="flex justify-end gap-6">
