@@ -20,7 +20,7 @@ function connectDB()
 function fetchAllThreads()
 {
     $conn = connectDB();
-    $sql = "SELECT id, title, content, author, date
+    $sql = "SELECT id, title, content, author, date, image_path
              FROM threads
              ORDER BY date DESC";
     $res = $conn->query($sql);
@@ -34,7 +34,7 @@ function fetchAllThreads()
 function fetchThreadById($id)
 {
     $conn = connectDB();
-    $stmt = $conn->prepare("SELECT id, title, content, author, date FROM threads WHERE id = ?");
+    $stmt = $conn->prepare("SELECT id, title, content, author, date, image_path FROM threads WHERE id = ?");
     $stmt->bind_param("i", $id);
     $stmt->execute();
     $data = $stmt->get_result()->fetch_assoc();
@@ -43,63 +43,96 @@ function fetchThreadById($id)
     return $data;
 }
 
-/**
- * Cek thread serupa yang dibuat user yang sama dalam window waktu tertentu (detik).
- * Dipakai sebagai debounce anti-spam.
- */
-function findSimilarRecentThread($author, $title, $content, $seconds = 60)
+function insertThread($title, $content, $author, $imagePath = null)
 {
     $conn = connectDB();
-    $stmt = $conn->prepare(
-        "SELECT id FROM threads
-         WHERE author = ? AND title = ? AND content = ?
-           AND date >= (NOW() - INTERVAL ? SECOND)
-         LIMIT 1"
-    );
-    $stmt->bind_param("sssi", $author, $title, $content, $seconds);
-    $stmt->execute();
-    $exists = $stmt->get_result()->fetch_assoc() ? true : false;
-    $stmt->close();
-    $conn->close();
-    return $exists;
-}
-
-/**
- * Insert thread dengan proteksi duplikat via hash unik (judul+konten+penulis).
- * Sekarang mendukung image_path (nullable).
- * Jika duplikat (errno 1062), fungsi mengembalikan false tanpa error fatal.
- */
-function insertThread($title, $content, $author)
-{
-    $conn = connectDB();
-
-    // hash untuk uniqueness (tambahkan trim agar stabil)
     $hash = md5($author . '|' . trim($title) . '|' . trim($content));
 
     $stmt = $conn->prepare(
-        "INSERT INTO threads (title, content, author, content_hash)
+        "INSERT INTO threads (title, content, author, content_hash, image_path)
          VALUES (?, ?, ?, ?, ?)"
     );
-    $stmt->bind_param("sssss", $title, $content, $author, $hash);
-
-    $ok = true;
-    try {
-        $stmt->execute();
-    } catch (mysqli_sql_exception $e) {
-        // 1062: duplicate key (UNIQUE constraint)
-        if ($e->getCode() === 1062) {
-            $ok = false;
-        } else {
-            $stmt->close();
-            $conn->close();
-            throw $e;
-        }
-    }
-
+    $stmt->bind_param("sssss", $title, $content, $author, $hash, $imagePath);
+    $ok = $stmt->execute();
     $stmt->close();
     $conn->close();
     return $ok;
 }
+
+function updateThread($id, $title, $content, $author, $imageFile = null, $removeImage = false)
+{
+    $conn = connectDB();
+
+    // Jika gambar baru diunggah
+    if ($imageFile && $imageFile['error'] === 0) {
+        // Proses upload gambar baru
+        $uploadDir = 'uploads/threads/';
+        $newImagePath = $uploadDir . basename($imageFile['name']);
+        move_uploaded_file($imageFile['tmp_name'], $newImagePath);
+
+        // Update thread dengan gambar baru
+        $stmt = $conn->prepare(
+            "UPDATE threads SET title = ?, content = ?, image_path = ? WHERE id = ? AND author = ?"
+        );
+        $stmt->bind_param("sssis", $title, $content, $newImagePath, $id, $author);
+    }
+    // Jika gambar dihapus
+    elseif ($removeImage) {
+
+        $thread = fetchThreadById($id);
+        if ($thread['image_path']) {
+            deleteImage($thread['image_path']); // Hapus file gambar yang ada
+        }
+        // Menghapus gambar, setelkan image_path ke NULL
+        $stmt = $conn->prepare(
+            "UPDATE threads SET title = ?, content = ?, image_path = NULL WHERE id = ? AND author = ?"
+        );
+        $stmt->bind_param("ssii", $title, $content, $id, $author); // Tidak ada image_path, set ke NULL
+    }
+    // Jika tidak ada gambar yang diunggah dan gambar tidak dihapus
+    else {
+        // Update thread tanpa perubahan gambar
+        $stmt = $conn->prepare(
+            "UPDATE threads SET title = ?, content = ? WHERE id = ? AND author = ?"
+        );
+        $stmt->bind_param("ssii", $title, $content, $id, $author); // Tanpa image_path
+    }
+
+
+
+    // Eksekusi query
+    $stmt->execute();
+    $affected = $stmt->affected_rows > 0; // Cek apakah ada perubahan
+    $stmt->close();
+    $conn->close();
+
+    return $affected;
+}
+
+
+
+function deleteThread($id, $author)
+{
+    $conn = connectDB();
+    $stmt = $conn->prepare("DELETE FROM threads WHERE id = ? AND author = ?");
+    $stmt->bind_param("is", $id, $author);
+    $stmt->execute();
+    $stmt->close();
+    $conn->close();
+    return true;
+}
+// backend/models/Forum.php
+
+function deleteImage($imagePath)
+{
+    // Periksa apakah file gambar ada dan sudah diupload
+    if ($imagePath && file_exists($imagePath)) {
+        // Hapus file gambar dari server
+        unlink($imagePath);
+    }
+}
+
+
 
 /* ============================
  * NEW: Pencarian thread simple
@@ -129,10 +162,3 @@ function searchThreads($q)
     $conn->close();
     return $rows;
 }
-
-/* -------------- OPSIONAL (lebih cepat, Fulltext)
--- Tambah FULLTEXT index (sekali saja di DB):
--- ALTER TABLE threads ADD FULLTEXT ft_threads_title_content (title, content);
-
--- Lalu ubah searchThreads() jadi MATCH ... AGAINST
-*/

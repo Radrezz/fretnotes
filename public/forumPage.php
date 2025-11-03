@@ -13,7 +13,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['submit-thread'])) {
     $title = htmlspecialchars(trim($_POST['title']));
     $content = htmlspecialchars(trim($_POST['content']));
     $author = $_SESSION['username'];
-    $ok = addThread($title, $content, $author);
+
+    // Handle image upload
+    $imageFile = $_FILES['thread_image'] ?? null;
+    $ok = addThread($title, $content, $author, $imageFile);
     header("Location: forumPage.php?posted=" . ($ok ? '1' : '0'));
     exit();
 }
@@ -35,7 +38,6 @@ $threads = getThreads($search);
     <link rel="stylesheet" href="css/cursor.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-
 </head>
 
 <body>
@@ -51,13 +53,9 @@ $threads = getThreads($search);
             <li><a href="favorites.php" class="cta-btn">Favorites</a></li>
             <li><a href="addsong.php" class="cta-btn">Add Song</a></li>
         </ul>
-
-        <!-- Menu Account akan diposisikan di luar list item navbar -->
         <div class="menu-account">
             <a href="account.php" class="cta-btn account-icon"><span class="material-icons">account_circle</span></a>
         </div>
-
-        <!-- Hamburger Menu Toggle -->
         <div class="menu-toggle" id="mobile-menu">
             <span></span>
             <span></span>
@@ -96,6 +94,10 @@ $threads = getThreads($search);
                 enctype="multipart/form-data">
                 <input type="text" name="title" placeholder="Thread title" required>
                 <textarea name="content" placeholder="Write something..." rows="4" required></textarea>
+
+                <!-- Image upload for thread -->
+                <input type="file" name="thread_image" accept="image/*">
+
                 <button type="submit" name="submit-thread">Post Thread</button>
             </form>
         </section>
@@ -108,13 +110,17 @@ $threads = getThreads($search);
                 <div class="thread-grid">
                     <?php foreach ($threads as $t): ?>
                         <div class="thread-card">
-
                             <h4><a href="thread.php?id=<?php echo $t['id']; ?>"><?php echo htmlspecialchars($t['title']); ?></a>
                             </h4>
                             <p class="meta">By <?php echo htmlspecialchars($t['author']); ?> •
                                 <?php echo htmlspecialchars($t['date'] ?? ''); ?>
                             </p>
                             <p class="excerpt"><?php echo nl2br(htmlspecialchars(substr($t['content'], 0, 160))); ?>…</p>
+
+                            <!-- Display thread image if it exists -->
+                            <?php if (!empty($t['image_path'])): ?>
+                                <img src="<?php echo htmlspecialchars($t['image_path']); ?>" alt="Thread Image" class="thread-img">
+                            <?php endif; ?>
 
                             <!-- Edit and Delete Buttons (only visible for thread author) -->
                             <?php if ($t['author'] === $_SESSION['username']): ?>
@@ -142,7 +148,6 @@ $threads = getThreads($search);
                     <h3>FretNotes.id</h3>
                     <p>Guitar Platform and Community</p>
                 </div>
-
                 <div class="nav-socialmedia">
                     <h3>Contact & Social Media</h3>
                     <ul>

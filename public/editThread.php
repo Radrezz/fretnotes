@@ -24,10 +24,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update-thread'])) {
     $content = htmlspecialchars(trim($_POST['content']));
     $author = $_SESSION['username'];
 
+    // Handle image upload
+    $imageFile = $_FILES['thread_image'] ?? null;
 
+    // Handle image removal (checkbox)
+    $removeImage = isset($_POST['remove_image']) ? true : false;
 
     // Update thread ke database
-    if (updateThread($id, $title, $content, $author)) {
+    if (updateThread($id, $title, $content, $author, $imageFile, $removeImage)) {
         header("Location: forumPage.php?updated=1");
         exit();
     } else {
@@ -35,6 +39,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update-thread'])) {
         exit();
     }
 }
+
+
 ?>
 
 <!DOCTYPE html>
@@ -96,9 +102,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update-thread'])) {
                     class="w-full rounded-lg border border-beige bg-cream p-4 focus:outline-none focus:border-terracotta mb-6 text-lg"
                     required><?php echo htmlspecialchars($thread['content']); ?></textarea>
 
+                <!-- Image upload for thread -->
+                <label class="block mb-2 font-medium">Thread Image (Optional)</label>
+                <input type="file" name="thread_image" accept="image/*"
+                    class="w-full rounded-lg border border-beige bg-cream p-4 focus:outline-none focus:border-terracotta mb-6 text-lg">
+
+                <!-- Current Image Display (if any) -->
+                <?php if (!empty($thread['image_path'])): ?>
+                    <div class="mt-4">
+                        <p class="font-medium">Current Image:</p>
+                        <img src="<?php echo htmlspecialchars($thread['image_path']); ?>" alt="Current thread image"
+                            class="rounded-lg max-w-full h-auto mt-2">
+                        <!-- Checkbox untuk menghapus gambar -->
+                        <label for="remove_image" class="text-red-600 cursor-pointer mt-2">Remove Image</label>
+                        <input type="checkbox" name="remove_image" id="remove_image" class="ml-2">
+
+                    </div>
+                <?php endif; ?>
 
                 <!-- Buttons -->
-                <div class="flex justify-end gap-6">
+                <div class="flex justify-end gap-6 mt-6">
                     <a href="forumPage.php"
                         class="px-6 py-3 bg-beige text-charcoal rounded-lg hover:bg-[#c9c3b3]">Cancel</a>
                     <button type="submit" name="update-thread"
@@ -106,6 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update-thread'])) {
                         Changes</button>
                 </div>
             </form>
+
         </div>
     </main>
 
@@ -135,6 +159,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update-thread'])) {
         <!-- Audio Wave Animation -->
         <div class="audio-wave"></div>
     </footer>
+
 </body>
 
 </html>

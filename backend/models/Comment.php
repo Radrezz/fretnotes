@@ -2,12 +2,13 @@
 // backend/models/Comment.php
 require_once(__DIR__ . '/Forum.php'); // pakai connectDB()
 
-function fetchCommentsByThread($threadId) {
+function fetchCommentsByThread($threadId)
+{
     $conn = connectDB();
 
     // kompatibel: jika DB lama tidak punya created_at, pakai kolom 'date' bila ada
     $sql =
-      "SELECT id, thread_id, author, content, image_path,
+        "SELECT id, thread_id, author, content, image_path,
               COALESCE(created_at, date) AS created_at
          FROM comments
         WHERE thread_id = ?
@@ -19,14 +20,16 @@ function fetchCommentsByThread($threadId) {
     $res = $stmt->get_result();
 
     $rows = [];
-    while ($row = $res->fetch_assoc()) $rows[] = $row;
+    while ($row = $res->fetch_assoc())
+        $rows[] = $row;
 
     $stmt->close();
     $conn->close();
     return $rows;
 }
 
-function fetchCommentById($id) {
+function fetchCommentById($id)
+{
     $conn = connectDB();
     $stmt = $conn->prepare(
         "SELECT id, thread_id, author, content, image_path,
@@ -43,7 +46,8 @@ function fetchCommentById($id) {
     return $data;
 }
 
-function insertComment($threadId, $author, $content, $imagePath = null) {
+function insertComment($threadId, $author, $content, $imagePath = null)
+{
     $conn = connectDB();
     // Menyimpan komentar dan gambar ke database
     $stmt = $conn->prepare(
@@ -65,7 +69,8 @@ function insertComment($threadId, $author, $content, $imagePath = null) {
  * - null dan $setNullImage=true => hapus image (set NULL)
  * - null dan $setNullImage=false => tetap (tidak diubah)
  */
-function updateComment($id, $author, $newContent, $newImagePath = null, $setNullImage = false) {
+function updateComment($id, $author, $newContent, $newImagePath = null, $setNullImage = false)
+{
     $conn = connectDB();
 
     if ($newImagePath !== null || $setNullImage) {
@@ -94,7 +99,8 @@ function updateComment($id, $author, $newContent, $newImagePath = null, $setNull
     return $ok;
 }
 
-function deleteComment($id, $author) {
+function deleteComment($id, $author)
+{
     $conn = connectDB();
     $stmt = $conn->prepare("DELETE FROM comments WHERE id = ? AND author = ?");
     $stmt->bind_param("is", $id, $author);

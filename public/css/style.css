@@ -927,7 +927,7 @@ footer .nav-socialmedia ul li a:hover {
 }
 
 /* === Gambar diperkecil === */
-.thread-image {
+.thread-img {
   display: block;
   width: 100%;
   max-width: 100%;
@@ -951,6 +951,15 @@ footer .nav-socialmedia ul li a:hover {
   border: 1px solid #eee5d6;
 }
 
+/* Gaya untuk h3 yang ingin meniru h1 */
+.content-title {
+  margin-top: 4px; /* 8px */
+  font-size: 18px;
+  font-weight: 500; /* bold */
+  font-family: "Poppins", sans-serif;
+  color: #4a4947; /* charcoal */
+}
+
 /* Responsive (khusus forum) */
 @media (max-width: 768px) {
   .forum-form {
@@ -961,6 +970,10 @@ footer .nav-socialmedia ul li a:hover {
   }
   .forum-container .search-section form {
     gap: 8px;
+  }
+
+  .content-title {
+    font-size: 15px;
   }
 }
 

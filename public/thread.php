@@ -28,6 +28,25 @@ if (isset($_POST['submit-comment'])) {
     $error = "Failed to post comment. Please try again.";
   }
 }
+
+// Handle Like
+if (isset($_POST['like_thread'])) {
+  $userId = $_SESSION['username'];
+  toggleLike($threadId, $userId);
+  header("Location: thread.php?id=" . $threadId);
+  exit();
+}
+
+// Handle Emote
+if (isset($_POST['emote_type'])) {
+  $userId = $_SESSION['username'];
+  $emoteType = $_POST['emote_type'];
+  toggleEmote($threadId, $userId, $emoteType);
+  header("Location: thread.php?id=" . $threadId);
+  exit();
+}
+
+
 ?>
 
 <!DOCTYPE html>
@@ -109,8 +128,57 @@ if (isset($_POST['submit-comment'])) {
   <main class="flex-grow max-w-6xl mx-auto px-6 py-8">
     <!-- Thread card -->
     <article class="bg-purewhite rounded-xl2 border border-beige p-6 shadow-soft leading-relaxed whitespace-pre-line">
-      <?php echo nl2br(htmlspecialchars($thread['content'])); ?>
+      <h3 class="content-title"><?php echo nl2br(htmlspecialchars($thread['content'])); ?></h3>
+      <img src="<?php echo htmlspecialchars($thread['image_path']); ?>" alt="Current thread image"
+        class="rounded-lg max-w-full h-auto mt-2" style="width: 50%; display: block; margin: 0 auto;">
     </article>
+
+    <!-- Like and Emote Section -->
+    <section class="mt-6 flex justify-between items-center">
+      <div class="flex items-center">
+        <!-- Like Button -->
+        <form method="POST" action="thread.php?id=<?php echo $threadId; ?>" class="like-form">
+          <input type="hidden" name="thread_id" value="<?php echo $threadId; ?>"> <!-- Pastikan threadId dikirim -->
+          <input type="hidden" name="like_thread" value="1">
+          <button type="submit" class="like-button flex items-center text-lg text-blue-500">
+            <i class="fa fa-thumbs-up mr-2"></i> Like (<?php echo getThreadLikes($threadId); ?>)
+          </button>
+        </form>
+
+
+        <!-- Emote Buttons -->
+        <form method="POST" action="thread.php?id=<?php echo $threadId; ?>" class="emote-form">
+          <input type="hidden" name="thread_id" value="<?php echo $threadId; ?>"> <!-- Pastikan threadId dikirim -->
+          <input type="hidden" name="emote_type" value="love">
+          <button type="submit" class="emote-button flex items-center text-lg text-red-500 ml-6">
+            <i class="fa fa-heart mr-2"></i> Love
+            (<span id="love-count"><?php echo getThreadEmotes($threadId, 'love'); ?></span>)
+          </button>
+        </form>
+
+        <form method="POST" action="thread.php?id=<?php echo $threadId; ?>" class="emote-form">
+          <input type="hidden" name="thread_id" value="<?php echo $threadId; ?>"> <!-- Pastikan threadId dikirim -->
+          <input type="hidden" name="emote_type" value="happy">
+          <button type="submit" class="emote-button flex items-center text-lg text-yellow-500 ml-6">
+            <i class="fa fa-smile mr-2"></i> Happy
+            (<span id="happy-count"><?php echo getThreadEmotes($threadId, 'happy'); ?></span>)
+          </button>
+        </form>
+
+        <form method="POST" action="thread.php?id=<?php echo $threadId; ?>" class="emote-form">
+          <input type="hidden" name="thread_id" value="<?php echo $threadId; ?>"> <!-- Pastikan threadId dikirim -->
+          <input type="hidden" name="emote_type" value="sad">
+          <button type="submit" class="emote-button flex items-center text-lg text-blue-500 ml-6">
+            <i class="fa fa-sad-tear mr-2"></i> Sad
+            (<span id="sad-count"><?php echo getThreadEmotes($threadId, 'sad'); ?></span>)
+          </button>
+        </form>
+
+
+      </div>
+    </section>
+
+
 
     <!-- Comments -->
     <section class="mt-10">
@@ -196,6 +264,7 @@ if (isset($_POST['submit-comment'])) {
     mobileMenu.addEventListener("click", () => {
       navbar.classList.toggle("active");
     });
+
   </script>
 
 </body>
