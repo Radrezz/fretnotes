@@ -219,7 +219,9 @@ $username = $_SESSION['username'] ?? null;
   <!-- Navbar: adaptif login / non-login -->
   <nav class="navbar">
     <div class="logo">
-      <a href="<?php echo $logged_in ? 'homepage.php' : 'index.php'; ?>">FretNotes</a>
+      <a href="<?php echo $logged_in ? 'homepage.php' : 'index.php'; ?>">
+        <img src="assets/images/FretNotes_Logo_-_COKLAT-transparent.png" alt="FretNotes Logo">
+      </a>
     </div>
     <ul class="nav-links">
       <?php if ($logged_in): ?>

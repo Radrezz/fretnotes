@@ -46,6 +46,17 @@ if (isset($_POST['emote_type'])) {
   exit();
 }
 
+//Delete Image
+if (isset($_POST['delete-comment'])) {
+  $commentId = $_POST['delete-comment'];
+  if (removeComment($commentId, $_SESSION['username'])) {
+    header("Location: thread.php?id=$threadId");
+  } else {
+    echo "Failed to delete comment.";
+  }
+}
+
+
 
 ?>
 
@@ -59,6 +70,7 @@ if (isset($_POST['emote_type'])) {
   <link rel="icon" href="assets/images/guitarlogo.ico" type="image/x-icon">
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/cursor.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <script src="https://cdn.tailwindcss.com"></script>
@@ -85,12 +97,12 @@ if (isset($_POST['emote_type'])) {
   </script>
 </head>
 
-<body class="bg-cream text-charcoal min-h-screen flex flex-col font-sans">
+<body>
 
   <!-- Navbar -->
   <nav class="navbar">
     <div class="logo">
-      <a href="homepage.php">FretNotes</a>
+      <a href="homepage.php"><img src="assets/images/FretNotes_Logo_-_COKLAT-transparent.png" alt="FretNotes Logo"></a>
     </div>
     <ul class="nav-links">
       <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
@@ -199,6 +211,18 @@ if (isset($_POST['emote_type'])) {
               <p class="text-sm text-charcoal/60 mt-2">— <?php echo htmlspecialchars($c['author']); ?>,
                 <?php echo htmlspecialchars($c['created_at']); ?>
               </p>
+
+              <!-- Edit and Delete Buttons (only if user is the comment's author) -->
+              <?php if ($_SESSION['username'] == $c['author']): ?>
+                <!-- Edit Button -->
+                <a href="editComment.php?id=<?php echo $c['id']; ?>" class="text-blue-500 hover:underline">Edit</a>
+
+                <!-- Delete Button -->
+                <form method="POST" action="thread.php?id=<?php echo $threadId; ?>" class="inline-block">
+                  <input type="hidden" name="delete-comment" value="<?php echo $c['id']; ?>">
+                  <button type="submit" class="text-red-500 hover:underline">Delete</button>
+                </form>
+              <?php endif; ?>
             </div>
           <?php endforeach; ?>
         </div>

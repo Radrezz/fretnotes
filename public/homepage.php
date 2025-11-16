@@ -26,7 +26,8 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
     <!-- Navbar -->
     <nav class="navbar">
         <div class="logo">
-            <a href="homepage.php">FretNotes</a>
+            <a href="homepage.php"><img src="assets/images/FretNotes_Logo_-_COKLAT-transparent.png"
+                    alt="FretNotes Logo"></a>
         </div>
         <ul class="nav-links">
             <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
@@ -92,8 +93,6 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
             <select id="tuning" name="tuning">
                 <option value="Standard" <?php if (isset($_SESSION['preferred_tuning']) && $_SESSION['preferred_tuning'] == 'Standard')
                     echo 'selected'; ?>>Standard (EADGBE)</option>
-                <option value="Drop D" <?php if (isset($_SESSION['preferred_tuning']) && $_SESSION['preferred_tuning'] == 'Drop D')
-                    echo 'selected'; ?>>Drop D</option>
                 <option value="Chromatic" <?php if (isset($_SESSION['preferred_tuning']) && $_SESSION['preferred_tuning'] == 'Chromatic')
                     echo 'selected'; ?>>Chromatic Tuner</option>
             </select>

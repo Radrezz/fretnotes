@@ -17,6 +17,11 @@ body {
   min-height: 100vh;
 }
 
+.logo img {
+  width: 90px; /* Atur sesuai dengan kebutuhan */
+  height: auto;
+}
+
 /* ============================================= */
 /* 🦶 FOOTER */
 /* ============================================= */

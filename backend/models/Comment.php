@@ -69,44 +69,60 @@ function insertComment($threadId, $author, $content, $imagePath = null)
  * - null dan $setNullImage=true => hapus image (set NULL)
  * - null dan $setNullImage=false => tetap (tidak diubah)
  */
-function updateComment($id, $author, $newContent, $newImagePath = null, $setNullImage = false)
+// backend/models/Comment.php
+
+function updateComment($id, $author, $newContent)
 {
+    // Pastikan koneksi ke database
     $conn = connectDB();
 
-    if ($newImagePath !== null || $setNullImage) {
-        // set image_path eksplisit
-        $stmt = $conn->prepare(
-            "UPDATE comments
-                SET content = ?, image_path = ?
-              WHERE id = ? AND author = ?"
-        );
-        $img = $setNullImage ? null : $newImagePath;
-        $stmt->bind_param("ssis", $newContent, $img, $id, $author);
-    } else {
-        // tidak menyentuh kolom image_path
-        $stmt = $conn->prepare(
-            "UPDATE comments
-                SET content = ?
-              WHERE id = ? AND author = ?"
-        );
-        $stmt->bind_param("sis", $newContent, $id, $author);
+    // Pastikan ID, author, dan content valid
+    if ($id <= 0 || $author === '' || $newContent === '') {
+        return false; // Jika ada input yang tidak valid, kembalikan false
     }
 
+    // Query untuk mengupdate komentar berdasarkan ID dan author
+    $stmt = $conn->prepare("UPDATE comments SET content = ? WHERE id = ? AND author = ?");
+    $stmt->bind_param("sis", $newContent, $id, $author);  // Parameter: content (string), id (int), author (string)
+
+    // Eksekusi query
     $stmt->execute();
-    $ok = $stmt->affected_rows >= 0; // 0 artinya tidak berubah, tetap dianggap ok
-    $stmt->close();
-    $conn->close();
-    return $ok;
+
+    // Cek apakah baris diupdate
+    if ($stmt->affected_rows > 0) {
+        $stmt->close();
+        $conn->close();
+        return true; // Berhasil mengupdate
+    } else {
+        $stmt->close();
+        $conn->close();
+        return false; // Gagal mengupdate (mungkin karena tidak ada perubahan atau id/author tidak ditemukan)
+    }
 }
+
+
 
 function deleteComment($id, $author)
 {
+    // Pastikan koneksi ke database
     $conn = connectDB();
+
+    // Query untuk menghapus komentar berdasarkan ID dan author
     $stmt = $conn->prepare("DELETE FROM comments WHERE id = ? AND author = ?");
-    $stmt->bind_param("is", $id, $author);
+    $stmt->bind_param("is", $id, $author); // Pastikan parameter yang dikirim benar (ID sebagai integer dan author sebagai string)
+
+    // Eksekusi query
     $stmt->execute();
-    $ok = $stmt->affected_rows > 0;
-    $stmt->close();
-    $conn->close();
-    return $ok;
+
+    // Cek apakah baris dihapus
+    if ($stmt->affected_rows > 0) {
+        $stmt->close();
+        $conn->close();
+        return true; // Berhasil menghapus
+    } else {
+        $stmt->close();
+        $conn->close();
+        return false; // Gagal menghapus
+    }
 }
+

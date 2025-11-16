@@ -28,17 +28,15 @@ function editComment($commentId, $author, $newContent)
     $commentId = (int) $commentId;
     $newContent = trim((string) $newContent);
     $author = trim((string) $author);
-    if ($commentId <= 0 || $newContent === '' || $author === '')
+
+    if ($commentId <= 0 || $newContent === '' || $author === '') {
         return false;
+    }
 
-    $current = fetchCommentById($commentId);
-    if (!$current || $current['author'] !== $author)
-        return false;
-
-
-    // tidak mengubah image
-    return updateComment($commentId, $author, $newContent, null, false);
+    // Update komentar di database
+    return updateComment($commentId, $author, $newContent);
 }
+
 
 // Fungsi untuk menghapus komentar (hanya bisa oleh author)
 function removeComment($commentId, $author)

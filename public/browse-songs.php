@@ -33,7 +33,8 @@ $songs = isset($_GET['search']) && !empty($_GET['search'])
     <!-- Navbar -->
     <nav class="navbar">
         <div class="logo">
-            <a href="homepage.php">FretNotes</a>
+            <a href="homepage.php"><img src="assets/images/FretNotes_Logo_-_COKLAT-transparent.png"
+                    alt="FretNotes Logo"></a>
         </div>
         <ul class="nav-links">
             <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
