@@ -66,10 +66,34 @@ if (isset($_GET['delete_user'])) {
 
 // CRUD Forum
 if (isset($_GET['delete_thread'])) {
-  $stmt = $pdo->prepare("DELETE FROM threads WHERE id=?");
-  $stmt->execute([$_GET['delete_thread']]);
-  $notification = "Thread deleted successfully!";
+  // Start a transaction to ensure all actions happen atomically
+  try {
+    $pdo->beginTransaction();
+
+    // Delete related data from thread_emotes
+    $stmt = $pdo->prepare("DELETE FROM thread_emotes WHERE thread_id = ?");
+    $stmt->execute([$_GET['delete_thread']]);
+
+    // Delete related data from thread_likes
+    $stmt = $pdo->prepare("DELETE FROM thread_likes WHERE thread_id = ?");
+    $stmt->execute([$_GET['delete_thread']]);
+
+    // Now delete the thread itself from the threads table
+    $stmt = $pdo->prepare("DELETE FROM threads WHERE id = ?");
+    $stmt->execute([$_GET['delete_thread']]);
+
+    // Commit the transaction if all queries succeeded
+    $pdo->commit();
+
+    $notification = "Thread and all related data (emotes and likes) deleted successfully!";
+  } catch (Exception $e) {
+    // Rollback the transaction if there was an error
+    $pdo->rollBack();
+    $notification = "Failed to delete thread: " . $e->getMessage();
+  }
 }
+
+
 
 // Fetch data
 $songs = getAllSongs();

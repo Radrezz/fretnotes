@@ -202,12 +202,6 @@ if (isset($_POST['delete-comment'])) {
             <div class="bg-purewhite rounded-xl2 border border-beige p-4 shadow-soft">
               <p class="text-charcoal whitespace-pre-line"><?php echo nl2br(htmlspecialchars($c['content'])); ?></p>
 
-              <!-- Display comment image if it exists -->
-              <?php if (!empty($c['image_path'])): ?>
-                <img src="<?php echo htmlspecialchars($c['image_path']); ?>" alt="Comment image"
-                  class="comment-img mt-3 rounded-xl border border-beige/70 shadow-soft" />
-              <?php endif; ?>
-
               <p class="text-sm text-charcoal/60 mt-2">— <?php echo htmlspecialchars($c['author']); ?>,
                 <?php echo htmlspecialchars($c['created_at']); ?>
               </p>
@@ -243,16 +237,14 @@ if (isset($_POST['delete-comment'])) {
         <textarea name="content" rows="4" required placeholder="Share your thoughts…"
           class="w-full rounded-2xl bg-cream border border-beige px-4 py-3 focus:outline-none focus:border-terracotta mb-3"></textarea>
 
-        <!-- Image upload for comment -->
-        <input type="file" name="comment_image" accept="image/*"
-          class="block w-full rounded-2xl bg-cream border border-beige px-4 py-2 text-sm mb-4 file:mr-4 file:py-2 file:px-3 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-terracotta file:text-purewhite hover:file:bg-[#9e6047]">
-
         <button type="submit" name="submit-comment"
           class="rounded-full bg-terracotta text-purewhite px-6 py-2.5 font-semibold shadow-soft hover:shadow-softHover hover:bg-[#9e6047] transition">
           Post Comment
         </button>
       </form>
     </section>
+
+
   </main>
 
   <footer>

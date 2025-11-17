@@ -8,7 +8,7 @@ function fetchCommentsByThread($threadId)
 
     // kompatibel: jika DB lama tidak punya created_at, pakai kolom 'date' bila ada
     $sql =
-        "SELECT id, thread_id, author, content, image_path,
+        "SELECT id, thread_id, author, content,
               COALESCE(created_at, date) AS created_at
          FROM comments
         WHERE thread_id = ?
@@ -32,7 +32,7 @@ function fetchCommentById($id)
 {
     $conn = connectDB();
     $stmt = $conn->prepare(
-        "SELECT id, thread_id, author, content, image_path,
+        "SELECT id, thread_id, author, content, 
                 COALESCE(created_at, date) AS created_at
            FROM comments
           WHERE id = ?
@@ -46,15 +46,15 @@ function fetchCommentById($id)
     return $data;
 }
 
-function insertComment($threadId, $author, $content, $imagePath = null)
+function insertComment($threadId, $author, $content)
 {
     $conn = connectDB();
     // Menyimpan komentar dan gambar ke database
     $stmt = $conn->prepare(
-        "INSERT INTO comments (thread_id, author, content, image_path)
-         VALUES (?, ?, ?, ?)"
+        "INSERT INTO comments (thread_id, author, content)
+         VALUES (?, ?, ?)"
     );
-    $stmt->bind_param("isss", $threadId, $author, $content, $imagePath);
+    $stmt->bind_param("iss", $threadId, $author, $content);
     $stmt->execute();
     $ok = $stmt->affected_rows > 0;
     $stmt->close();
