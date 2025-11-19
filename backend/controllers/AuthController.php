@@ -37,7 +37,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
 
         // Redirect berdasarkan role
         if ($user['role'] === 'admin') {
-            header("Location: " . $baseUrl . "admin-panel.php");
+            header("Location: " . $baseUrl . "../admin/admin-panel.php");
             exit;
         } else {
             header("Location: " . $baseUrl . "homepage.php");

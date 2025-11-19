@@ -28,13 +28,13 @@ $songs = isset($_GET['search']) && !empty($_GET['search'])
     <!-- Navbar -->
     <nav class="navbar">
         <div class="logo">
-            <a href="index.php"><img src="assets/images/FretNotes_Logo_-_COKLAT-transparent.png"
+            <a href="../index.php"><img src="assets/images/FretNotes_Logo_-_COKLAT-transparent.png"
                     alt="FretNotes Logo"></a>
         </div>
         <ul class="nav-links">
-            <li><a href="index.php #songs-list" class="cta-btn">Preview Songs</a></li>
+            <li><a href="../index.php #songs-list" class="cta-btn">Preview Songs</a></li>
             <li><a href="browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
-            <li><a href="index.php #tuner" class="cta-btn">Tuner</a></li>
+            <li><a href="../index.php #tuner" class="cta-btn">Tuner</a></li>
             <li><a href="login-register.php" class="cta-btn">Forum</a></li>
 
         </ul>

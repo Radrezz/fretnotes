@@ -1,6 +1,6 @@
 <?php
 session_start();  // Memulai sesi
-include('../backend/controllers/SongController.php');  // Mengimpor controller untuk mendapatkan lagu
+include('backend/controllers/SongController.php');  // Mengimpor controller untuk mendapatkan lagu
 
 // Ambil 5 lagu pertama dari database untuk preview
 $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambil 5 lagu
@@ -13,9 +13,9 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FretNotes - Guitar Chord & Tab Platform</title>
-    <link rel="stylesheet" href="css/cursor.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="icon" href="assets/images/guitarlogo.ico" type="image/x-icon">
+    <link rel="stylesheet" href="public/css/cursor.css">
+    <link rel="stylesheet" href="public/css/style.css">
+    <link rel="icon" href="public/assets/images/guitarlogo.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.23/Tone.js"></script>
@@ -26,21 +26,22 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
     <!-- Navbar -->
     <nav class="navbar">
         <div class="logo">
-            <a href="index.php"><img src="assets/images/FretNotes_Logo_-_COKLAT-transparent.png"
+            <a href="index.php"><img src="public/assets/images/FretNotes_Logo_-_COKLAT-transparent.png"
                     alt="FretNotes Logo"></a>
         </div>
         <ul class="nav-links">
             <li><a href="#songs-list" class="cta-btn">Preview Songs</a></li>
-            <li><a href="browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
+            <li><a href="public/browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
             <li><a href="#tuner" class="cta-btn">Tuner</a></li>
             <!-- Cek apakah user sudah login sebelum menampilkan link Forum -->
-            <li><a href="<?php echo isset($_SESSION['user_id']) ? 'forumPage.php' : 'login-register.php?redirect=forumPage.php'; ?>"
+            <li><a href="<?php echo isset($_SESSION['user_id']) ? 'public/forumPage.php' : 'public/login-register.php?redirect=public/forumPage.php'; ?>"
                     class="cta-btn">Forum</a></li>
         </ul>
 
         <!-- Menu Account akan diposisikan di luar list item navbar -->
         <div class="menu-account">
-            <a href="account.php" class="cta-btn account-icon"><span class="material-icons">account_circle</span></a>
+            <a href="public/account.php" class="cta-btn account-icon"><span
+                    class="material-icons">account_circle</span></a>
         </div>
 
         <!-- Hamburger Menu Toggle -->
@@ -75,8 +76,8 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
                 <h3><?php echo htmlspecialchars($song['title']); ?></h3>
                 <p>Artist: <?php echo htmlspecialchars($song['artist']); ?></p>
                 <p>Genre: <?php echo htmlspecialchars($song['genre']); ?></p>
-                <a href="chord-viewer.php?song_id=<?php echo $song['id']; ?>" class="cta-btn">View Chords</a>
-                <a href="favorites.php" class="cta-btn">Add to Favorites</a>
+                <a href="public/chord-viewer.php?song_id=<?php echo $song['id']; ?>" class="cta-btn">View Chords</a>
+                <a href="public/favorites.php" class="cta-btn">Add to Favorites</a>
             </div>
         <?php endforeach; ?>
     </section>
@@ -136,84 +137,7 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
         <div class="audio-wave"></div>
     </footer>
 
-
-
-    <script>
-        // Toggle Menu (Hamburger) untuk mobile
-        const mobileMenu = document.getElementById("mobile-menu");
-        const navbar = document.querySelector(".navbar");
-
-        mobileMenu.addEventListener("click", () => {
-            navbar.classList.toggle("active");
-        });
-
-
-        //TunerMenu
-        const startButton = document.getElementById('startButton');
-        const noteDisplay = document.getElementById('note');
-        const tuningSelect = document.getElementById('tuning');
-        const tuningProgress = document.getElementById('tuningProgress');
-        const indicator = document.getElementById('indicator');
-        const accuracyIndicator = document.getElementById('accuracyIndicator');
-
-        let audioContext = new (window.AudioContext || window.webkitAudioContext)();
-        let analyser = audioContext.createAnalyser();
-        let microphone;
-
-        const getPitch = () => {
-            Tone.context.resume().then(() => {
-                navigator.mediaDevices.getUserMedia({ audio: true }).then((stream) => {
-                    microphone = audioContext.createMediaStreamSource(stream);
-                    microphone.connect(analyser);
-                    analyser.fftSize = 2048;
-                    let bufferLength = analyser.frequencyBinCount;
-                    let dataArray = new Uint8Array(bufferLength);
-
-                    function detectPitch() {
-                        analyser.getByteFrequencyData(dataArray);
-                        let maxIndex = dataArray.indexOf(Math.max(...dataArray));
-                        let frequency = maxIndex * audioContext.sampleRate / analyser.fftSize;
-                        updatePitchDisplay(frequency);
-                        requestAnimationFrame(detectPitch);
-                    }
-
-                    detectPitch();
-                });
-            });
-        };
-
-        const updatePitchDisplay = (frequency) => {
-            let noteName = getNoteName(frequency);
-            noteDisplay.innerHTML = noteName;
-
-            if (isTuningCorrect(noteName)) {
-                tuningProgress.style.width = '100%';
-                indicator.style.left = '100%';
-                accuracyIndicator.style.display = 'inline-block';
-            } else {
-                tuningProgress.style.width = '50%';
-                indicator.style.left = '50%';
-                accuracyIndicator.style.display = 'none';
-            }
-        };
-
-        const getNoteName = (frequency) => {
-            const notes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-            let noteIndex = Math.round(12 * Math.log2(frequency / 432)) + 9;
-            return notes[noteIndex % 12];
-        };
-
-        const isTuningCorrect = (noteName) => {
-            const tuning = tuningSelect.value;
-            const standardTuning = ['E', 'A', 'D', 'G', 'B', 'E'];
-            const dropDTuning = ['D', 'A', 'D', 'G', 'B', 'E'];
-            if (tuning === 'Standard') return standardTuning.includes(noteName);
-            if (tuning === 'Drop D') return dropDTuning.includes(noteName);
-            return false;
-        };
-
-        startButton.addEventListener('click', getPitch);
-    </script>
+    <script src="public/js/tuner.js"></script>
 
 </body>
 

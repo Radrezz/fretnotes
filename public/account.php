@@ -1,5 +1,6 @@
 <?php
-include('../backend/controllers/AuthController.php');  // Menyertakan AuthController
+session_start();
+include('../backend/config/db.php'); // Database connection
 
 // Periksa apakah pengguna sudah login
 if (!isset($_SESSION['user_id'])) {
@@ -39,14 +40,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $update_stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, password_hash = ? WHERE id = ?");
         $update_stmt->execute([$new_username, $new_email, $new_password_hash, $user_id]);
         $_SESSION['username'] = $new_username; // Update session username
+        $_SESSION['email'] = $new_email; // Update session email
         $success_message = "Akun berhasil diperbarui!";
+        header("Location: account.php");
     }
     // Jika password tidak diubah, hanya update email dan username
     elseif ($new_password === '') {
         $update_stmt = $pdo->prepare("UPDATE users SET username = ?, email = ? WHERE id = ?");
         $update_stmt->execute([$new_username, $new_email, $user_id]);
         $_SESSION['username'] = $new_username; // Update session username
+        $_SESSION['email'] = $new_email; // Update session email
         $success_message = "Akun berhasil diperbarui!";
+        header("Location: account.php");
     }
 }
 ?>

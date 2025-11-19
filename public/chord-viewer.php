@@ -219,7 +219,7 @@ $username = $_SESSION['username'] ?? null;
   <!-- Navbar: adaptif login / non-login -->
   <nav class="navbar">
     <div class="logo">
-      <a href="<?php echo $logged_in ? 'homepage.php' : 'index.php'; ?>">
+      <a href="<?php echo $logged_in ? 'homepage.php' : '../index.php'; ?>">
         <img src="assets/images/FretNotes_Logo_-_COKLAT-transparent.png" alt="FretNotes Logo">
       </a>
     </div>
@@ -233,10 +233,10 @@ $username = $_SESSION['username'] ?? null;
           <li><a href="addsong.php" class="cta-btn">Add Song</a></li>
         </ul>
       <?php else: ?>
-        <li><a href="index.php #songs-list" class="cta-btn">Preview Songs</a></li>
+        <li><a href="../index.php #songs-list" class="cta-btn">Preview Songs</a></li>
         <li><a href="browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
-        <li><a href="index.php #tuner" class="cta-btn">Tuner</a></li>
-        <li><a href="forumPage.php" class="cta-btn">Tuner</a></li>
+        <li><a href="../index.php #tuner" class="cta-btn">Tuner</a></li>
+        <li><a href="forumPage.php" class="cta-btn">Forum</a></li>
       <?php endif; ?>
     </ul>
     <!-- Menu Account akan diposisikan di luar list item navbar -->
