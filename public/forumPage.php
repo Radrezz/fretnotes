@@ -32,8 +32,14 @@ $threads = getThreads($search);
 <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Forum - FretNotes</title>
-    <link rel="icon" href="assets/images/guitarlogo.ico" type="image/x-icon">
+    <title>Forum</title>
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+    <link rel="manifest" href="../favicon/site.webmanifest">
+
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/cursor.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -44,8 +50,7 @@ $threads = getThreads($search);
     <!-- Navbar -->
     <nav class="navbar">
         <div class="logo">
-            <a href="homepage.php"><img src="assets/images/FretNotes_Logo_-_COKLAT-transparent.png"
-                    alt="FretNotes Logo"></a>
+            <a href="homepage.php"><img src="assets/images/FretNotesLogoRevisiVer2.png" alt="FretNotes Logo"></a>
         </div>
         <ul class="nav-links">
             <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>

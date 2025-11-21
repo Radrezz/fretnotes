@@ -96,12 +96,6 @@ body::after {
   opacity: 0.85;
 }
 
-@media (max-width: 768px) {
-  .container h1 {
-    letter-spacing: 0;
-  }
-}
-
 .container span {
   font-size: 11px;
   color: var(--ink);
@@ -328,4 +322,40 @@ body::after {
   color: #155724;
   background: #e6f6ea;
   border: 1px solid #bfe3c6;
+}
+
+@media (max-width: 768px) {
+  .container h1 {
+    letter-spacing: 0;
+  }
+  .container input {
+    font-size: 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    margin: -25px;
+  }
+  .container h1 {
+    letter-spacing: 0;
+  }
+
+  .container input {
+    font-size: 8.5px;
+  }
+
+  .container a {
+    color: var(--brand);
+    font-size: 8.5px;
+    text-decoration: none;
+    margin: 10px 0 6px;
+    align-items: center;
+  }
+
+  .container button {
+    font-size: 8px;
+    text-align: center;
+    padding: 7px 32px;
+  }
 }

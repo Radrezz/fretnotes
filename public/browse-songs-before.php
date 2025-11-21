@@ -2,10 +2,25 @@
 session_start();
 include('../backend/controllers/SongController.php');
 
+// Ambil semua lagu yang sudah disetujui
+$songs = getAllSongsByStatus('approved');
+
+// Fungsi untuk mendapatkan lagu yang statusnya 'approved'
+function getAllSongsByStatus($song_status)
+{
+    global $pdo; // Menggunakan $pdo untuk koneksi database
+    $query = "SELECT * FROM songs WHERE song_status = ?";
+    $stmt = $pdo->prepare($query); // Menggunakan $pdo, bukan $conn
+    $stmt->execute([$song_status]); // Eksekusi query dengan parameter status
+    return $stmt->fetchAll(PDO::FETCH_ASSOC); // Mengambil hasilnya sebagai array asosiatif
+}
+
+
+
 // Ambil semua lagu atau hasil pencarian
 $songs = isset($_GET['search']) && !empty($_GET['search'])
     ? searchSongs($_GET['search'])
-    : getAllSongs();
+    : getAllSongsByStatus('approved');
 ?>
 
 <!DOCTYPE html>
@@ -14,10 +29,16 @@ $songs = isset($_GET['search']) && !empty($_GET['search'])
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Browse Songs - FretNotes</title>
+    <title>Browse Songs</title>
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+    <link rel="manifest" href="../favicon/site.webmanifest">
+
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/cursor.css">
-    <link rel="icon" href="assets/images/guitarlogo.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 
@@ -28,8 +49,7 @@ $songs = isset($_GET['search']) && !empty($_GET['search'])
     <!-- Navbar -->
     <nav class="navbar">
         <div class="logo">
-            <a href="../index.php"><img src="assets/images/FretNotes_Logo_-_COKLAT-transparent.png"
-                    alt="FretNotes Logo"></a>
+            <a href="../index.php"><img src="assets/images/FretNotesLogoRevisiVer2.png" alt="FretNotes Logo"></a>
         </div>
         <ul class="nav-links">
             <li><a href="../index.php #songs-list" class="cta-btn">Preview Songs</a></li>
@@ -80,7 +100,7 @@ $songs = isset($_GET['search']) && !empty($_GET['search'])
                     <p>Version: <?php echo htmlspecialchars($song['version_name']); ?></p>
 
                     <!-- Tombol Preview (non-login mode) -->
-                    <a href="chord-viewer.php" class="cta-btn">View Chords</a>
+                    <a href="chord-viewer.php?song_id=<?php echo $song['id']; ?>" class="cta-btn">View Chords</a>
                     <a href="login-register.php" class="cta-btn">Add to Favorites</a>
                 </div>
             <?php endforeach; ?>

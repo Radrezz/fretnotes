@@ -1,67 +1,46 @@
 <?php
-include('../backend/controllers/AuthController.php');  // Menyertakan AuthController
+session_start();
+include('../backend/controllers/SongController.php');
 
-// Periksa apakah pengguna sudah login
-if (!isset($_SESSION['user_id'])) {
-    header("Location: login-register.php");
-    exit;
-}
-
-// Ambil informasi pengguna dari session
-$user_id = $_SESSION['user_id'];
-
-// Ambil data pengguna dari database
-$stmt = $pdo->prepare("SELECT username, email FROM users WHERE id = ?");
-$stmt->execute([$user_id]);
-$user = $stmt->fetch(PDO::FETCH_ASSOC);
-
-// Proses pengubahan data akun
+// Validasi dan penyimpanan data lagu baru
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Ambil data yang diubah dari form
-    $new_username = trim($_POST['username']);
-    $new_email = trim($_POST['email']);
-    $new_password = $_POST['password'];
-    $confirm_password = $_POST['confirm_password'];
+    if (isset($_POST['action']) && $_POST['action'] === 'add') {
+        // Ambil data dari form input
+        $title = $_POST['title'];
+        $artist = $_POST['artist'];
+        $genre = $_POST['genre'];
+        $version_name = $_POST['version_name'];
+        $chords_text = $_POST['chords_text'];  // Ambil input chords
+        $tab_text = $_POST['tab_text'];        // Ambil input tab
+        $created_by = $_SESSION['user_id'];    // ID user yang login
 
-    // Validasi username dan email
-    if (empty($new_username) || empty($new_email)) {
-        $error_message = "Username dan email tidak boleh kosong!";
-    } elseif (!filter_var($new_email, FILTER_VALIDATE_EMAIL)) {
-        $error_message = "Email tidak valid!";
-    }
-    // Validasi password jika diubah
-    elseif ($new_password !== '' && $new_password !== $confirm_password) {
-        $error_message = "Password dan konfirmasi password tidak cocok!";
-    }
-    // Jika password diubah dan valid
-    elseif ($new_password !== '' && $new_password === $confirm_password) {
-        $new_password_hash = password_hash($new_password, PASSWORD_DEFAULT);
-        $update_stmt = $pdo->prepare("UPDATE users SET username = ?, email = ?, password_hash = ? WHERE id = ?");
-        $update_stmt->execute([$new_username, $new_email, $new_password_hash, $user_id]);
-        $_SESSION['username'] = $new_username; // Update session username
-        $success_message = "Akun berhasil diperbarui!";
-    }
-    // Jika password tidak diubah, hanya update email dan username
-    elseif ($new_password === '') {
-        $update_stmt = $pdo->prepare("UPDATE users SET username = ?, email = ? WHERE id = ?");
-        $update_stmt->execute([$new_username, $new_email, $user_id]);
-        $_SESSION['username'] = $new_username; // Update session username
-        $success_message = "Akun berhasil diperbarui!";
+        // Panggil fungsi untuk menambah lagu ke database
+        addSong($title, $artist, $genre, $version_name, $created_by, $chords_text, $tab_text);
+
     }
 }
+
+// Ambil data lagu yang ada dari database
+$songs = getAllSongs(); // Fungsi ini perlu menyesuaikan query untuk menampilkan lagu berdasarkan user yang membuatnya
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FretNotes - Account Information</title>
+    <title>Add Song</title>
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+    <link rel="manifest" href="../favicon/site.webmanifest">
+
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/cursor.css">
-    <link rel="icon" href="assets/images/guitarlogo.ico" type="image/x-icon">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
 </head>
 
 <body>
@@ -69,8 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <!-- Navbar -->
     <nav class="navbar">
         <div class="logo">
-            <a href="homepage.php"><img src="assets/images/FretNotes_Logo_-_COKLAT-transparent.png"
-                    alt="FretNotes Logo"></a>
+            <a href="homepage.php"><img src="assets/images/FretNotesLogoRevisiVer2.png" alt="FretNotes Logo"></a>
         </div>
         <ul class="nav-links">
             <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
@@ -93,122 +71,91 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </nav>
 
-    <!-- Account Information Section -->
-    <section class="account-info">
-        <h2>Account Information</h2>
+    <!-- Hero Section -->
+    <header class="hero">
+        <h1>Create Your Own Song</h1>
+        <p>Make your own songs and show to the world.</p>
+    </header>
 
-        <!-- Menampilkan pesan sukses atau error -->
-        <?php if (isset($success_message)): ?>
-            <div class="notification success"><?php echo $success_message; ?></div>
-        <?php elseif (isset($error_message)): ?>
-            <div class="notification error"><?php echo $error_message; ?></div>
-        <?php endif; ?>
+    <div class="add-song-container">
+        <h1 style="margin-bottom : 1px;">Add a New Song</h1>
+        <p style="margin-top : 2px;">*Make sure you have formatted the chord and tab layout.</p>
+        <!-- Form untuk menambah lagu baru -->
+        <form method="POST">
+            <label for="title">Song Title:</label>
+            <input type="text" id="title" name="title" required>
 
-        <form action="account.php" method="POST">
-            <label for="username">Username</label>
-            <input type="text" name="username" id="username" value="<?php echo htmlspecialchars($user['username']); ?>"
-                required>
+            <label for="artist">Artist:</label>
+            <input type="text" id="artist" name="artist" required>
 
-            <label for="email">Email</label>
-            <input type="email" name="email" id="email" value="<?php echo htmlspecialchars($user['email']); ?>"
-                required>
+            <label for="genre">Genre:</label>
+            <input type="text" id="genre" name="genre" required>
 
-            <label for="password">New Password (Leave blank to keep the same)</label>
-            <input type="password" name="password" id="password" placeholder="Enter new password">
+            <label for="version_name">Version Name:</label>
+            <input type="text" id="version_name" name="version_name" required>
 
-            <label for="confirm_password">Confirm Password</label>
-            <input type="password" name="confirm_password" id="confirm_password" placeholder="Confirm new password">
+            <label for="chords_text">Chords:</label>
+            <textarea id="chords_text" name="chords_text" rows="6" required></textarea>
 
-            <button type="submit" class="cta-btn">Update Account</button>
+            <label for="tab_text">Tab:</label>
+            <textarea id="tab_text" name="tab_text" rows="6" required></textarea>
+
+            <button type="submit" name="action" value="add">Add Song</button>
         </form>
 
-        <!-- Tombol Logout -->
-        <a href="logout.php" class="cta-btn logout-btn">Logout</a> <!-- Logout button here -->
-
-    </section>
+        <h2>Your Songs</h2>
+        <?php foreach ($songs as $song): ?>
+            <?php if ($song['created_by'] == $_SESSION['user_id']): ?>
+                <div class="song-item">
+                    <h3><?php echo htmlspecialchars($song['title']); ?></h3>
+                    <p>Artist: <?php echo htmlspecialchars($song['artist']); ?></p>
+                    <p>Version: <?php echo htmlspecialchars($song['version_name']); ?></p>
+                    <p>Chords: <?php echo htmlspecialchars($song['chords_text']); ?></p>
+                    <p>Tab: <?php echo htmlspecialchars($song['tab_text']); ?></p>
+                    <a href="edit-song.php?id=<?php echo $song['id']; ?>">Edit</a>
+                    <a href="delete-song.php?id=<?php echo $song['id']; ?>">Delete</a>
+                </div>
+            <?php endif; ?>
+        <?php endforeach; ?>
+    </div>
 
     <!-- Footer -->
     <footer>
-        <footer>
-            <div class="footer-content">
-                <p>&copy; 2025 FretNotes</p>
-                <div class="footer-nav">
-                    <div class="nav-column">
-                        <h3>FretNotes.id</h3>
-                        <p>Guitar Platform and Community</p>
-                    </div>
+        <div class="footer-content">
+            <p>&copy; 2025 FretNotes</p>
+            <div class="footer-nav">
+                <div class="nav-column">
+                    <h3>FretNotes.id</h3>
+                    <p>Guitar Platform and Community</p>
+                </div>
 
-                    <div class="nav-socialmedia">
-                        <h3>Contact & Social Media</h3>
-                        <ul>
-                            <li><a href="https://www.instagram.com/artudiei/" target="_blank"><i
-                                        class="fab fa-instagram"></i> Instagram</a></li>
-                            <li><a href="https://www.youtube.com/@artudieii" target="_blank"><i
-                                        class="fab fa-youtube"></i>
-                                    YouTube</a></li>
-                            <li><a href="https://wa.me/+62895337858815" target="_blank"><i class="fab fa-whatsapp"></i>
-                                    Whatsapp</a>
-                            </li>
-                        </ul>
-                    </div>
+                <div class="nav-socialmedia">
+                    <h3>Contact & Social Media</h3>
+                    <ul>
+                        <li><a href="https://www.instagram.com/artudiei/" target="_blank"><i
+                                    class="fab fa-instagram"></i> Instagram</a></li>
+                        <li><a href="https://www.youtube.com/@artudieii" target="_blank"><i class="fab fa-youtube"></i>
+                                YouTube</a></li>
+                        <li><a href="https://wa.me/+62895337858815" target="_blank"><i class="fab fa-whatsapp"></i>
+                                Whatsapp</a></li>
+                    </ul>
                 </div>
             </div>
-            <!-- Audio Wave Animation -->
-            <div class="audio-wave"></div>
-        </footer>
+        </div>
+        <!-- Audio Wave Animation -->
+        <div class="audio-wave"></div>
+    </footer>
 
-        <script>
-            // Validasi form sebelum dikirim
-            document.querySelector("form").addEventListener("submit", function (event) {
-                // Tampilkan konfirmasi sebelum submit form
-                const confirmation = confirm("Are you sure you want to update your account?");
-
-                // Jika pengguna menekan "Cancel", cegah pengiriman form
-                if (!confirmation) {
-                    event.preventDefault();  // Cegah form untuk dikirim
-                    return false;
-                }
-
-                // Validasi username dan email
-                let username = document.getElementById("username").value.trim();
-                let email = document.getElementById("email").value.trim();
-                let password = document.getElementById("password").value.trim();
-                let confirm_password = document.getElementById("confirm_password").value.trim();
-
-                // Validasi username dan email
-                if (username === "" || email === "") {
-                    alert("Username dan Email tidak boleh kosong!");
-                    event.preventDefault(); // Cegah form dikirim
-                    return false;
-                }
-
-                // Validasi format email
-                let emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
-                if (!emailPattern.test(email)) {
-                    alert("Email tidak valid!");
-                    event.preventDefault();
-                    return false;
-                }
-
-                // Validasi password
-                if (password !== "" && password !== confirm_password) {
-                    alert("Password dan konfirmasi password tidak cocok!");
-                    event.preventDefault();
-                    return false;
-                }
-
-                // Jika semua validasi berhasil, form akan dikirim
-                return true;
-            });
-
-            // Toggle Menu (Hamburger) untuk mobile
-            const mobileMenu = document.getElementById("mobile-menu");
-            const navbar = document.querySelector(".navbar");
-            mobileMenu.addEventListener("click", () => {
-                navbar.classList.toggle("active");
-            });
-        </script>
+    <script>
+        // Toggle Menu (Hamburger) untuk mobile
+        const mobileMenu = document.getElementById("mobile-menu");
+        const navbar = document.querySelector(".navbar");
+        mobileMenu.addEventListener("click", () => {
+            navbar.classList.toggle("active");
+        });
+    </script>
 
 </body>
+
 
 </html>

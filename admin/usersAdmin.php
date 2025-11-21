@@ -80,22 +80,29 @@ if (isset($notification)) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Manage Users</title>
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+    <link rel="manifest" href="../favicon/site.webmanifest">
+
+
     <link rel="stylesheet" href="adminpage.css">
     <link rel="stylesheet" href="../public/css/cursor.css">
-    <link rel="icon" href="../public/assets/images/guitarlogo.ico" type="image/x-icon">
 </head>
 
 <body>
 
     <!-- Sidebar -->
     <div class="sidebar">
-        <img src="../public/assets/images/FretNotes_Logo_-_COKLAT-transparent.png" alt="Logo" class="sidebar-logo">
+        <img src="../public/assets/images/FretNotesLogoRevisiVer1.png" alt="Logo" class="sidebar-logo">
         <h2 class="header">Admin Panel</h2>
-        <a href="admin-panel.php">Dashboard</a>
+        <a href="index.php">Dashboard</a>
         <a href="songsAdmin.php">Manage Songs</a>
         <a href="usersAdmin.php" class="active">Manage Users</a>
         <a href="forumAdmin.php">Manage Forum</a>
-        <a href="../public/logout.php" class="logout-button">Logout</a> <!-- Logout Button -->
+        <a href="../public/logout.php" style="color : white;" class="logout-button">Logout</a> <!-- Logout Button -->
     </div>
 
     <!-- Button for toggling sidebar (only on mobile) -->

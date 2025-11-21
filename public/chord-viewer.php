@@ -12,12 +12,8 @@ if (!isset($_GET['song_id']) || !ctype_digit($_GET['song_id'])) {
   $song = null;
 
   // Coba berbagai fungsi agar kompatibel dengan controller yang kamu pakai
-  if (function_exists('getSongWithChordsById')) {
-    $song = getSongWithChordsById($song_id);
-  } elseif (function_exists('getSongByIdWithLatestVersion')) {
-    $song = getSongByIdWithLatestVersion($song_id);
-  } elseif (function_exists('getSongById')) {
-    $song = getSongById($song_id);
+  if (function_exists('getSongById')) {
+    $song = getSongById($song_id); // Mengambil lagu berdasarkan ID
   }
 
   if (!$song) {
@@ -42,11 +38,17 @@ $username = $_SESSION['username'] ?? null;
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chord Viewer - FretNotes</title>
+  <title>Chord and Tab</title>
+
+  <!-- Favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+  <link rel="manifest" href="../favicon/site.webmanifest">
+
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="css/cursor.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-  <link rel="icon" href="assets/images/guitarlogo.ico" type="image/x-icon">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
   <style>
     /* Tambahan kecil khusus viewer di atas style.css */
@@ -220,7 +222,7 @@ $username = $_SESSION['username'] ?? null;
   <nav class="navbar">
     <div class="logo">
       <a href="<?php echo $logged_in ? 'homepage.php' : '../index.php'; ?>">
-        <img src="assets/images/FretNotes_Logo_-_COKLAT-transparent.png" alt="FretNotes Logo">
+        <img src="assets/images/FretNotesLogoRevisiVer2.png" alt="FretNotes Logo">
       </a>
     </div>
     <ul class="nav-links">
@@ -317,7 +319,8 @@ $username = $_SESSION['username'] ?? null;
       <div class="viewer-actions">
         <?php if (!isset($error)): ?>
           <?php if ($logged_in): ?>
-            <a href="add-to-favorites.php?song_id=<?php echo (int) $song_id; ?>">Add to Favorites</a>
+            <a href="favorites.php?add_to_favorites=true&song_id=<?php echo $song['id']; ?>" class="cta-btn">Add to
+              Favorites</a>
           <?php else: ?>
             <a href="login-register.php">Add to Favorites</a>
           <?php endif; ?>

@@ -18,8 +18,9 @@ body {
 }
 
 .logo img {
-  width: 90px; /* Atur sesuai dengan kebutuhan */
+  width: 120px; /* Atur sesuai dengan kebutuhan */
   height: auto;
+  margin-bottom: 0;
 }
 
 /* ============================================= */
@@ -1222,7 +1223,7 @@ footer .nav-socialmedia ul li a:hover {
     flex-direction: column;
     width: 100%;
     position: absolute;
-    top: 50px;
+    top: 85px;
     left: 0;
     background-color: #b17457;
     padding: 15px;
@@ -1262,7 +1263,7 @@ footer .nav-socialmedia ul li a:hover {
     flex-direction: column;
     width: 100%;
     position: absolute;
-    top: 50px;
+    top: 85px;
     left: 0;
     background-color: #b17457;
     padding: 15px;
@@ -1279,5 +1280,147 @@ footer .nav-socialmedia ul li a:hover {
 
   .navbar.active .nav-links {
     display: flex;
+  }
+}
+
+/* ============================================= */
+/* 🌟 ADD SONG PAGE STYLES                       */
+/* ============================================= */
+
+.add-song-container {
+  max-width: 800px;
+  margin: 50px auto;
+  background-color: #ffffff;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.add-song-container h1 {
+  color: #4a4947;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+
+.add-song-container form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.add-song-container form label {
+  font-size: 1.1rem;
+  color: #4a4947;
+}
+
+.add-song-container form input,
+.add-song-container form textarea {
+  padding: 12px 14px;
+  font-size: 1rem;
+  border-radius: 12px;
+  background-color: #fffdf8;
+  color: #4a4947;
+  resize: vertical; /* Allow resizing for textarea */
+}
+.add-song-container form input,
+.add-song-container form textarea:focus {
+  border-color: #b17457;
+  box-shadow: 0 0 0 3px rgba(177, 116, 87, 0.2);
+  background: #ffffff;
+}
+
+.add-song-container form button {
+  background-color: #b17457;
+  color: white;
+  font-size: 1.1rem;
+  padding: 12px 18px;
+  border-radius: 30px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease, transform 0.3s ease;
+  margin-top: 20px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.add-song-container form button:hover {
+  background-color: #4a4947;
+  transform: translateY(-5px);
+}
+
+/* Style for the existing songs section */
+.song-item {
+  background-color: #d8d2c2; /* Matching color with song items */
+  padding: 15px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+  text-align: center;
+}
+
+.song-item:hover {
+  transform: translateY(-5px);
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.2);
+  background-color: #b17457;
+  color: white;
+}
+
+.song-item h3 {
+  font-size: 1.2em;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.song-item p {
+  margin: 5px 0;
+  font-size: 0.9em;
+}
+
+.song-item .cta-btn {
+  background-color: #4a4947;
+  color: white;
+  padding: 8px 15px;
+  text-decoration: none;
+  border-radius: 5px;
+  margin-top: 10px;
+  display: inline-block;
+  transition: background-color 0.3s ease;
+  font-weight: 500;
+}
+
+.song-item .cta-btn:hover {
+  background-color: #b17457;
+}
+
+/* Responsive for mobile */
+@media (max-width: 768px) {
+  .add-song-container {
+    padding: 20px;
+  }
+
+  .add-song-container h1 {
+    font-size: 1.8rem;
+  }
+
+  .add-song-container form {
+    gap: 15px;
+  }
+
+  .song-item {
+    padding: 10px;
+  }
+
+  .song-item h3 {
+    font-size: 1.1rem;
+  }
+
+  .song-item .cta-btn {
+    font-size: 0.9rem;
+    padding: 8px 14px;
+  }
+
+  .add-song-container form input,
+  .add-song-container form textarea {
+    font-size: 0.95rem;
   }
 }

@@ -15,9 +15,15 @@ $totalThreads = $pdo->query("SELECT COUNT(*) FROM threads")->fetchColumn();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Panel - Dashboard</title>
+
+    <!-- Favicon -->
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
+    <link rel="manifest" href="../favicon/site.webmanifest">
+
     <link rel="stylesheet" href="adminpage.css">
     <link rel="stylesheet" href="../public/css/cursor.css">
-    <link rel="icon" href="../public/assets/images/guitarlogo.ico" type="image/x-icon">
 </head>
 
 <body>
@@ -30,13 +36,13 @@ $totalThreads = $pdo->query("SELECT COUNT(*) FROM threads")->fetchColumn();
 
     <div class="sidebar">
         <!-- Logo -->
-        <img src="../public/assets/images/FretNotes_Logo_-_COKLAT-transparent.png" alt="Logo" class="sidebar-logo">
+        <img src="../public/assets/images/FretNotesLogoRevisiVer1.png" alt="Logo" class="sidebar-logo">
         <h2 class="header">Admin Panel</h2>
-        <a href="admin-panel.php" class="active">Dashboard</a>
+        <a href="index.php" class="active">Dashboard</a>
         <a href="songsAdmin.php">Manage Songs</a>
         <a href="usersAdmin.php">Manage Users</a>
         <a href="forumAdmin.php">Manage Forum</a>
-        <a href="../public/logout.php" class="logout-button">Logout</a> <!-- Logout Button -->
+        <a href="../public/logout.php" style="color : white;" class="logout-button">Logout</a> <!-- Logout Button -->
     </div>
 
     <!-- Main Content Area -->
