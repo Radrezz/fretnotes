@@ -20,7 +20,6 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
     <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
     <link rel="manifest" href="../favicon/site.webmanifest">
 
-
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/cursor.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
@@ -64,7 +63,7 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
 
     <!-- Songs Preview Section -->
     <section id="songs-list">
-        <h2>Preview Songs (5 Latest)</h2>
+        <h2>Preview Songs</h2>
         <?php foreach ($songs as $song): ?>
             <div class="song-item">
                 <h3><?php echo htmlspecialchars($song['title']); ?></h3>

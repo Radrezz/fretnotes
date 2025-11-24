@@ -87,7 +87,6 @@ if (isset($notification)) {
     <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
     <link rel="manifest" href="../favicon/site.webmanifest">
 
-
     <link rel="stylesheet" href="adminpage.css">
     <link rel="stylesheet" href="../public/css/cursor.css">
 </head>

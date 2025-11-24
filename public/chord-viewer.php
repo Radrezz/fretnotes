@@ -11,9 +11,8 @@ if (!isset($_GET['song_id']) || !ctype_digit($_GET['song_id'])) {
   $song_id = (int) $_GET['song_id'];
   $song = null;
 
-  // Coba berbagai fungsi agar kompatibel dengan controller yang kamu pakai
   if (function_exists('getSongById')) {
-    $song = getSongById($song_id); // Mengambil lagu berdasarkan ID
+    $song = getSongById($song_id);
   }
 
   if (!$song) {
@@ -21,12 +20,16 @@ if (!isset($_GET['song_id']) || !ctype_digit($_GET['song_id'])) {
   }
 }
 
-// --- Fallback Fields Mapping (samakan dengan kolom di DB-mu) ---
+// --- Fallback Fields Mapping ---
 $title = $song['title'] ?? null;
 $artist = $song['artist'] ?? null;
 $version_name = $song['version_name'] ?? ($song['version'] ?? null);
-// cari kolom chord yang tersedia
-$chords_raw = $song['chords_text'] ?? ($song['chords'] ?? ($song['content'] ?? ($song['tab'] ?? null)));
+
+$chords_raw = $song['chords_text']
+  ?? ($song['chords'] ?? ($song['content'] ?? ($song['tab'] ?? null)));
+
+$tab_raw = $song['tab_text'] ?? null;        // TAB dari kolom tab_text
+$author = $song['author_name'] ?? null;
 
 // status login
 $logged_in = isset($_SESSION['user_id']) && !empty($_SESSION['user_id']);
@@ -50,6 +53,7 @@ $username = $_SESSION['username'] ?? null;
   <link rel="stylesheet" href="css/cursor.css">
   <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+
   <style>
     /* Tambahan kecil khusus viewer di atas style.css */
     .chord-viewer-wrap {
@@ -140,11 +144,17 @@ $username = $_SESSION['username'] ?? null;
     }
 
     .chord-surface {
+      font-family: 'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
       background: #ffffff;
       border: 1px solid #e0dbcc;
       border-radius: 16px;
       box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
       padding: 18px;
+      font-weight: 1000;
+    }
+
+    .tab-surface {
+      margin-top: 18px;
     }
 
     .chord-container {
@@ -190,7 +200,7 @@ $username = $_SESSION['username'] ?? null;
       transform: translateY(-1px);
     }
 
-    /* Focus mode */
+    /* Focus mode (full screen reading) */
     .focus-mode .navbar,
     .focus-mode footer,
     .focus-mode .hero {
@@ -212,6 +222,55 @@ $username = $_SESSION['username'] ?? null;
 
       .viewer-controls .group {
         flex-wrap: wrap;
+      }
+    }
+
+    /* =========================
+       PRINT MODE: hanya chord & tab area
+       ========================= */
+    @media print {
+
+      /* Sembunyikan semua elemen dulu */
+      body * {
+        visibility: hidden;
+      }
+
+      /* Hanya area chord (print-area) yang kelihatan */
+      .print-area,
+      .print-area * {
+        visibility: visible;
+      }
+
+      /* Letakkan area chord memenuhi halaman */
+      .print-area {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0;
+        padding: 0 10mm;
+      }
+
+      /* Sembunyikan elemen yang tidak perlu di kertas */
+      .navbar,
+      .hero,
+      footer,
+      .viewer-controls,
+      .viewer-actions {
+        display: none !important;
+      }
+
+      /* Rapikan kontainer chord di print */
+      .chord-surface {
+        box-shadow: none;
+        border: none;
+      }
+
+      .chord-container {
+        max-height: none;
+        overflow: visible;
+        border: none;
+        padding: 0;
       }
     }
   </style>
@@ -241,13 +300,13 @@ $username = $_SESSION['username'] ?? null;
         <li><a href="forumPage.php" class="cta-btn">Forum</a></li>
       <?php endif; ?>
     </ul>
-    <!-- Menu Account akan diposisikan di luar list item navbar -->
     <div class="menu-account">
       <a href="account.php" class="cta-btn account-icon"><span class="material-icons">account_circle</span></a>
     </div>
 
     <!-- Hamburger Menu Toggle -->
     <div class="menu-toggle" id="mobile-menu">
+      <span></span>
       <span></span>
       <span></span>
       <span></span>
@@ -259,7 +318,8 @@ $username = $_SESSION['username'] ?? null;
     <p>Play, learn, and enjoy the songs.</p>
   </header>
 
-  <main class="chord-viewer-wrap">
+  <!-- print-area: yang akan dicetak -->
+  <main class="chord-viewer-wrap print-area">
     <div class="chord-header">
       <?php if (isset($error)): ?>
         <h1>Chord Viewer</h1>
@@ -271,8 +331,8 @@ $username = $_SESSION['username'] ?? null;
           <?php if (!empty($version_name)): ?>
             &nbsp;&middot;&nbsp; Version: <strong><?php echo htmlspecialchars($version_name); ?></strong>
           <?php endif; ?>
-          <?php if ($logged_in && $username): ?>
-            &nbsp;&middot;&nbsp; Viewed by: <strong><?php echo htmlspecialchars($username); ?></strong>
+          <?php if (!empty($author)): ?>
+            &nbsp;&middot;&nbsp; Author: <strong><?php echo htmlspecialchars($author); ?></strong>
           <?php endif; ?>
         </div>
       <?php endif; ?>
@@ -307,7 +367,9 @@ $username = $_SESSION['username'] ?? null;
       </div>
     </div>
 
+    <!-- CHORD SECTION -->
     <div class="chord-surface">
+      <h2 style="margin-top:0;margin-bottom:10px;color:#b17457;">Chord</h2>
       <div class="chord-container" id="chord-container" tabindex="0" aria-label="Chord content scrollable">
         <?php if (isset($error)): ?>
           <pre id="chords">(no content)</pre>
@@ -319,8 +381,9 @@ $username = $_SESSION['username'] ?? null;
       <div class="viewer-actions">
         <?php if (!isset($error)): ?>
           <?php if ($logged_in): ?>
-            <a href="favorites.php?add_to_favorites=true&song_id=<?php echo $song['id']; ?>" class="cta-btn">Add to
-              Favorites</a>
+            <a href="favorites.php?add_to_favorites=true&song_id=<?php echo $song['id']; ?>" class="cta-btn">
+              Add to Favorites
+            </a>
           <?php else: ?>
             <a href="login-register.php">Add to Favorites</a>
           <?php endif; ?>
@@ -329,9 +392,18 @@ $username = $_SESSION['username'] ?? null;
         <button type="button" id="printBtn">Print</button>
       </div>
     </div>
-  </main>
 
-  <!-- Footer -->
+    <!-- TAB SECTION (jika ada) -->
+    <?php if (!isset($error) && !empty($tab_raw)): ?>
+      <div class="chord-surface tab-surface">
+        <h2 style="margin-top:0;margin-bottom:10px;color:#b17457;">Tab</h2>
+        <div class="chord-container" aria-label="Tab content scrollable">
+          <pre id="tabs"><?php echo htmlspecialchars($tab_raw); ?></pre>
+        </div>
+      </div>
+    <?php endif; ?>
+
+  </main>
 
   <footer>
     <div class="footer-content">
@@ -355,7 +427,6 @@ $username = $_SESSION['username'] ?? null;
         </div>
       </div>
     </div>
-    <!-- Audio Wave Animation -->
     <div class="audio-wave"></div>
   </footer>
 
@@ -372,6 +443,7 @@ $username = $_SESSION['username'] ?? null;
       if (i !== -1) return i;
       return NOTES_FLAT.indexOf(note);
     }
+
     function transposeNote(note, shift, preferSharps = true) {
       const idx = noteIndex(note);
       if (idx === -1) return note;
@@ -379,6 +451,7 @@ $username = $_SESSION['username'] ?? null;
       const newIdx = (idx + shift + 12) % 12;
       return arr[newIdx];
     }
+
     function estimateKey(text) {
       let counts = new Array(12).fill(0);
       (text.match(chordRegex) || []).forEach(m => {
@@ -414,15 +487,11 @@ $username = $_SESSION['username'] ?? null;
     const bottomBtn = document.getElementById('scrollBottom');
     const printBtn = document.getElementById('printBtn');
 
-    // cache original text
     const originalText = chordsEl.textContent || '';
 
     let transposeSteps = 0;
     let preferSharps = true;
 
-    /* =========================
-       Render & Transpose
-       ========================= */
     function renderTransposed() {
       if (!originalText) { return; }
       const shifted = originalText.replace(chordRegex, (match, root, qual = '') => {
@@ -432,33 +501,32 @@ $username = $_SESSION['username'] ?? null;
       chordsEl.textContent = shifted;
       currentKeyBadge.textContent = 'Key: ' + estimateKey(shifted);
     }
+
     currentKeyBadge.textContent = 'Key: ' + estimateKey(originalText);
 
     transposeDownBtn.addEventListener('click', () => {
-      transposeSteps--; transposeBadge.textContent = String(transposeSteps);
-      renderTransposed();
-    });
-    transposeUpBtn.addEventListener('click', () => {
-      transposeSteps++; transposeBadge.textContent = String(transposeSteps);
+      transposeSteps--;
+      transposeBadge.textContent = String(transposeSteps);
       renderTransposed();
     });
 
-    /* =========================
-       Font & Line-height
-       ========================= */
+    transposeUpBtn.addEventListener('click', () => {
+      transposeSteps++;
+      transposeBadge.textContent = String(transposeSteps);
+      renderTransposed();
+    });
+
     function applyTypography() {
       const fs = parseInt(fontSizeRange.value, 10);
       const lh = parseInt(lineHeightRange.value, 10);
       chordsEl.style.fontSize = fs + 'px';
       chordsEl.style.lineHeight = (lh / 16).toString();
     }
+
     fontSizeRange.addEventListener('input', applyTypography);
     lineHeightRange.addEventListener('input', applyTypography);
     applyTypography();
 
-    /* =========================
-       Auto Scroll
-       ========================= */
     let scrolling = false;
     let rafId = null;
 
@@ -487,18 +555,15 @@ $username = $_SESSION['username'] ?? null;
       }
     });
 
-    /* =========================
-       Helpers
-       ========================= */
     focusBtn.addEventListener('click', () => {
       document.documentElement.classList.toggle('focus-mode');
       document.body.classList.toggle('focus-mode');
     });
+
     topBtn.addEventListener('click', () => { container.scrollTop = 0; });
     bottomBtn.addEventListener('click', () => { container.scrollTop = container.scrollHeight; });
     printBtn.addEventListener('click', () => window.print());
 
-    // keyboard shortcuts: space = start/pause, +/- transpose
     document.addEventListener('keydown', (e) => {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
       if (e.key === ' ') { e.preventDefault(); toggleScroll.click(); }
@@ -506,7 +571,6 @@ $username = $_SESSION['username'] ?? null;
       if (e.key === '-') { transposeDownBtn.click(); }
     });
 
-    // Toggle Menu (Hamburger) untuk mobile
     const mobileMenu = document.getElementById("mobile-menu");
     const navbar = document.querySelector(".navbar");
     mobileMenu.addEventListener("click", () => {

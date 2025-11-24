@@ -1,113 +1,155 @@
 <?php
 session_start();
+
 include('../backend/config/db.php'); // Database connection
 include('../backend/controllers/SongController.php');
 
-// Handle the approve/reject actions
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['approve_song_id'])) {
-        $song_id = $_POST['approve_song_id'];
-        // Update status to 'approved'
-        approveSong($song_id);
-    }
-    if (isset($_POST['reject_song_id'])) {
-        $song_id = $_POST['reject_song_id'];
-        // Update status to 'rejected'
-        rejectSong($song_id);
-    }
-    // After approval/rejection, redirect to refresh the page and get the updated list
+// =========================
+//  HANDLE APPROVE / REJECT
+// =========================
+
+// Approve song
+if (isset($_POST['approve_song_id'])) {
+    $song_id = $_POST['approve_song_id'];
+    approveSong($song_id);
     header("Location: songsAdmin.php");
     exit();
 }
 
-// Fetch song to edit
+// Reject song
+if (isset($_POST['reject_song_id'])) {
+    $song_id = $_POST['reject_song_id'];
+    rejectSong($song_id);
+    header("Location: songsAdmin.php");
+    exit();
+}
+
+// =========================
+//  HANDLE ADD SONG
+// =========================
+
+if (isset($_POST['add_song'])) {
+    $title = $_POST['title'];
+    $artist = $_POST['artist'];
+    $genre = $_POST['genre'];
+    $version_name = $_POST['version_name'];
+    $song_status = $_POST['song_status']; // saat ini tidak dipakai di addSong (selalu pending), tapi aman
+    $chords_text = $_POST['chords_text'];
+    $tab_text = $_POST['tab_text'];
+
+    if (!isset($_SESSION['user_id'])) {
+        // Kalau sampai sini user_id tidak ada, ini error logik yang serius di sistem login
+        die("User tidak terautentik. Pastikan sesi login sudah benar.");
+    }
+
+    $created_by = $_SESSION['user_id'];
+
+    // addSong di controller saat ini selalu set status 'pending'
+    addSong($title, $artist, $genre, $version_name, $created_by, $chords_text, $tab_text);
+
+    $notification = "Song added successfully!";
+    header("Location: songsAdmin.php");
+    exit();
+}
+
+// =========================
+//  HANDLE EDIT SONG
+// =========================
+
+if (isset($_POST['edit_song'])) {
+    $id = $_POST['id']; // Song ID
+    $title = $_POST['title'];
+    $artist = $_POST['artist'];
+    $genre = $_POST['genre'];
+    $version_name = $_POST['version_name'];
+    $song_status = $_POST['song_status'];
+    $chords_text = $_POST['chords_text'];
+    $tab_text = $_POST['tab_text'];
+
+    updateSong($id, $title, $artist, $genre, $version_name, $song_status, $chords_text, $tab_text);
+
+    $notification = "Song updated successfully!";
+    header("Location: songsAdmin.php");
+    exit();
+}
+
+// =========================
+//  HANDLE DELETE SONG
+// =========================
+
+if (isset($_GET['delete_song'])) {
+    $song_id = $_GET['delete_song'];
+
+    deleteSongById($song_id);
+
+    $notification = "Song deleted successfully!";
+    header("Location: songsAdmin.php");
+    exit();
+}
+
+// =========================
+//  FETCH SONG UNTUK EDIT
+// =========================
+
+$songToEdit = null;
 if (isset($_GET['edit_song'])) {
     $id = $_GET['edit_song'];
-    $stmt = $pdo->prepare("SELECT * FROM songs WHERE id=?");
+    $stmt = $pdo->prepare("SELECT * FROM songs WHERE id = ?");
     $stmt->execute([$id]);
     $songToEdit = $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
-// CRUD Song - Add Song
-if (isset($_POST['add_song'])) {
-    // Get the form data, including the song status
-    $title = $_POST['title'];
-    $artist = $_POST['artist'];
-    $genre = $_POST['genre'];
-    $version_name = $_POST['version_name'];
-    $song_status = $_POST['song_status']; // Adding the song status to the insert query
+// =========================
+//  FETCH DAFTAR LAGU
+// =========================
 
-    // Insert the song into the database, including song_status
-    $stmt = $pdo->prepare("INSERT INTO songs (title, artist, genre, version_name, song_status) VALUES (?, ?, ?, ?, ?)");
-    $stmt->execute([$title, $artist, $genre, $version_name, $song_status]);
-
-    $notification = "Song added successfully!";
-    header("Location: songsAdmin.php"); // Redirect to avoid form resubmission
-    exit;
-}
-
-// CRUD Song - Edit Song
-if (isset($_POST['edit_song'])) {
-    // Get the form data, including the song status
-    $id = $_POST['id'];
-    $title = $_POST['title'];
-    $artist = $_POST['artist'];
-    $genre = $_POST['genre'];
-    $version_name = $_POST['version_name'];
-    $song_status = $_POST['song_status']; // Adding the song status to the update query
-
-    // Update the song in the database, including song_status
-    $stmt = $pdo->prepare("UPDATE songs SET title=?, artist=?, genre=?, version_name=?, song_status=? WHERE id=?");
-    $stmt->execute([$title, $artist, $genre, $version_name, $song_status, $id]);
-
-    $notification = "Song updated successfully!";
-    header("Location: songsAdmin.php"); // Redirect to avoid form resubmission
-    exit;
-}
-
-// Delete Song
-if (isset($_GET['delete_song'])) {
-    $song_id = $_GET['delete_song'];
-
-    try {
-        // Delete the song from the database
-        $stmt = $pdo->prepare("DELETE FROM songs WHERE id=?");
-        $stmt->execute([$song_id]);
-
-        $notification = "Song deleted successfully!";
-    } catch (PDOException $e) {
-        $notification = "Error deleting song: " . $e->getMessage();
-    }
-
-    header("Location: songsAdmin.php"); // Redirect to avoid form resubmission
-    exit;
-}
-
-
-
-// Fetch all songs with 'pending' status
+// Songs dengan status pending
 $songs = getSongsByStatus('pending');
+
+// Semua lagu (bisa difilter search)
 $allsongs = getAllSongs();
 
-// Function to approve song
+// Search functionality
+$searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
+if ($searchTerm !== '') {
+    $query = "SELECT * FROM songs 
+              WHERE title LIKE ? 
+                 OR artist LIKE ? 
+                 OR genre LIKE ? 
+                 OR chords_text LIKE ? 
+                 OR tab_text LIKE ? 
+              ORDER BY created_at DESC";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([
+        '%' . $searchTerm . '%',
+        '%' . $searchTerm . '%',
+        '%' . $searchTerm . '%',
+        '%' . $searchTerm . '%',
+        '%' . $searchTerm . '%'
+    ]);
+    $allsongs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+// =========================
+//  FUNGSI KHUSUS ADMIN DI FILE INI
+// =========================
+
 function approveSong($song_id)
 {
-    global $pdo; // Use the PDO connection for database operations
+    global $pdo;
     $query = "UPDATE songs SET song_status = 'approved' WHERE id = ?";
     $stmt = $pdo->prepare($query);
     $stmt->execute([$song_id]);
 }
 
-// Function to reject song
 function rejectSong($song_id)
 {
-    global $pdo; // Use the PDO connection for database operations
+    global $pdo;
     $query = "UPDATE songs SET song_status = 'rejected' WHERE id = ?";
     $stmt = $pdo->prepare($query);
     $stmt->execute([$song_id]);
 }
 
-// Fetch songs with pending status
 function getSongsByStatus($song_status)
 {
     global $pdo;
@@ -117,8 +159,8 @@ function getSongsByStatus($song_status)
     $stmt->execute();
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-?>
 
+?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -147,7 +189,7 @@ function getSongsByStatus($song_status)
         <a href="songsAdmin.php" class="active">Manage Songs</a>
         <a href="usersAdmin.php">Manage Users</a>
         <a href="forumAdmin.php">Manage Forum</a>
-        <a href="../public/logout.php" style="color : white;" class="logout-button">Logout</a> <!-- Logout Button -->
+        <a href="../public/logout.php" style="color: white;" class="logout-button">Logout</a>
     </div>
 
     <!-- Button for toggling sidebar (only on mobile) -->
@@ -185,39 +227,56 @@ function getSongsByStatus($song_status)
             </div>
         <?php endif; ?>
 
-        <!-- Add Song Form -->
+        <!-- Add / Edit Song Form -->
         <div class="card mb-10">
-            <h3 class="form-header"><?php echo isset($songToEdit) ? 'Edit Song' : 'Add New Song'; ?></h3>
-            <!-- Add/Edit Song Form -->
+            <h3 class="form-header">
+                <?php echo isset($songToEdit) ? 'Edit Song' : 'Add New Song'; ?>
+            </h3>
             <form method="POST" class="form">
-                <!-- Hidden field for Edit Song -->
                 <?php if (isset($songToEdit)): ?>
                     <input type="hidden" name="id" value="<?php echo $songToEdit['id']; ?>">
                 <?php endif; ?>
 
                 <input name="title" placeholder="Title" required class="input-field"
                     value="<?php echo isset($songToEdit) ? htmlspecialchars($songToEdit['title']) : ''; ?>">
+
                 <input name="artist" placeholder="Artist" required class="input-field"
                     value="<?php echo isset($songToEdit) ? htmlspecialchars($songToEdit['artist']) : ''; ?>">
+
                 <input name="genre" placeholder="Genre" required class="input-field"
                     value="<?php echo isset($songToEdit) ? htmlspecialchars($songToEdit['genre']) : ''; ?>">
+
                 <input name="version_name" placeholder="Version" required class="input-field"
                     value="<?php echo isset($songToEdit) ? htmlspecialchars($songToEdit['version_name']) : ''; ?>">
 
-                <!-- Song Status Dropdown -->
+                <textarea name="chords_text" placeholder="Chord" required
+                    class="input-field"><?php echo isset($songToEdit) ? htmlspecialchars($songToEdit['chords_text']) : ''; ?></textarea>
+
+                <textarea name="tab_text" placeholder="Tab" required
+                    class="input-field"><?php echo isset($songToEdit) ? htmlspecialchars($songToEdit['tab_text']) : ''; ?></textarea>
+
                 <select name="song_status" required class="input-field">
                     <option value="pending" <?php echo (isset($songToEdit) && $songToEdit['song_status'] == 'pending') ? 'selected' : ''; ?>>Pending</option>
                     <option value="approved" <?php echo (isset($songToEdit) && $songToEdit['song_status'] == 'approved') ? 'selected' : ''; ?>>Approved</option>
                     <option value="rejected" <?php echo (isset($songToEdit) && $songToEdit['song_status'] == 'rejected') ? 'selected' : ''; ?>>Rejected</option>
                 </select>
 
-                <button type="submit" name="<?php echo isset($songToEdit) ? 'edit_song' : 'add_song'; ?>"
-                    class="btn"><?php echo isset($songToEdit) ? 'Update Song' : 'Add Song'; ?></button>
-                <!-- Cancel Button -->
-                <a href="songsAdmin.php" class="btn-cancel">Cancel</a> <!-- Redirect back without making changes -->
-            </form>
+                <?php if (isset($songToEdit)): ?>
+                    <button type="submit" name="edit_song" class="btn">Update Song</button>
+                <?php else: ?>
+                    <button type="submit" name="add_song" class="btn">Add Song</button>
+                <?php endif; ?>
 
+                <a href="songsAdmin.php" class="btn-cancel">Cancel</a>
+            </form>
         </div>
+
+        <!-- Search Form -->
+        <form method="GET" class="search-form">
+            <input type="text" name="search" style="margin-bottom: 7px;" placeholder="Search by title, artist or genre"
+                class="input-field" value="<?php echo htmlspecialchars($searchTerm); ?>">
+            <button type="submit" style="margin-bottom: 11px;" class="btn">Search</button>
+        </form>
 
         <!-- Songs Table -->
         <div class="card">
@@ -230,7 +289,9 @@ function getSongsByStatus($song_status)
                         <th>Artist</th>
                         <th>Genre</th>
                         <th>Version</th>
-                        <th>Status</th> <!-- New Status column -->
+                        <th>Chord</th>
+                        <th>Tab</th>
+                        <th>Status</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -242,12 +303,13 @@ function getSongsByStatus($song_status)
                             <td><?php echo htmlspecialchars($s['artist']); ?></td>
                             <td><?php echo htmlspecialchars($s['genre']); ?></td>
                             <td><?php echo htmlspecialchars($s['version_name']); ?></td>
-                            <td><?php echo htmlspecialchars($s['song_status']); ?></td> <!-- Display the song status -->
+                            <td><?php echo nl2br(htmlspecialchars($s['chords_text'])); ?></td>
+                            <td><?php echo nl2br(htmlspecialchars($s['tab_text'])); ?></td>
+                            <td><?php echo htmlspecialchars($s['song_status']); ?></td>
                             <td>
                                 <a href="?edit_song=<?php echo $s['id']; ?>" class="link-btn">Edit</a>
                                 <a href="?delete_song=<?php echo $s['id']; ?>"
                                     onclick="return confirm('Delete this song?');" class="link-btn delete-btn">Delete</a>
-
                             </td>
                         </tr>
                     <?php endforeach; ?>
@@ -262,7 +324,7 @@ function getSongsByStatus($song_status)
         const toggleButton = document.getElementById("sidebar-toggle");
 
         toggleButton.addEventListener("click", function () {
-            sidebar.classList.toggle("active"); // Toggles sidebar visibility
+            sidebar.classList.toggle("active");
         });
     </script>
 
