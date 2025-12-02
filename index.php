@@ -24,6 +24,7 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
     <link rel="stylesheet" href="public/css/style.css">
     <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Tone.js untuk suara referensi tuner -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.23/Tone.js"></script>
 </head>
 
@@ -39,14 +40,17 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
             <li><a href="public/browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
             <li><a href="#tuner" class="cta-btn">Tuner</a></li>
             <!-- Cek apakah user sudah login sebelum menampilkan link Forum -->
-            <li><a href="<?php echo isset($_SESSION['user_id']) ? 'public/forumPage.php' : 'public/login-register.php?redirect=public/forumPage.php'; ?>"
-                    class="cta-btn">Forum</a></li>
+            <li>
+                <a href="<?php echo isset($_SESSION['user_id']) ? 'public/forumPage.php' : 'public/login-register.php?redirect=public/forumPage.php'; ?>"
+                    class="cta-btn">Forum</a>
+            </li>
         </ul>
 
         <!-- Menu Account akan diposisikan di luar list item navbar -->
         <div class="menu-account">
-            <a href="public/account.php" class="cta-btn account-icon"><span
-                    class="material-icons">account_circle</span></a>
+            <a href="public/account.php" class="cta-btn account-icon">
+                <span class="material-icons">account_circle</span>
+            </a>
         </div>
 
         <!-- Hamburger Menu Toggle -->
@@ -73,6 +77,9 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
             share musical knowledge and provides a more interactive guitar playing experience</p>
     </section>
 
+
+    <!-- TUNER: diambil dari file terpisah -->
+    <?php include 'public/tuner-section.php'; ?>
     <!-- Preview Songs Section -->
     <section id="songs-list">
         <h2>Preview Songs</h2>
@@ -85,33 +92,6 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
                 <a href="public/favorites.php" class="cta-btn">Add to Favorites</a>
             </div>
         <?php endforeach; ?>
-    </section>
-
-    <section id="tuner">
-        <h2>Guitar Tuner</h2>
-        <div class="tuning-display">
-            <h3>Tune Your Guitar</h3>
-            <div id="note">E</div>
-            <div id="tuningBar">
-                <div id="tuningProgress"></div>
-                <div id="indicator"></div>
-            </div>
-            <div id="accuracyIndicator">
-                Correct <span class="check-icon">&#10003;</span>
-            </div>
-        </div>
-
-        <button id="startButton">Start</button>
-
-        <div id="selectedTuning">
-            <label for="tuning">Choose:</label>
-            <select id="tuning" name="tuning">
-                <option value="Standard" <?php if (isset($_SESSION['preferred_tuning']) && $_SESSION['preferred_tuning'] == 'Standard')
-                    echo 'selected'; ?>>Standard (EADGBE)</option>
-                <option value="Chromatic" <?php if (isset($_SESSION['preferred_tuning']) && $_SESSION['preferred_tuning'] == 'Chromatic')
-                    echo 'selected'; ?>>Chromatic Tuner</option>
-            </select>
-        </div>
     </section>
 
 
@@ -142,7 +122,7 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
         <div class="audio-wave"></div>
     </footer>
 
-    <script src="public/js/tuner.js"></script>
+    <!-- script tuner.js TIDAK diperlukan lagi karena logic sudah di tuner-section.php -->
 
 </body>
 

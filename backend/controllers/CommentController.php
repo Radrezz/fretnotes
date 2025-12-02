@@ -2,27 +2,38 @@
 // backend/controllers/CommentController.php
 include_once('../backend/models/Comment.php');
 
-// Fungsi untuk mendapatkan komentar berdasarkan thread
+// =========================
+// Ambil komentar per thread
+// =========================
 function getCommentsByThread($threadId)
 {
+    // CUKUP kembalikan data flat dari DB, tree dibangun di thread.php
     return fetchCommentsByThread((int) $threadId);
 }
 
-// Fungsi untuk menambah komentar (termasuk upload gambar)
-function addComment($threadId, $content, $author)
+// =========================
+// Tambah komentar (support reply via parentId)
+// =========================
+function addComment($threadId, $content, $author, $parentId = null)
 {
     $threadId = (int) $threadId;
     $content = trim((string) $content);
     $author = trim((string) $author);
-    if ($threadId <= 0 || $content === '' || $author === '')
-        return false;
 
-    // Menyimpan komentar ke database
-    return insertComment($threadId, $author, $content);
+    if ($threadId <= 0 || $content === '' || $author === '') {
+        return false;
+    }
+
+    if ($parentId !== null) {
+        $parentId = (int) $parentId;
+    }
+
+    return insertComment($threadId, $author, $content, $parentId);
 }
 
-
-// Fungsi untuk mengedit komentar (hanya bisa oleh author)
+// =========================
+// Edit komentar (hanya author)
+// =========================
 function editComment($commentId, $author, $newContent)
 {
     $commentId = (int) $commentId;
@@ -33,20 +44,41 @@ function editComment($commentId, $author, $newContent)
         return false;
     }
 
-    // Update komentar di database
     return updateComment($commentId, $author, $newContent);
 }
 
-
-// Fungsi untuk menghapus komentar (hanya bisa oleh author)
+// =========================
+// Hapus komentar (hanya author)
+// =========================
 function removeComment($commentId, $author)
 {
     $commentId = (int) $commentId;
     $author = trim((string) $author);
+
     $current = fetchCommentById($commentId);
-    if (!$current || $current['author'] !== $author)
+    if (!$current || $current['author'] !== $author) {
         return false;
+    }
 
     return deleteComment($commentId, $author);
 }
-?>
+
+// =========================
+// Like comment
+// =========================
+function toggleCommentLikeController($commentId, $userId)
+{
+    $commentId = (int) $commentId;
+    $userId = trim((string) $userId);
+    if ($commentId <= 0 || $userId === '') {
+        return false;
+    }
+
+    toggleCommentLike($commentId, $userId);
+    return true;
+}
+
+function getCommentLikes($commentId)
+{
+    return getCommentLikesCount((int) $commentId);
+}

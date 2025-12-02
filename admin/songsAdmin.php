@@ -229,7 +229,7 @@ function getSongsByStatus($song_status)
 
         <!-- Add / Edit Song Form -->
         <div class="card mb-10">
-            <h3 class="form-header">
+            <h3 style="margin-bottom: 10px;" class="form-header">
                 <?php echo isset($songToEdit) ? 'Edit Song' : 'Add New Song'; ?>
             </h3>
             <form method="POST" class="form">

@@ -53,8 +53,8 @@ $threads = getThreads($search);
             <a href="homepage.php"><img src="assets/images/FretNotesLogoRevisiVer2.png" alt="FretNotes Logo"></a>
         </div>
         <ul class="nav-links">
-            <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
             <li><a href="homepage.php #tuner" class="cta-btn">Tuner</a></li>
+            <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
             <li><a href="forumPage.php" class="cta-btn">Forum</a></li>
             <li><a href="favorites.php" class="cta-btn">Favorites</a></li>
             <li><a href="addsong.php" class="cta-btn">Add Song</a></li>

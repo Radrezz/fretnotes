@@ -120,7 +120,8 @@ if (isset($notification)) {
 
         <!-- Add or Edit User Form -->
         <div class="card mb-10">
-            <h3 class="form-header"><?php echo isset($userToEdit) ? 'Edit User' : 'Add New User'; ?></h3>
+            <h3 style="margin-bottom: 10px;" class="form-header">
+                <?php echo isset($userToEdit) ? 'Edit User' : 'Add New User'; ?></h3>
             <form method="POST" class="form">
                 <!-- Hidden field for Edit User -->
                 <?php if (isset($userToEdit)): ?>

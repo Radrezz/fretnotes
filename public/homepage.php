@@ -16,7 +16,7 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
 
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="../favicon/favicon-32x32.png">
     <link rel="icon" type="image/png" sizes="16x16" href="../favicon/favicon-16x16.png">
     <link rel="manifest" href="../favicon/site.webmanifest">
 
@@ -35,8 +35,8 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
             <a href="homepage.php"><img src="assets/images/FretNotesLogoRevisiVer2.png" alt="FretNotes Logo"></a>
         </div>
         <ul class="nav-links">
-            <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
             <li><a href="#tuner" class="cta-btn">Tuner</a></li>
+            <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
             <li><a href="forumPage.php" class="cta-btn">Forum</a></li>
             <li><a href="favorites.php" class="cta-btn">Favorites</a></li>
             <li><a href="addsong.php" class="cta-btn">Add Song</a></li>
@@ -44,7 +44,9 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
 
         <!-- Menu Account akan diposisikan di luar list item navbar -->
         <div class="menu-account">
-            <a href="account.php" class="cta-btn account-icon"><span class="material-icons">account_circle</span></a>
+            <a href="account.php" class="cta-btn account-icon">
+                <span class="material-icons">account_circle</span>
+            </a>
         </div>
 
         <!-- Hamburger Menu Toggle -->
@@ -61,6 +63,9 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
         <p class="subTitleGuitar">Your one-stop destination for guitar chords, tabs, and more.</p>
     </header>
 
+    <!-- TUNER: ambil dari file terpisah -->
+    <?php include 'tuner-section.php'; ?>
+
     <!-- Songs Preview Section -->
     <section id="songs-list">
         <h2>Preview Songs</h2>
@@ -71,38 +76,13 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
                 <p>Genre: <?php echo htmlspecialchars($song['genre']); ?></p>
                 <p>Version: <?php echo htmlspecialchars($song['version_name']); ?></p>
                 <a href="chord-viewer.php?song_id=<?php echo $song['id']; ?>" class="cta-btn">View Chords</a>
-                <a href="favorites.php?add_to_favorites=true&song_id=<?php echo $song['id']; ?>" class="cta-btn">Add to
-                    Favorites</a>
+                <a href="favorites.php?add_to_favorites=true&song_id=<?php echo $song['id']; ?>" class="cta-btn">
+                    Add to Favorites
+                </a>
             </div>
         <?php endforeach; ?>
     </section>
 
-    <section id="tuner">
-        <h2>Guitar Tuner</h2>
-        <div class="tuning-display">
-            <h3>Tune Your Guitar</h3>
-            <div id="note">E</div>
-            <div id="tuningBar">
-                <div id="tuningProgress"></div>
-                <div id="indicator"></div>
-            </div>
-            <div id="accuracyIndicator">
-                Correct <span class="check-icon">&#10003;</span>
-            </div>
-        </div>
-
-        <button id="startButton">Start</button>
-
-        <div id="selectedTuning">
-            <label for="tuning">Choose:</label>
-            <select id="tuning" name="tuning">
-                <option value="Standard" <?php if (isset($_SESSION['preferred_tuning']) && $_SESSION['preferred_tuning'] == 'Standard')
-                    echo 'selected'; ?>>Standard (EADGBE)</option>
-                <option value="Chromatic" <?php if (isset($_SESSION['preferred_tuning']) && $_SESSION['preferred_tuning'] == 'Chromatic')
-                    echo 'selected'; ?>>Chromatic Tuner</option>
-            </select>
-        </div>
-    </section>
 
     <!-- Footer -->
     <footer>
@@ -131,7 +111,8 @@ $songs = getPreviewSongs();  // Pastikan fungsi getPreviewSongs() hanya mengambi
         <div class="audio-wave"></div>
     </footer>
 
-    <script src="js/tuner.js"></script>
+    <!-- Tidak ada lagi js/tuner.js, logika tuner ada di tuner-section.php -->
+
 </body>
 
 </html>
