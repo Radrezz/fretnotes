@@ -129,37 +129,6 @@ if ($searchTerm !== '') {
     ]);
     $allsongs = $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
-
-// =========================
-//  FUNGSI KHUSUS ADMIN DI FILE INI
-// =========================
-
-function approveSong($song_id)
-{
-    global $pdo;
-    $query = "UPDATE songs SET song_status = 'approved' WHERE id = ?";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute([$song_id]);
-}
-
-function rejectSong($song_id)
-{
-    global $pdo;
-    $query = "UPDATE songs SET song_status = 'rejected' WHERE id = ?";
-    $stmt = $pdo->prepare($query);
-    $stmt->execute([$song_id]);
-}
-
-function getSongsByStatus($song_status)
-{
-    global $pdo;
-    $query = "SELECT * FROM songs WHERE song_status = :song_status ORDER BY created_at DESC";
-    $stmt = $pdo->prepare($query);
-    $stmt->bindParam(':song_status', $song_status, PDO::PARAM_STR);
-    $stmt->execute();
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
-
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -177,6 +146,42 @@ function getSongsByStatus($song_status)
 
     <link rel="stylesheet" href="adminpage.css">
     <link rel="stylesheet" href="../public/css/cursor.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Chord and Tab Preview styles */
+        .preview-container {
+            position: relative;
+            max-height: 50px;
+            overflow: hidden;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 2px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: max-height 0.3s ease;
+        }
+
+        .preview-container.open {
+            max-height: 150px;
+            overflow-y: auto;
+        }
+
+        .preview-container button {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            background-color: #b17457;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .preview-container button:hover {
+            background-color: #4a4947;
+        }
+    </style>
 </head>
 
 <body>
@@ -185,13 +190,12 @@ function getSongsByStatus($song_status)
     <div class="sidebar">
         <img src="../public/assets/images/FretNotesLogoRevisiVer1.png" alt="Logo" class="sidebar-logo">
         <h2 class="header">Admin Panel</h2>
-        <a href="index.php">Dashboard</a>
-        <a href="songsAdmin.php" class="active">Manage Songs</a>
-        <a href="usersAdmin.php">Manage Users</a>
-        <a href="forumAdmin.php">Manage Forum</a>
-        <a href="../public/logout.php" style="color: white;" class="logout-button">Logout</a>
+        <a href="index.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="songsAdmin.php" class="active"><i class="fas fa-music"></i> Manage Songs</a>
+        <a href="usersAdmin.php"><i class="fas fa-users"></i> Manage Users</a>
+        <a href="forumAdmin.php"><i class="fas fa-comments"></i> Manage Forum</a>
+        <a href="../public/logout.php" class="logout-button"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
-
     <!-- Button for toggling sidebar (only on mobile) -->
     <button class="sidebar-toggle" id="sidebar-toggle">☰</button>
 
@@ -303,8 +307,20 @@ function getSongsByStatus($song_status)
                             <td><?php echo htmlspecialchars($s['artist']); ?></td>
                             <td><?php echo htmlspecialchars($s['genre']); ?></td>
                             <td><?php echo htmlspecialchars($s['version_name']); ?></td>
-                            <td><?php echo nl2br(htmlspecialchars($s['chords_text'])); ?></td>
-                            <td><?php echo nl2br(htmlspecialchars($s['tab_text'])); ?></td>
+                            <td>
+                                <!-- Chord Preview -->
+                                <div class="preview-container" id="chord-preview-<?php echo $s['id']; ?>">
+                                    <pre><?php echo nl2br(htmlspecialchars($s['chords_text'])); ?></pre>
+                                    <button onclick="togglePreview(<?php echo $s['id']; ?>, 'chord')">Full</button>
+                                </div>
+                            </td>
+                            <td>
+                                <!-- Tab Preview -->
+                                <div class="preview-container" id="tab-preview-<?php echo $s['id']; ?>">
+                                    <pre><?php echo nl2br(htmlspecialchars($s['tab_text'])); ?></pre>
+                                    <button onclick="togglePreview(<?php echo $s['id']; ?>, 'tab')">Full</button>
+                                </div>
+                            </td>
                             <td><?php echo htmlspecialchars($s['song_status']); ?></td>
                             <td>
                                 <a href="?edit_song=<?php echo $s['id']; ?>" class="link-btn">Edit</a>
@@ -326,6 +342,18 @@ function getSongsByStatus($song_status)
         toggleButton.addEventListener("click", function () {
             sidebar.classList.toggle("active");
         });
+
+        // Toggle preview function
+        function togglePreview(songId, type) {
+            var previewContainer = document.getElementById(type + '-preview-' + songId);
+            previewContainer.classList.toggle('open');
+            var button = previewContainer.querySelector('button');
+            if (previewContainer.classList.contains('open')) {
+                button.textContent = "Minimize";
+            } else {
+                button.textContent = "Full";
+            }
+        }
     </script>
 
 </body>

@@ -92,9 +92,33 @@ if (isset($_GET['edit_song']) && ctype_digit($_GET['edit_song'])) {
 }
 
 // =========================
-//  FETCH DAFTAR LAGU USER
+//  FETCH DAFTAR LAGU USER + SEARCH (GET)
 // =========================
-$songs = getSongsByUser($user_id);
+$searchTerm = isset($_GET['search']) ? trim($_GET['search']) : '';
+
+if ($searchTerm !== '') {
+    // Pastikan ada koneksi $pdo untuk query search
+    include_once('../backend/config/db.php');
+
+    $query = "SELECT * FROM songs
+              WHERE created_by = ?
+                AND (
+                    title LIKE ?
+                    OR artist LIKE ?
+                    OR genre LIKE ?
+                    OR version_name LIKE ?
+                    OR chords_text LIKE ?
+                    OR tab_text LIKE ?
+                )
+              ORDER BY created_at DESC";
+
+    $stmt = $pdo->prepare($query);
+    $like = '%' . $searchTerm . '%';
+    $stmt->execute([$user_id, $like, $like, $like, $like, $like, $like]);
+    $songs = $stmt->fetchAll(PDO::FETCH_ASSOC);
+} else {
+    $songs = getSongsByUser($user_id);
+}
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -177,19 +201,217 @@ $songs = getSongsByUser($user_id);
             background-color: #922b21;
         }
 
-        .song-item {
-            border: 1px solid #e0dbcc;
-            border-radius: 10px;
-            padding: 12px 14px;
-            margin-bottom: 12px;
-            background: #fffdf8;
+        /* ===========================
+           NEW: Search UI
+           =========================== */
+        .search-wrap {
+            margin-top: 10px;
+            margin-bottom: 14px;
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 10px;
+            align-items: center;
         }
 
-        .song-item-actions {
-            margin-top: 8px;
+        .search-input {
+            width: 100%;
+            padding: 10px 15px;
+            border-radius: 999px;
+            border: 1px solid #e0dbcc;
+            outline: none;
+            background: #fff;
+            transition: box-shadow .2s ease, transform .2s ease;
+        }
+
+        .search-input:focus {
+            box-shadow: 0 0 0 4px rgba(177, 116, 87, 0.18);
+            transform: translateY(-1px);
+        }
+
+        .search-reset {
+            padding: 10px 14px;
+        }
+
+        .search-hint {
+            margin-top: -6px;
+            margin-bottom: 12px;
+            color: #6b6558;
+            font-size: 0.95rem;
+        }
+
+        @media (max-width: 640px) {
+            .search-wrap {
+                grid-template-columns: 1fr;
+            }
+
+            .search-btn,
+            .search-reset {
+                width: 100%;
+            }
+        }
+
+        /* ===========================
+           NEW: Song Card + Accordion UI
+           =========================== */
+        .song-card {
+            border: 1px solid #e0dbcc;
+            border-radius: 14px;
+            padding: 14px;
+            margin-bottom: 14px;
+            background: #fffdf8;
+            box-shadow: 0 8px 18px rgba(0, 0, 0, 0.05);
+            transition: transform .15s ease, box-shadow .15s ease;
+        }
+
+        .song-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 26px rgba(0, 0, 0, 0.08);
+        }
+
+        .song-card-head {
+            display: flex;
+            justify-content: space-between;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 10px;
+        }
+
+        .song-title {
+            margin: 0;
+            font-size: 1.15rem;
+            letter-spacing: .2px;
+            color: #2f2f2f;
+        }
+
+        .song-meta {
+            margin-top: 6px;
             display: flex;
             gap: 8px;
             flex-wrap: wrap;
+            color: #6b6558;
+            font-size: 0.92rem;
+        }
+
+        .status-badge {
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.82rem;
+            border: 1px solid #e0dbcc;
+            background: #fff;
+            color: #4a4947;
+            white-space: nowrap;
+        }
+
+        .status-approved {
+            background: #eaf7ee;
+            border-color: #bfe3c9;
+            color: #1f7a3a;
+        }
+
+        .status-pending {
+            background: #fff7e6;
+            border-color: #f0d6a6;
+            color: #8a5a00;
+        }
+
+        .status-rejected {
+            background: #fdecec;
+            border-color: #f2b8b8;
+            color: #9b1c1c;
+        }
+
+        .song-accordion {
+            display: grid;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .acc {
+            border: 1px solid #e0dbcc;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #ffffff;
+        }
+
+        .acc-summary {
+            list-style: none;
+            cursor: pointer;
+            padding: 10px 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 10px;
+            font-weight: 800;
+            color: #4a4947;
+            background: linear-gradient(135deg, #f5eee0 0%, #ffffff 100%);
+        }
+
+        .acc-summary::-webkit-details-marker {
+            display: none;
+        }
+
+        .acc[open] .acc-summary {
+            background: linear-gradient(135deg, #d8d2c2 0%, #ffffff 100%);
+        }
+
+        .acc-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn-mini {
+            border: 1px solid #d8d2c2;
+            background: #fff;
+            color: #4a4947;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-weight: 700;
+            font-size: 0.78rem;
+            cursor: pointer;
+            transition: transform .15s ease, background .15s ease;
+        }
+
+        .btn-mini:hover {
+            background: #f5eee0;
+            transform: translateY(-1px);
+        }
+
+        .acc-body {
+            padding: 10px 12px 12px 12px;
+            border-top: 1px solid #eee6d7;
+        }
+
+        .song-pre {
+            margin: 0;
+            padding: 10px;
+            border-radius: 10px;
+            background: #0f0f10;
+            color: #f4f4f4;
+            font-size: 0.9rem;
+            line-height: 1.4;
+
+            white-space: pre;
+            overflow: auto;
+            max-height: 220px;
+        }
+
+        .song-actions {
+            margin-top: 12px;
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        @media (max-width: 640px) {
+            .song-card-head {
+                flex-direction: column;
+            }
+
+            .song-pre {
+                max-height: 180px;
+            }
         }
     </style>
 </head>
@@ -235,15 +457,15 @@ $songs = getSongsByUser($user_id);
         <p style="margin-top: 2px;">*Make sure you have formatted the chord and tab layout.</p>
 
         <?php if ($error): ?>
-            <div class="error-message" style="color: #c0392b; margin-bottom:10px;">
-                <?php echo htmlspecialchars($error); ?>
-            </div>
+                <div class="error-message" style="color: #c0392b; margin-bottom:10px;">
+                    <?php echo htmlspecialchars($error); ?>
+                </div>
         <?php endif; ?>
 
         <!-- Form Add / Edit Song -->
         <form method="POST">
             <?php if ($songToEdit): ?>
-                <input type="hidden" name="id" value="<?php echo $songToEdit['id']; ?>">
+                    <input type="hidden" name="id" value="<?php echo $songToEdit['id']; ?>">
             <?php endif; ?>
 
             <label for="title">Song Title:</label>
@@ -273,38 +495,102 @@ $songs = getSongsByUser($user_id);
             ?></textarea>
 
             <?php if ($songToEdit): ?>
-                <button type="submit" name="edit_song" class="btn-primary">Update Song</button>
-                <a href="addsong.php" class="btn-secondary" style="margin-left:8px;">Cancel</a>
+                    <button type="submit" name="edit_song" class="btn-primary">Update Song</button>
+                    <a href="addsong.php" class="btn-secondary" style="margin-left:8px;">Cancel</a>
             <?php else: ?>
-                <button type="submit" name="add_song" class="btn-primary">Add Song</button>
+                    <button type="submit" name="add_song" class="btn-primary">Add Song</button>
             <?php endif; ?>
         </form>
 
-
         <h2>Your Songs</h2>
-        <?php if (empty($songs)): ?>
-            <p>You haven't added any songs yet.</p>
-        <?php else: ?>
-            <?php foreach ($songs as $song): ?>
-                <div class="song-item">
-                    <h3><?php echo htmlspecialchars($song['title']); ?></h3>
-                    <p>Artist: <?php echo htmlspecialchars($song['artist']); ?></p>
-                    <p>Version: <?php echo htmlspecialchars($song['version_name']); ?></p>
-                    <p><strong>Chords:</strong><br><?php echo nl2br(htmlspecialchars($song['chords_text'])); ?></p>
-                    <p><strong>Tab:</strong><br><?php echo nl2br(htmlspecialchars($song['tab_text'])); ?></p>
-                    <p>Status: <?php echo htmlspecialchars($song['song_status']); ?></p>
 
-                    <div class="song-item-actions">
-                        <a href="addsong.php?edit_song=<?php echo $song['id']; ?>" class="btn-small">
-                            Edit
-                        </a>
-                        <a href="addsong.php?delete_song=<?php echo $song['id']; ?>" class="btn-small btn-danger"
-                            onclick="return confirm('Delete this song?');">
-                            Delete
-                        </a>
-                    </div>
-                </div>
-            <?php endforeach; ?>
+        <!-- Search Form -->
+        <form method="GET" class="search-wrap">
+            <input type="text" name="search" class="search-input"
+                placeholder="Search by title, artist, genre, version, chords, tab..."
+                value="<?php echo htmlspecialchars($searchTerm); ?>">
+            <button type="submit" class="btn-primary search-btn">Search</button>
+            <?php if (!empty($searchTerm)): ?>
+                    <a href="addsong.php" class="btn-secondary search-reset">Reset</a>
+            <?php endif; ?>
+        </form>
+
+        <?php if (!empty($searchTerm)): ?>
+                <p class="search-hint">
+                    Showing results for: <strong><?php echo htmlspecialchars($searchTerm); ?></strong>
+                </p>
+        <?php endif; ?>
+
+        <?php if (empty($songs)): ?>
+                <?php if (!empty($searchTerm)): ?>
+                        <p>No songs found for "<strong><?php echo htmlspecialchars($searchTerm); ?></strong>".</p>
+                <?php else: ?>
+                        <p>You haven't added any songs yet.</p>
+                <?php endif; ?>
+        <?php else: ?>
+                <?php foreach ($songs as $song): ?>
+                        <?php
+                        $chordsFull = (string) ($song['chords_text'] ?? '');
+                        $tabFull = (string) ($song['tab_text'] ?? '');
+                        $status = (string) ($song['song_status'] ?? 'pending');
+                        ?>
+                        <div class="song-card">
+                            <div class="song-card-head">
+                                <div class="song-head-left">
+                                    <h3 class="song-title"><?php echo htmlspecialchars($song['title']); ?></h3>
+                                    <div class="song-meta">
+                                        <span>Artist: <?php echo htmlspecialchars($song['artist']); ?></span>
+                                        <span>•</span>
+                                        <span>Version: <?php echo htmlspecialchars($song['version_name']); ?></span>
+                                    </div>
+                                </div>
+
+                                <div class="song-head-right">
+                                    <span class="status-badge status-<?php echo htmlspecialchars($status); ?>">
+                                        <?php echo htmlspecialchars(ucfirst($status)); ?>
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="song-accordion">
+                                <details class="acc">
+                                    <summary class="acc-summary">
+                                        <span>Chords</span>
+                                        <div class="acc-actions">
+                                            <button type="button" class="btn-mini btn-copy"
+                                                data-copy="<?php echo htmlspecialchars($chordsFull, ENT_QUOTES, 'UTF-8'); ?>">
+                                                Copy
+                                            </button>
+                                        </div>
+                                    </summary>
+                                    <div class="acc-body">
+                                        <pre class="song-pre"><?php echo htmlspecialchars($chordsFull); ?></pre>
+                                    </div>
+                                </details>
+
+                                <details class="acc">
+                                    <summary class="acc-summary">
+                                        <span>Tab</span>
+                                        <div class="acc-actions">
+                                            <button type="button" class="btn-mini btn-copy"
+                                                data-copy="<?php echo htmlspecialchars($tabFull, ENT_QUOTES, 'UTF-8'); ?>">
+                                                Copy
+                                            </button>
+                                        </div>
+                                    </summary>
+                                    <div class="acc-body">
+                                        <pre class="song-pre"><?php echo htmlspecialchars($tabFull); ?></pre>
+                                    </div>
+                                </details>
+                            </div>
+
+                            <div class="song-actions">
+                                <a href="addsong.php?edit_song=<?php echo $song['id']; ?>" class="btn-small">Edit</a>
+                                <a href="addsong.php?delete_song=<?php echo $song['id']; ?>" class="btn-small btn-danger"
+                                    onclick="return confirm('Delete this song?');">Delete</a>
+                            </div>
+                        </div>
+                <?php endforeach; ?>
         <?php endif; ?>
     </div>
 
@@ -331,7 +617,6 @@ $songs = getSongsByUser($user_id);
                 </div>
             </div>
         </div>
-        <!-- Audio Wave Animation -->
         <div class="audio-wave"></div>
     </footer>
 
@@ -341,6 +626,34 @@ $songs = getSongsByUser($user_id);
         const navbar = document.querySelector(".navbar");
         mobileMenu.addEventListener("click", () => {
             navbar.classList.toggle("active");
+        });
+
+        // Copy handler untuk chords/tab
+        document.querySelectorAll(".btn-copy").forEach(btn => {
+            btn.addEventListener("click", async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+
+                const text = btn.dataset.copy || "";
+                try {
+                    await navigator.clipboard.writeText(text);
+                    const old = btn.textContent;
+                    btn.textContent = "Copied!";
+                    setTimeout(() => btn.textContent = old, 900);
+                } catch (err) {
+                    // fallback
+                    const ta = document.createElement("textarea");
+                    ta.value = text;
+                    document.body.appendChild(ta);
+                    ta.select();
+                    document.execCommand("copy");
+                    document.body.removeChild(ta);
+
+                    const old = btn.textContent;
+                    btn.textContent = "Copied!";
+                    setTimeout(() => btn.textContent = old, 900);
+                }
+            });
         });
     </script>
 

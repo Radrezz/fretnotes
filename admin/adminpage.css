@@ -578,6 +578,7 @@ body {
 /* =========================== */
 
 table {
+  table-layout: fixed;
   width: 100%;
   text-align: left;
   background-color: var(--card-color);
@@ -592,15 +593,19 @@ table {
 
 th,
 td {
-  padding: 15px;
+  padding: 5px 6px; /* Menurunkan padding untuk membuatnya lebih kecil */
   border-bottom: 1px solid var(--secondary-color);
   transition: all var(--transition-medium);
+  vertical-align: top;
+  font-size: 13px; /* Mengurangi ukuran font untuk membuatnya lebih kecil */
+  text-align: center;
 }
 
 thead {
   background: linear-gradient(135deg, var(--secondary-color) 0%, #c9c3b3 100%);
   color: var(--text-color);
   font-weight: 600;
+  font-size: 14px; /* Mengatur font header sedikit lebih besar */
 }
 
 tbody tr {
@@ -620,6 +625,56 @@ tbody tr:nth-child(even) {
 tbody tr:hover td {
   color: var(--primary-color);
   font-weight: 600;
+}
+
+/* Atur lebar kolom Chord dan Tab agar tidak makan tempat */
+th:nth-child(6),
+td:nth-child(6),
+th:nth-child(7),
+td:nth-child(7) {
+  width: 220px;
+}
+
+/* Preview 1 baris + ellipsis */
+.cell-preview {
+  display: block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  font-size: 12px; /* Mengurangi ukuran font untuk preview agar lebih kompak */
+}
+
+/* Tooltip untuk full text saat hover */
+.preview-tooltip {
+  position: fixed;
+  z-index: 9999;
+  background: #111;
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 10px;
+  max-width: 520px;
+  max-height: 260px;
+  overflow: auto;
+  white-space: pre-wrap;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+  font-size: 13px; /* Menurunkan ukuran font di tooltip */
+  line-height: 1.4;
+}
+
+/* Mengurangi jarak antar sel dan memberikan ruang yang lebih rapi */
+.table th,
+.table td {
+  padding: 8px 10px;
+}
+
+/* Memastikan tabel tetap responsif di perangkat kecil */
+@media screen and (max-width: 768px) {
+  .table th,
+  .table td {
+    padding: 6px 8px; /* Mengurangi padding lebih lanjut untuk layar kecil */
+    font-size: 12px; /* Ukuran font lebih kecil di perangkat kecil */
+  }
 }
 
 /* =========================== */

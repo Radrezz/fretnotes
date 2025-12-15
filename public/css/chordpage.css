@@ -1,0 +1,753 @@
+/* =========================================================
+   FretNotes - Chord Viewer (LATEST CSS)
+   File: public/css/chordpage.css
+   ========================================================= */
+
+/* =========================
+   Layout
+   ========================= */
+.chord-viewer-wrap {
+  max-width: 1100px;
+  margin: 40px auto 80px;
+  padding: 0 20px;
+}
+
+.chord-header {
+  background: #fff;
+  border: 1px solid #e0dbcc;
+  border-radius: 16px;
+  padding: 22px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  margin-bottom: 16px;
+}
+
+.chord-header h1 {
+  margin: 0 0 6px;
+  font-size: 1.6rem;
+  color: #b17457;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.chord-header .meta {
+  color: #4a4947a5;
+  font-size: 0.95rem;
+  font-weight: 650;
+}
+
+.section-title {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #b17457;
+  font-weight: 900;
+}
+
+/* =========================
+   Viewer Controls (simple)
+   ========================= */
+.viewer-controls {
+  position: sticky;
+  top: 0;
+  z-index: 5;
+
+  background: #faf7f0cc;
+  backdrop-filter: blur(4px);
+  border: 1px solid #e0dbcc;
+  border-radius: 14px;
+  padding: 10px 12px;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+}
+
+.viewer-controls .row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.viewer-controls .group {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  background: #fff;
+  border: 1px solid #e9e3d4;
+  padding: 8px 10px;
+  border-radius: 12px;
+  flex-wrap: wrap;
+}
+
+.viewer-controls label {
+  font-size: 0.9rem;
+  color: #4a4947a5;
+  font-weight: 900;
+}
+
+.viewer-controls button,
+.viewer-controls .pill {
+  border: none;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.2s ease all;
+}
+
+.viewer-controls button {
+  background: #b17457;
+  color: #fff;
+  box-shadow: 0 3px 10px rgba(177, 116, 87, 0.25);
+}
+
+.viewer-controls button:hover {
+  background: #4a4947;
+  transform: translateY(-1px);
+}
+
+.viewer-controls button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.viewer-controls .pill {
+  background: #d8d2c2;
+  color: #4a4947;
+  box-shadow: none;
+}
+
+.viewer-controls .pill.ghost {
+  background: #faf7f0;
+  border: 1px solid #efe8d9;
+}
+
+.viewer-controls .btn-soft {
+  background: #d8d2c2 !important;
+  color: #4a4947 !important;
+  box-shadow: none !important;
+}
+
+/* Autoscroll UI like your screenshot */
+.auto-btn {
+  background: #ffd54a !important;
+  color: #222 !important;
+  box-shadow: none !important;
+  border: 1px solid #f1c400 !important;
+  font-weight: 950;
+}
+
+.auto-btn.on {
+  background: #4a4947 !important;
+  color: #fff !important;
+  border: 1px solid #4a4947 !important;
+}
+
+.speed-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid #e9e3d4;
+  background: #fff;
+  font-weight: 900;
+  color: #4a4947;
+}
+
+.viewer-controls input[type="range"] {
+  accent-color: #b17457;
+  width: 160px;
+}
+
+/* Advanced panel */
+.viewer-controls .advanced {
+  display: none;
+}
+.viewer-controls .advanced.open {
+  display: block;
+}
+
+/* Metronome pulse */
+.pill.metro-pulse {
+  background: #4a4947;
+  color: #fff;
+  transition: transform 0.08s ease;
+}
+.pill.metro-pulse.pulse {
+  transform: scale(1.06);
+}
+
+@media (max-width: 720px) {
+  .viewer-controls .group {
+    width: 100%;
+    justify-content: space-between;
+  }
+  .viewer-controls input[type="range"] {
+    width: 180px;
+  }
+}
+
+/* =========================
+   Chord Surface
+   ========================= */
+.chord-surface {
+  background: #fff;
+  border: 1px solid #e0dbcc;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+  padding: 18px;
+}
+
+.tab-surface {
+  margin-top: 18px;
+}
+
+.chord-container {
+  max-height: 65vh;
+  overflow: auto;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fffdf8;
+  border: 1px solid #efe8d9;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+#chords,
+#tabs {
+  margin: 0;
+  font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, "Courier New", monospace;
+  white-space: pre;
+  word-break: normal;
+  line-height: 1.55;
+  font-weight: 600;
+  letter-spacing: 0.1px;
+  font-size: 16px;
+}
+
+/* =========================
+   Actions buttons
+   ========================= */
+.viewer-actions {
+  margin-top: 14px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.viewer-actions a,
+.viewer-actions button {
+  background: #b17457;
+  color: #fff;
+  text-decoration: none;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 999px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.25s ease all;
+  box-shadow: 0 3px 10px rgba(177, 116, 87, 0.25);
+}
+
+.viewer-actions a:hover,
+.viewer-actions button:hover {
+  background: #4a4947;
+  transform: translateY(-1px);
+}
+
+/* =========================
+   Reactions
+   ========================= */
+.reaction-bar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 12px;
+}
+
+.reaction-btn {
+  background: #b17457;
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.2s ease;
+  box-shadow: 0 10px 18px rgba(177, 116, 87, 0.18);
+}
+
+.reaction-btn:hover {
+  background: #4a4947;
+  transform: translateY(-1px);
+}
+
+.reaction-btn.secondary {
+  background: #d8d2c2;
+  color: #4a4947;
+  box-shadow: none;
+}
+
+.reaction-btn.liked {
+  background: #4a4947;
+}
+
+/* =========================
+   Chord tokens + tooltip
+   ========================= */
+.chord-token {
+  color: #b17457;
+  background: rgba(177, 116, 87, 0.14);
+  border: 1px solid rgba(177, 116, 87, 0.18);
+  padding: 0 6px;
+  border-radius: 8px;
+  font-weight: 900;
+  cursor: pointer;
+  display: inline-block;
+}
+
+.chord-tooltip {
+  position: fixed;
+  z-index: 9999;
+  min-width: 240px;
+  max-width: 360px;
+  background: #fff;
+  border: 1px solid #efe8d9;
+  border-radius: 14px;
+  box-shadow: 0 18px 40px rgba(0, 0, 0, 0.16);
+  padding: 12px;
+  display: none;
+}
+
+.chord-tooltip .tt-title {
+  font-weight: 950;
+  color: #4a4947;
+  margin: 0 0 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.chord-tooltip .tt-close {
+  border: none;
+  background: #d8d2c2;
+  color: #4a4947;
+  font-weight: 900;
+  border-radius: 999px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+
+.chord-tooltip .tt-body {
+  background: #fffdf8;
+  border: 1px solid #efe8d9;
+  border-radius: 12px;
+  padding: 10px;
+}
+
+.chord-tooltip .tt-empty {
+  font-weight: 900;
+  color: #4a4947a5;
+}
+
+/* Tooltip diagram wrapper + Start fret badge (right side) */
+.tt-diagram-wrap {
+  position: relative;
+}
+
+.tt-startfret {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+
+  background: #fff;
+  border: 1px solid #efe8d9;
+  border-radius: 999px;
+  padding: 6px 10px;
+
+  font-weight: 900;
+  color: #4a4947;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.08);
+  pointer-events: none;
+}
+
+/* =========================
+   Comments
+   ========================= */
+.comments-box {
+  margin-top: 14px;
+  background: linear-gradient(180deg, #fffdf8 0%, #fff 100%);
+  border: 1px solid #efe8d9;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.06);
+  font-weight: 700;
+}
+
+.comments-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.comments-head h3 {
+  margin: 0;
+  color: #4a4947;
+  font-size: 1.1rem;
+  letter-spacing: 0.2px;
+  font-weight: 900;
+}
+
+.comments-sub {
+  color: #4a4947a5;
+  font-size: 0.9rem;
+  font-weight: 650;
+  margin-top: 4px;
+}
+
+.comments-layout {
+  display: grid;
+  grid-template-columns: 1.35fr 0.65fr;
+  gap: 14px;
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .comments-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.comments-panel {
+  background: #fff;
+  border: 1px solid #efe8d9;
+  border-radius: 14px;
+  padding: 12px;
+}
+
+.comments-panel-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.panel-title {
+  font-weight: 900;
+  color: #4a4947;
+}
+
+.badge-soft {
+  background: #faf7f0;
+  border: 1px solid #efe8d9;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 900;
+  color: #b17457;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.select-pill {
+  border: 1px solid #efe8d9;
+  background: #fffdf8;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 900;
+  color: #4a4947;
+  outline: none;
+}
+
+.comments-feed {
+  max-height: 360px;
+  overflow: auto;
+  padding-right: 6px;
+}
+
+.comment-item {
+  background: #fffdf8;
+  border: 1px solid #efe8d9;
+  border-radius: 14px;
+  padding: 12px;
+  margin-bottom: 10px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  font-weight: 650;
+}
+
+.comment-item:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(0, 0, 0, 0.06);
+}
+
+.comment-row {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+
+.comment-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: #b17457;
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-weight: 900;
+  box-shadow: 0 6px 14px rgba(177, 116, 87, 0.25);
+  flex: 0 0 36px;
+}
+
+.comment-content {
+  flex: 1;
+}
+
+.comment-meta {
+  margin: 0 0 6px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: baseline;
+  color: #4a4947a5;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.comment-meta .name {
+  color: #4a4947;
+  font-weight: 900;
+}
+
+.comment-text {
+  color: #4a4947;
+  font-weight: 650;
+  line-height: 1.55;
+}
+
+/* comment actions */
+.comment-actions {
+  margin-top: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.c-like {
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 900;
+  background: #d8d2c2;
+  color: #4a4947;
+}
+
+.c-like.liked {
+  background: #4a4947;
+  color: #fff;
+}
+
+.c-act {
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 900;
+  background: #faf7f0;
+  border: 1px solid #efe8d9;
+  color: #4a4947;
+}
+
+.c-act.danger {
+  background: #fff1f1;
+  border: 1px solid #ffd1d1;
+  color: #b00020;
+}
+
+.c-editbox {
+  width: 100%;
+  min-height: 90px;
+  border-radius: 12px;
+  border: 1px solid #efe8d9;
+  padding: 10px;
+  outline: none;
+  resize: vertical;
+  font-weight: 650;
+  background: #fffdf8;
+}
+
+.c-edit-actions {
+  margin-top: 8px;
+  display: flex;
+  gap: 8px;
+}
+
+.c-edit-actions button {
+  border: none;
+  cursor: pointer;
+  padding: 8px 12px;
+  border-radius: 999px;
+  font-weight: 900;
+  background: #b17457;
+  color: #fff;
+}
+
+.c-edit-actions .c-cancel {
+  background: #d8d2c2;
+  color: #4a4947;
+}
+
+.comment-form textarea {
+  width: 100%;
+  min-height: 120px;
+  background: #fffdf8;
+  border: 1px solid #efe8d9;
+  border-radius: 14px;
+  padding: 12px;
+  outline: none;
+  resize: vertical;
+  font-weight: 650;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+.comment-form textarea:focus {
+  border-color: #b17457;
+  box-shadow: 0 0 0 4px rgba(177, 116, 87, 0.15);
+}
+
+.compose-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
+
+.char-counter {
+  color: #4a4947a5;
+  font-weight: 900;
+  font-size: 0.85rem;
+}
+
+.btn-modern {
+  background: #b17457;
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 999px;
+  font-weight: 900;
+  cursor: pointer;
+  box-shadow: 0 10px 18px rgba(177, 116, 87, 0.22);
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+
+.btn-modern:hover {
+  background: #4a4947;
+  transform: translateY(-1px);
+}
+
+.login-card {
+  background: #fffdf8;
+  border: 1px dashed #e0dbcc;
+  border-radius: 14px;
+  padding: 12px;
+  color: #4a4947a5;
+  font-weight: 800;
+}
+
+.login-card a {
+  color: #b17457;
+  font-weight: 900;
+  text-decoration: none;
+}
+
+.login-card a:hover {
+  text-decoration: underline;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 22px 10px;
+  color: #4a4947a5;
+  font-weight: 900;
+}
+
+/* =========================
+   Focus Mode
+   ========================= */
+.focus-mode .navbar,
+.focus-mode footer,
+.focus-mode .hero {
+  display: none;
+}
+
+.focus-mode .viewer-controls {
+  top: 8px;
+}
+
+.focus-mode body {
+  background: #fffdf8;
+}
+
+/* =========================
+   Print Mode
+   ========================= */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  .print-area,
+  .print-area * {
+    visibility: visible;
+  }
+  .print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    margin: 0;
+    padding: 0 10mm;
+  }
+
+  .navbar,
+  .hero,
+  footer,
+  .viewer-controls,
+  .viewer-actions,
+  .no-print {
+    display: none !important;
+  }
+
+  .chord-surface {
+    box-shadow: none;
+    border: none;
+  }
+  .chord-container {
+    max-height: none;
+    overflow: visible;
+    border: none;
+    padding: 0;
+  }
+  .chord-token {
+    background: transparent !important;
+    border: none !important;
+    color: #000 !important;
+  }
+  .chord-tooltip {
+    display: none !important;
+  }
+  #chords {
+    white-space: pre;
+  }
+}

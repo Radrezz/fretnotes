@@ -46,6 +46,7 @@ if (isset($_GET['delete_thread'])) {
 
     <link rel="stylesheet" href="adminpage.css">
     <link rel="stylesheet" href="../public/css/cursor.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 
 <body>
@@ -54,11 +55,11 @@ if (isset($_GET['delete_thread'])) {
     <div class="sidebar">
         <img src="../public/assets/images/FretNotesLogoRevisiVer1.png" alt="Logo" class="sidebar-logo">
         <h2 class="header">Admin Panel</h2>
-        <a href="index.php">Dashboard</a>
-        <a href="songsAdmin.php">Manage Songs</a>
-        <a href="usersAdmin.php">Manage Users</a>
-        <a href="forumAdmin.php" class="active">Manage Forum</a>
-        <a href="../public/logout.php" style="color : white;" class="logout-button">Logout</a> <!-- Logout Button -->
+        <a href="index.php"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+        <a href="songsAdmin.php"><i class="fas fa-music"></i> Manage Songs</a>
+        <a href="usersAdmin.php"><i class="fas fa-users"></i> Manage Users</a>
+        <a href="forumAdmin.php" class="active"><i class="fas fa-comments"></i> Manage Forum</a>
+        <a href="../public/logout.php" class="logout-button"><i class="fas fa-sign-out-alt"></i> Logout</a>
     </div>
 
     <!-- Button for toggling sidebar (only on mobile) -->
