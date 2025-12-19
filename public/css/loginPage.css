@@ -359,3 +359,265 @@ body::after {
     padding: 7px 32px;
   }
 }
+
+/* ====== FORGOT PASSWORD ANIMATIONS ====== */
+.pulse-animation {
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.slide-down {
+  animation: slideDown 0.5s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Loading spinner */
+.spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+  border-top-color: #fff;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Floating animation */
+.float {
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+/* ====== TOAST NOTIFICATIONS ====== */
+.toast-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 9999;
+  max-width: 350px;
+  width: 90%;
+}
+
+/* ====== INPUT VALIDATION STATES ====== */
+.input-error {
+  border-color: #e74c3c !important;
+  background-color: #fff9f9 !important;
+  animation: shake 0.5s ease-in-out;
+}
+
+.input-success {
+  border-color: #2ecc71 !important;
+  background-color: #f9fff9 !important;
+}
+
+@keyframes shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-5px);
+  }
+  75% {
+    transform: translateX(5px);
+  }
+}
+
+/* ====== FLOATING LABELS ====== */
+.input-group {
+  position: relative;
+  margin: 8px 0;
+}
+
+.input-group label {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  color: var(--ink);
+  opacity: 0.7;
+  font-size: 13px;
+  transition: all 0.3s ease;
+  pointer-events: none;
+  background: var(--white);
+  padding: 0 4px;
+  z-index: 1;
+}
+
+.input-group input:focus + label,
+.input-group input:not(:placeholder-shown) + label {
+  top: -8px;
+  font-size: 11px;
+  opacity: 1;
+  color: var(--brand);
+}
+
+.input-group input:focus.input-error + label,
+.input-group input.input-error + label {
+  color: #e74c3c;
+}
+
+.input-group input:focus.input-success + label,
+.input-group input.input-success + label {
+  color: #2ecc71;
+}
+
+/* ====== STATUS INDICATORS ====== */
+.status-indicator {
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  transition: all 0.3s ease;
+}
+
+.status-indicator.error {
+  color: #e74c3c;
+  background: #ffeaea;
+  animation: pulseError 1.5s infinite;
+}
+
+.status-indicator.success {
+  color: #2ecc71;
+  background: #eaffea;
+  animation: pulseSuccess 1.5s infinite;
+}
+
+@keyframes pulseError {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes pulseSuccess {
+  0%,
+  100% {
+    transform: translateY(-50%) scale(1);
+    box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.4);
+  }
+  50% {
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 0 0 5px rgba(46, 204, 113, 0);
+  }
+}
+
+/* Simple Notification System */
+.notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  max-width: 350px;
+  z-index: 1000;
+}
+
+.notification-item {
+  background: white;
+  border-radius: 8px;
+  padding: 15px;
+  margin-bottom: 10px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  border-left: 4px solid;
+  animation: slideInRight 0.3s ease;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.notification-error {
+  border-left-color: #e74c3c;
+  background: #fff9f9;
+}
+
+.notification-success {
+  border-left-color: #2ecc71;
+  background: #f9fff9;
+}
+
+.notification-warning {
+  border-left-color: #f39c12;
+  background: #fffbf2;
+}
+
+/* Input Validation States */
+.input-error {
+  border-color: #e74c3c !important;
+  background-color: #fff9f9 !important;
+}
+
+.input-success {
+  border-color: #2ecc71 !important;
+  background-color: #f9fff9 !important;
+}
+
+.input-pulse {
+  animation: pulse 1.5s ease;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(231, 76, 60, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 8px rgba(231, 76, 60, 0);
+  }
+}

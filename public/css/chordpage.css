@@ -751,3 +751,206 @@
     white-space: pre;
   }
 }
+
+@media (max-width: 539px) {
+  /* 1. Container utama full width */
+  .chord-viewer-wrap {
+    max-width: 100%;
+    width: 100%;
+    padding: 0 10px;
+    margin: 12px auto 24px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+  }
+
+  /* 2. CHORD HEADER - CENTER ALIGN & COMPACT */
+  .chord-header {
+    padding: 16px 12px !important;
+    border-radius: 12px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 12px;
+  }
+
+  .chord-header h1 {
+    font-size: 1.2rem;
+    margin: 0 0 8px 0;
+    text-align: center;
+    width: 100%;
+    color: #b17457;
+    font-weight: 800;
+    line-height: 1.3;
+  }
+
+  .chord-header .meta {
+    font-size: 0.85rem;
+    color: #4a4947a5;
+    text-align: center;
+    width: 100%;
+    line-height: 1.4;
+    font-weight: 650;
+  }
+
+  /* 3. Chord surface compact */
+  .chord-surface,
+  .tab-surface {
+    padding: 14px 12px;
+    border-radius: 12px;
+    text-align: center;
+  }
+
+  .section-title {
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+    text-align: center;
+    width: 100%;
+    color: #b17457;
+    font-weight: 900;
+  }
+
+  #chords,
+  #tabs {
+    font-size: 10px !important;
+    line-height: 1.4 !important;
+    letter-spacing: 0 !important;
+    white-space: pre;
+    font-family: "JetBrains Mono", ui-monospace, monospace;
+    font-weight: bold !important;
+    text-align: left;
+    width: 100%;
+  }
+
+  .chord-token {
+    padding: 2px 5px;
+    border-radius: 5px;
+    font-size: 11px;
+  }
+
+  /* Advanced panel lebih kecil */
+  .advanced .group {
+    padding: 8px !important;
+  }
+
+  /* ===== VIEWER ACTIONS - LEBIH KECIL ===== */
+  .viewer-actions {
+    margin-top: 12px;
+    gap: 8px;
+  }
+
+  .viewer-actions a,
+  .viewer-actions button {
+    padding: 8px 12px !important;
+    font-size: 0.85rem !important;
+    min-height: 38px;
+  }
+
+  /* ===== REACTIONS & COMMENTS - LEBIH KECIL ===== */
+  .reaction-bar {
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .reaction-btn {
+    padding: 8px 12px !important;
+    font-size: 0.85rem !important;
+    min-height: 38px;
+  }
+
+  .pill.ghost {
+    padding: 6px 10px !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* Comments box lebih compact */
+  .comments-box {
+    padding: 14px;
+    margin-top: 14px;
+  }
+
+  .comments-head h3 {
+    font-size: 1rem;
+  }
+
+  .comments-sub {
+    font-size: 0.8rem;
+  }
+
+  .badge-soft {
+    padding: 5px 8px !important;
+    font-size: 0.75rem !important;
+  }
+
+  .comments-layout {
+    gap: 12px;
+  }
+
+  .comments-panel {
+    padding: 10px;
+  }
+
+  .panel-title {
+    font-size: 0.9rem;
+  }
+
+  .select-pill {
+    padding: 6px 10px !important;
+    font-size: 0.8rem !important;
+  }
+
+  .comment-item {
+    padding: 10px;
+    margin-bottom: 8px;
+  }
+
+  .comment-avatar {
+    width: 32px !important;
+    height: 32px !important;
+    font-size: 0.9rem;
+  }
+
+  .comment-meta {
+    font-size: 0.75rem;
+  }
+
+  .comment-text {
+    font-size: 0.85rem;
+    line-height: 1.4;
+  }
+
+  .c-like,
+  .c-act {
+    padding: 6px 10px !important;
+    font-size: 0.8rem !important;
+  }
+
+  /* Comment form lebih kecil */
+  .comment-form textarea {
+    min-height: 100px;
+    padding: 10px;
+    font-size: 0.85rem;
+  }
+
+  .char-counter {
+    font-size: 0.75rem;
+  }
+
+  .btn-modern {
+    padding: 8px 12px !important;
+    font-size: 0.85rem !important;
+  }
+
+  /* Centered untuk viewer controls group */
+  .viewer-controls .group {
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* Centered untuk reaction bar */
+  .reaction-bar {
+    justify-content: center;
+    text-align: center;
+  }
+}

@@ -61,65 +61,150 @@ function insertThread($title, $content, $author, $imagePath = null)
 
 function updateThread($id, $title, $content, $author, $imageFile = null, $removeImage = false)
 {
-    $conn = connectDB();
+    // GANTI: global $conn; dengan:
+    $conn = connectDB(); // Buat koneksi baru
 
-    // Jika gambar baru diunggah
-    if ($imageFile && $imageFile['error'] === 0) {
-        // Proses upload gambar baru
-        $uploadDir = 'uploads/threads/';
-        $newImagePath = $uploadDir . basename($imageFile['name']);
-        move_uploaded_file($imageFile['tmp_name'], $newImagePath);
+    try {
+        // 1. Ambil thread saat ini untuk mendapatkan gambar lama
+        $stmt = $conn->prepare("SELECT image_path FROM threads WHERE id = ? AND author = ?");
+        $stmt->bind_param("is", $id, $author);
+        $stmt->execute();
+        $result = $stmt->get_result();
 
-        // Update thread dengan gambar baru
-        $stmt = $conn->prepare(
-            "UPDATE threads SET title = ?, content = ?, image_path = ? WHERE id = ? AND author = ?"
-        );
-        $stmt->bind_param("sssis", $title, $content, $newImagePath, $id, $author);
-    }
-    // Jika gambar dihapus
-    elseif ($removeImage) {
-
-        $thread = fetchThreadById($id);
-        if ($thread['image_path']) {
-            deleteImage($thread['image_path']); // Hapus file gambar yang ada
+        if ($result->num_rows === 0) {
+            $conn->close();
+            return false; // Thread tidak ditemukan atau bukan author
         }
-        // Menghapus gambar, setelkan image_path ke NULL
-        $stmt = $conn->prepare(
-            "UPDATE threads SET title = ?, content = ?, image_path = NULL WHERE id = ? AND author = ?"
-        );
-        $stmt->bind_param("ssii", $title, $content, $id, $author); // Tidak ada image_path, set ke NULL
+
+        $currentThread = $result->fetch_assoc();
+        $currentImagePath = $currentThread['image_path'] ?? null;
+        $stmt->close();
+
+        $newImagePath = $currentImagePath;
+
+        // 2. Handle penghapusan gambar
+        if ($removeImage && $currentImagePath) {
+            // Hapus file fisik
+            $fullPath = $_SERVER['DOCUMENT_ROOT'] . $currentImagePath;
+            if (file_exists($fullPath)) {
+                unlink($fullPath);
+            }
+            $newImagePath = null;
+        }
+
+        // 3. Handle upload gambar baru
+        if ($imageFile && $imageFile['error'] === UPLOAD_ERR_OK) {
+            // Hapus gambar lama jika ada
+            if ($currentImagePath) {
+                $fullPath = $_SERVER['DOCUMENT_ROOT'] . $currentImagePath;
+                if (file_exists($fullPath)) {
+                    unlink($fullPath);
+                }
+            }
+
+            // Upload gambar baru
+            $allowedTypes = ['image/jpeg', 'image/png', 'image/gif', 'image/webp'];
+            $fileType = mime_content_type($imageFile['tmp_name']);
+
+            if (!in_array($fileType, $allowedTypes)) {
+                $_SESSION['upload_error'] = 'Only JPG, JPEG, PNG, GIF & WebP files are allowed.';
+                $conn->close();
+                return false;
+            } else if ($imageFile['size'] > 2 * 1024 * 1024) {
+                $_SESSION['upload_error'] = 'File size must be less than 2MB.';
+                $conn->close();
+                return false;
+            } else {
+                // Generate unique filename
+                $fileName = generateUniqueFilename($imageFile['name']);
+                $targetPath = getThreadUploadPath($fileName);
+
+                if (move_uploaded_file($imageFile['tmp_name'], $targetPath)) {
+                    $newImagePath = getThreadImageUrl($fileName); // Absolute path
+                } else {
+                    $_SESSION['upload_error'] = 'Failed to upload image.';
+                    $conn->close();
+                    return false;
+                }
+            }
+        }
+
+        // 4. Update thread di database
+        $stmt = $conn->prepare("UPDATE threads SET title = ?, content = ?, image_path = ?, edited_at = NOW() WHERE id = ? AND author = ?");
+        $stmt->bind_param("sssis", $title, $content, $newImagePath, $id, $author);
+
+        $success = $stmt->execute();
+        $stmt->close();
+        $conn->close();
+
+        return $success;
+
+    } catch (Exception $e) {
+        error_log("Update thread error: " . $e->getMessage());
+        if (isset($conn))
+            $conn->close();
+        return false;
     }
-    // Jika tidak ada gambar yang diunggah dan gambar tidak dihapus
-    else {
-        // Update thread tanpa perubahan gambar
-        $stmt = $conn->prepare(
-            "UPDATE threads SET title = ?, content = ? WHERE id = ? AND author = ?"
-        );
-        $stmt->bind_param("ssii", $title, $content, $id, $author); // Tanpa image_path
-    }
-
-
-
-    // Eksekusi query
-    $stmt->execute();
-    $affected = $stmt->affected_rows > 0; // Cek apakah ada perubahan
-    $stmt->close();
-    $conn->close();
-
-    return $affected;
 }
-
 
 
 function deleteThread($id, $author)
 {
     $conn = connectDB();
-    $stmt = $conn->prepare("DELETE FROM threads WHERE id = ? AND author = ?");
-    $stmt->bind_param("is", $id, $author);
-    $stmt->execute();
-    $stmt->close();
-    $conn->close();
-    return true;
+
+    try {
+        // 1. Cek apakah thread ada dan user adalah author, serta ambil image_path
+        $checkStmt = $conn->prepare("SELECT id, image_path FROM threads WHERE id = ? AND author = ?");
+        $checkStmt->bind_param("is", $id, $author);
+        $checkStmt->execute();
+        $result = $checkStmt->get_result();
+
+        if ($result->num_rows === 0) {
+            $checkStmt->close();
+            $conn->close();
+            error_log("Delete thread failed: Thread not found or user is not author. ID: $id, Author: $author");
+            return false;
+        }
+
+        // 2. Ambil data thread untuk hapus gambar jika ada
+        $thread = $result->fetch_assoc();
+        $checkStmt->close();
+
+        // 3. Hapus file gambar jika ada
+        if (!empty($thread['image_path'])) {
+            $imagePath = $_SERVER['DOCUMENT_ROOT'] . $thread['image_path'];
+            if (file_exists($imagePath)) {
+                if (unlink($imagePath)) {
+                    error_log("Deleted image file: " . $imagePath);
+                } else {
+                    error_log("Failed to delete image file: " . $imagePath);
+                }
+            }
+        }
+
+        // 4. Hapus thread dari database
+        $deleteStmt = $conn->prepare("DELETE FROM threads WHERE id = ? AND author = ?");
+        $deleteStmt->bind_param("is", $id, $author);
+        $success = $deleteStmt->execute();
+
+        $deleteStmt->close();
+        $conn->close();
+
+        if ($success) {
+            error_log("Thread deleted successfully from database. ID: $id");
+            return true;
+        } else {
+            error_log("Failed to delete thread from database. ID: $id");
+            return false;
+        }
+
+    } catch (Exception $e) {
+        error_log("Delete thread error: " . $e->getMessage());
+        if (isset($conn)) {
+            $conn->close();
+        }
+        return false;
+    }
 }
 // backend/models/Forum.php
 

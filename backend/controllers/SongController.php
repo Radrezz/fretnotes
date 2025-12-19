@@ -38,6 +38,75 @@ function getSongById($song_id)
     return $stmt->fetch(PDO::FETCH_ASSOC);
 }
 
+
+// Views Count
+function getPreviewSongs()
+{
+    global $pdo;
+
+    $sql = "
+        SELECT 
+            s.*,
+            COALESCE(l.like_count, 0) as like_count,
+            COALESCE(c.comment_count, 0) as comment_count,
+            COALESCE(f.favorite_count, 0) as favorite_count,
+            (COALESCE(l.like_count, 0) * 2 + 
+             COALESCE(c.comment_count, 0) * 1.5 + 
+             COALESCE(f.favorite_count, 0) * 1) as popularity_score
+        FROM songs s
+        LEFT JOIN (
+            SELECT song_id, COUNT(*) as like_count 
+            FROM song_likes 
+            GROUP BY song_id
+        ) l ON s.id = l.song_id
+        LEFT JOIN (
+            SELECT song_id, COUNT(*) as comment_count 
+            FROM song_comments 
+            WHERE is_flagged = 0 OR is_flagged IS NULL
+            GROUP BY song_id
+        ) c ON s.id = c.song_id
+        LEFT JOIN (
+            SELECT song_id, COUNT(*) as favorite_count 
+            FROM favorites 
+            GROUP BY song_id
+        ) f ON s.id = f.song_id
+        WHERE s.song_status = 'approved'
+        ORDER BY popularity_score DESC, s.created_at DESC
+        LIMIT 6
+    ";
+
+    $stmt = $pdo->query($sql);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+function incrementSongViews($song_id)
+{
+    global $pdo;
+
+    // Cek apakah kolom views ada
+    $stmt = $pdo->prepare("SHOW COLUMNS FROM songs LIKE 'views'");
+    $stmt->execute();
+
+    if ($stmt->rowCount() > 0) {
+        // Jika kolom views ada, update
+        $stmt = $pdo->prepare("UPDATE songs SET views = views + 1 WHERE id = ?");
+        $stmt->execute([$song_id]);
+    }
+}
+
+
+function isSongInFavorites($user_id, $song_id)
+{
+    global $pdo;
+
+    // Gunakan SELECT 1 karena tidak peduli kolom apa yang dipilih
+    $stmt = $pdo->prepare("SELECT 1 FROM favorites WHERE user_id = ? AND song_id = ?");
+    $stmt->execute([$user_id, $song_id]);
+
+    return $stmt->rowCount() > 0;
+}
+
+
 function addSong($title, $artist, $genre, $version_name, $created_by, $chords_text, $tab_text)
 {
     global $pdo;
@@ -68,12 +137,7 @@ function deleteSongById($song_id)
     $stmt->execute([$song_id]);
 }
 
-function getPreviewSongs()
-{
-    global $pdo;
-    $stmt = $pdo->query("SELECT * FROM songs LIMIT 5");
-    return $stmt->fetchAll(PDO::FETCH_ASSOC);
-}
+
 
 function searchSongs($search_term)
 {
@@ -93,7 +157,12 @@ function searchSongs($search_term)
 function getFavoriteSongs($userId)
 {
     global $pdo;
-    $query = "SELECT * FROM songs WHERE id IN (SELECT song_id FROM favorites WHERE user_id = ?)";
+    $query = "SELECT s.*, f.created_at as added_date 
+              FROM songs s 
+              JOIN favorites f ON s.id = f.song_id 
+              WHERE f.user_id = ? 
+              ORDER BY f.created_at DESC";
+
     $stmt = $pdo->prepare($query);
     $stmt->execute([$userId]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -102,8 +171,13 @@ function getFavoriteSongs($userId)
 function searchFavoriteSongs($userId, $searchQuery)
 {
     global $pdo;
-    $query = "SELECT * FROM songs WHERE id IN (SELECT song_id FROM favorites WHERE user_id = ?) 
-              AND (title LIKE ? OR artist LIKE ? OR genre LIKE ?)";
+    $query = "SELECT s.*, f.created_at as added_date 
+              FROM songs s 
+              JOIN favorites f ON s.id = f.song_id 
+              WHERE f.user_id = ? 
+                AND (s.title LIKE ? OR s.artist LIKE ? OR s.genre LIKE ?) 
+              ORDER BY f.created_at DESC";
+
     $stmt = $pdo->prepare($query);
     $searchTerm = "%" . $searchQuery . "%";
     $stmt->execute([$userId, $searchTerm, $searchTerm, $searchTerm]);
@@ -307,6 +381,7 @@ function toggleCommentLike($comment_id, $user_id)
 /**
  * Comments with like_count + liked_by_me
  */
+// VERSI USER BIASA - auto hide flagged comments
 function getSongComments($song_id, $viewer_user_id = null)
 {
     global $pdo;
@@ -328,6 +403,7 @@ function getSongComments($song_id, $viewer_user_id = null)
             FROM song_comments c
             JOIN users u ON u.id = c.user_id
             WHERE c.song_id = ?
+            AND (c.is_flagged = 0 OR c.is_flagged IS NULL)  -- INI PERUBAHANNYA!
             ORDER BY c.created_at DESC
         ";
         $stmt = $pdo->prepare($sql);
@@ -348,6 +424,7 @@ function getSongComments($song_id, $viewer_user_id = null)
         FROM song_comments c
         JOIN users u ON u.id = c.user_id
         WHERE c.song_id = ?
+        AND (c.is_flagged = 0 OR c.is_flagged IS NULL)  -- INI PERUBAHANNYA!
         ORDER BY c.created_at DESC
     ";
     $stmt = $pdo->prepare($sql);

@@ -16,6 +16,28 @@ $threadId = intval($_GET['id']);
 $thread = getThreadById($threadId);
 $comments = getCommentsByThread($threadId);
 
+// ===== FUNGSI EDIT KOMENTAR (ditambahkan dari editComment.php) =====
+if (isset($_POST['edit-comment'])) {
+  $commentId = intval($_POST['comment_id']);
+  $newContent = $_POST['content'];
+
+  // Verifikasi bahwa user adalah pemilik komentar
+  $comment = fetchCommentById($commentId);
+
+  if ($_SESSION['username'] == $comment['author']) {
+    if (editComment($commentId, $_SESSION['username'], $newContent)) {
+      $_SESSION['toast'] = 'Comment updated successfully.';
+      header("Location: thread.php?id=" . $threadId);
+      exit();
+    } else {
+      $error = "Failed to update the comment.";
+    }
+  } else {
+    $error = "You are not authorized to edit this comment.";
+  }
+}
+// ===== AKHIR FUNGSI EDIT KOMENTAR =====
+
 // Tambah komentar (support reply via parent_id)
 if (isset($_POST['submit-comment'])) {
   $content = htmlspecialchars(trim($_POST['content']));
@@ -58,7 +80,7 @@ if (isset($_POST['like_comment'])) {
   exit();
 }
 
-// Delete comment (satu blok saja + toast)
+// Delete comment
 if (isset($_POST['delete-comment'])) {
   $commentId = (int) $_POST['delete-comment'];
   if (removeComment($commentId, $_SESSION['username'])) {
@@ -70,7 +92,7 @@ if (isset($_POST['delete-comment'])) {
   }
 }
 
-// Toast message (sekali pakai)
+// Toast message
 $toastMessage = '';
 if (isset($_SESSION['toast'])) {
   $toastMessage = $_SESSION['toast'];
@@ -96,7 +118,7 @@ function buildCommentTree($comments)
       if (isset($byId[$parentId])) {
         $byId[$parentId]['children'][] = &$c;
       } else {
-        $tree[] = &$c; // kalau parent tidak ketemu, jadikan root
+        $tree[] = &$c;
       }
     } else {
       $tree[] = &$c;
@@ -114,9 +136,9 @@ function renderComments($comments, $threadId, $level = 0)
     return;
 
   foreach ($comments as $c): ?>
-    <div class="bg-purewhite rounded-xl2 border border-beige p-4 shadow-soft mt-3"
-      style="margin-left: <?= $level * 24 ?>px">
-      <p class="text-charcoal whitespace-pre-line">
+    <div class="bg-purewhite rounded-xl2 border border-beige p-4 shadow-soft mt-3 comment-container"
+      data-comment-id="<?= $c['id']; ?>" style="margin-left: <?= $level * 24 ?>px">
+      <p class="text-charcoal whitespace-pre-line comment-content">
         <?= nl2br(htmlspecialchars($c['content'])); ?>
       </p>
 
@@ -127,7 +149,7 @@ function renderComments($comments, $threadId, $level = 0)
 
       <div class="flex items-center gap-3 mt-2 text-sm">
         <!-- Like comment -->
-        <form method="POST" action="thread.php?id=<?= $threadId; ?>">
+        <form method="POST" action="thread.php?id=<?= $threadId; ?>" class="inline">
           <input type="hidden" name="comment_id" value="<?= $c['id']; ?>">
           <button type="submit" name="like_comment" value="1" class="text-blue-500 hover:underline">
             <i class="fa fa-thumbs-up mr-1"></i>
@@ -142,18 +164,16 @@ function renderComments($comments, $threadId, $level = 0)
         </button>
 
         <?php if ($_SESSION['username'] == $c['author']): ?>
-          <!-- Edit -->
-          <a href="editComment.php?id=<?= $c['id']; ?>" class="text-blue-500 hover:underline">
+          <!-- Edit (button untuk membuka modal) -->
+          <button type="button" class="text-blue-500 hover:underline edit-comment-btn" data-comment-id="<?= $c['id']; ?>"
+            data-comment-content="<?= htmlspecialchars($c['content']); ?>">
             Edit
-          </a>
+          </button>
 
           <!-- Delete -->
-          <form method="POST" action="thread.php?id=<?= $threadId; ?>" class="inline-block delete-comment-form">
-            <input type="hidden" name="delete-comment" value="<?= $c['id']; ?>">
-            <button type="submit" class="text-red-500 hover:underline">
-              Delete
-            </button>
-          </form>
+          <button type="button" class="text-red-500 hover:underline delete-comment-btn" data-comment-id="<?= $c['id']; ?>">
+            Delete
+          </button>
         <?php endif; ?>
       </div>
 
@@ -308,7 +328,7 @@ $commentsTree = buildCommentTree($comments);
       <h2 class="text-2xl font-bold text-charcoal mb-4">Comments</h2>
 
       <?php if (!empty($commentsTree)): ?>
-        <div class="space-y-2">
+        <div class="space-y-2" id="comments-section">
           <?php renderComments($commentsTree, $threadId); ?>
         </div>
       <?php else: ?>
@@ -345,6 +365,51 @@ $commentsTree = buildCommentTree($comments);
       </form>
     </section>
   </main>
+
+  <!-- Modal Edit Comment -->
+  <div id="editCommentModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-purewhite rounded-xl2 p-6 w-full max-w-2xl shadow-soft">
+      <h2 class="text-2xl font-semibold text-terracotta mb-4">Edit Comment</h2>
+
+      <form id="editCommentForm" method="POST" action="thread.php?id=<?php echo $threadId; ?>">
+        <input type="hidden" id="edit_comment_id" name="comment_id">
+
+        <!-- Error message if any -->
+        <div id="edit-error-message" class="bg-red-100 text-red-600 p-4 rounded-lg mb-4 hidden"></div>
+
+        <!-- Content -->
+        <label class="block mb-2 font-medium">Content</label>
+        <textarea id="edit_comment_content" name="content" rows="6"
+          class="w-full rounded-lg border border-beige bg-cream p-4 focus:outline-none focus:border-terracotta mb-6 text-lg"
+          required></textarea>
+
+        <!-- Buttons -->
+        <div class="flex justify-end gap-6 mt-6">
+          <button type="button" id="cancelEdit"
+            class="px-6 py-3 bg-beige text-charcoal rounded-lg hover:bg-[#c9c3b3]">Cancel</button>
+          <button type="submit" name="edit-comment"
+            class="px-6 py-3 bg-terracotta text-purewhite rounded-lg hover:bg-[#9e6047]">Save Changes</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Delete Comment -->
+  <div id="deleteCommentModal" class="fixed inset-0 bg-black/50 z-50 hidden flex items-center justify-center p-4">
+    <div class="bg-purewhite rounded-xl2 p-6 w-full max-w-md shadow-soft">
+      <h2 class="text-2xl font-semibold text-charcoal mb-4">Delete Comment</h2>
+      <p class="text-charcoal mb-6">Are you sure you want to delete this comment? This action cannot be undone.</p>
+
+      <form id="deleteCommentForm" method="POST" action="thread.php?id=<?php echo $threadId; ?>"
+        class="flex justify-end gap-6">
+        <input type="hidden" id="delete_comment_id" name="delete-comment">
+
+        <button type="button" id="cancelDeleteComment"
+          class="px-6 py-3 bg-beige text-charcoal rounded-lg hover:bg-[#c9c3b3]">Cancel</button>
+        <button type="submit" class="px-6 py-3 bg-red-500 text-purewhite rounded-lg hover:bg-red-600">Delete</button>
+      </form>
+    </div>
+  </div>
 
   <footer>
     <div class="footer-content">
@@ -385,6 +450,73 @@ $commentsTree = buildCommentTree($comments);
       navbar.classList.toggle("active");
     });
 
+    // ===== Modal Functions =====
+    function openModal(modalId) {
+      const modal = document.getElementById(modalId);
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal(modalId) {
+      const modal = document.getElementById(modalId);
+      modal.classList.add('hidden');
+      document.body.style.overflow = 'auto';
+    }
+
+    // ===== Modal Edit Comment =====
+    const editModal = document.getElementById('editCommentModal');
+    const editCommentIdInput = document.getElementById('edit_comment_id');
+    const editCommentContentInput = document.getElementById('edit_comment_content');
+    const editErrorDiv = document.getElementById('edit-error-message');
+    const editForm = document.getElementById('editCommentForm');
+    const cancelEditBtn = document.getElementById('cancelEdit');
+
+    // Event listener untuk tombol edit komentar
+    document.addEventListener('click', function (e) {
+      if (e.target.classList.contains('edit-comment-btn')) {
+        const commentId = e.target.dataset.commentId;
+        const commentContent = e.target.dataset.commentContent;
+
+        editCommentIdInput.value = commentId;
+        editCommentContentInput.value = commentContent;
+        editErrorDiv.classList.add('hidden');
+
+        openModal('editCommentModal');
+      }
+    });
+
+    // Tutup modal edit
+    cancelEditBtn.addEventListener('click', function () {
+      closeModal('editCommentModal');
+    });
+
+    // Konfirmasi sebelum submit edit
+    editForm.addEventListener('submit', function (e) {
+      if (!confirm('Save changes to this comment?')) {
+        e.preventDefault();
+      }
+    });
+
+    // ===== Modal Delete Comment =====
+    const deleteCommentModal = document.getElementById('deleteCommentModal');
+    const deleteCommentIdInput = document.getElementById('delete_comment_id');
+    const cancelDeleteCommentBtn = document.getElementById('cancelDeleteComment');
+    const deleteCommentForm = document.getElementById('deleteCommentForm');
+
+    // Event listener untuk tombol delete komentar
+    document.addEventListener('click', function (e) {
+      if (e.target.classList.contains('delete-comment-btn')) {
+        const commentId = e.target.dataset.commentId;
+        deleteCommentIdInput.value = commentId;
+        openModal('deleteCommentModal');
+      }
+    });
+
+    // Tutup modal delete komentar
+    cancelDeleteCommentBtn.addEventListener('click', function () {
+      closeModal('deleteCommentModal');
+    });
+
     // ===== Reply handler =====
     const replyButtons = document.querySelectorAll('.reply-button');
     const parentIdInput = document.getElementById('parent_id');
@@ -409,20 +541,12 @@ $commentsTree = buildCommentTree($comments);
       replyInfo.classList.add('hidden');
     });
 
-    // ===== Konfirmasi sebelum submit (add / delete) =====
+    // ===== Konfirmasi sebelum submit (add comment) =====
     const addCommentForm = document.querySelector('.add-comment-form');
     addCommentForm.addEventListener('submit', function (e) {
       if (!confirm('Kirim komentar ini?')) {
         e.preventDefault();
       }
-    });
-
-    document.querySelectorAll('.delete-comment-form').forEach(form => {
-      form.addEventListener('submit', function (e) {
-        if (!confirm('Yakin ingin menghapus komentar ini?')) {
-          e.preventDefault();
-        }
-      });
     });
 
     // ===== Toast notification =====
@@ -441,6 +565,13 @@ $commentsTree = buildCommentTree($comments);
     if (toastPhpMessage) {
       showToast(toastPhpMessage);
     }
+
+    // Tampilkan error jika ada dari proses edit sebelumnya
+    <?php if (isset($error) && strpos($error, 'Failed to update') !== false): ?>
+      document.addEventListener('DOMContentLoaded', function () {
+        showToast("<?php echo addslashes($error); ?>", 5000);
+      });
+    <?php endif; ?>
   </script>
 
 </body>

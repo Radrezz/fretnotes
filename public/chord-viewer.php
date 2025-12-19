@@ -2,6 +2,25 @@
 session_start();
 include('../backend/controllers/SongController.php');
 
+// Cek apakah song_id ada di GET
+if (!isset($_GET['song_id'])) {
+  // Redirect atau tampilkan pesan error
+  header('Location: browse-songs-before.php');
+  exit();
+}
+
+$song_id = $_GET['song_id']; // Sekarang $song_id sudah terdefinisi
+
+// Increment view count jika ada kolom views
+incrementSongViews($song_id);
+
+// Get song data
+$song = getSongById($song_id);
+if (!$song) {
+  echo "<p>Lagu tidak ditemukan.</p>";
+  exit();
+}
+
 // =====================================================
 // AJAX HANDLER (LIKE/COMMENT/COMMENT LIKE/EDIT/DELETE)
 // =====================================================
@@ -202,7 +221,7 @@ if (!isset($error) && $song) {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Chord and Tab</title>
+  <title>Chord & Tab</title>
 
   <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="../favicon-32x32.png">
@@ -221,7 +240,7 @@ if (!isset($error) && $song) {
 </head>
 
 <body>
-  <!-- Navbar -->
+  <!-- Navbar dengan pemisahan user -->
   <nav class="navbar">
     <div class="logo">
       <a href="<?php echo $logged_in ? 'homepage.php' : '../index.php'; ?>">
@@ -231,27 +250,29 @@ if (!isset($error) && $song) {
 
     <ul class="nav-links">
       <?php if ($logged_in): ?>
-        <ul class="nav-links">
-          <li><a href="homepage.php #tuner" class="cta-btn">Tuner</a></li>
-          <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
-          <li><a href="forumPage.php" class="cta-btn">Forum</a></li>
-          <li><a href="favorites.php" class="cta-btn">Favorites</a></li>
-          <li><a href="addsong.php" class="cta-btn">Add Song</a></li>
-        </ul>
+        <!-- Menu untuk user yang sudah login -->
+        <li><a href="homepage.php #tuner" class="cta-btn">Tuner</a></li>
+        <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
+        <li><a href="forumPage.php" class="cta-btn">Forum</a></li>
+        <li><a href="favorites.php" class="cta-btn">Favorites</a></li>
+        <li><a href="addsong.php" class="cta-btn">Add Song</a></li>
       <?php else: ?>
+        <!-- Menu untuk user belum login -->
         <li><a href="../index.php #tuner" class="cta-btn">Tuner</a></li>
         <li><a href="../index.php #songs-list" class="cta-btn">Preview Songs</a></li>
-        <li><a href="browse-songs-before.php" class="cta-btn">Browse Songs</a></li>
+        <li><a href="browse-songs.php" class="cta-btn">Browse Songs</a></li>
         <li><a href="forumPage.php" class="cta-btn">Forum</a></li>
       <?php endif; ?>
     </ul>
 
     <div class="menu-account">
-      <a href="account.php" class="cta-btn account-icon"><span class="material-icons">account_circle</span></a>
+      <a href="public/account.php" class="cta-btn account-icon">
+        <span class="material-icons">account_circle</span>
+      </a>
     </div>
 
     <div class="menu-toggle" id="mobile-menu">
-      <span></span><span></span><span></span><span></span>
+      <span></span><span></span><span></span>
     </div>
   </nav>
 
@@ -348,7 +369,7 @@ if (!isset($error) && $song) {
             <a href="login-register.php">Add to Favorites</a>
           <?php endif; ?>
         <?php endif; ?>
-        <a href="<?php echo $logged_in ? 'browse-songs.php' : 'browse-songs-before.php'; ?>">Back to List</a>
+        <a href="browse-song.php">Back to List</a>
         <button type="button" id="printBtn">Print</button>
       </div>
     </div>
@@ -482,6 +503,7 @@ if (!isset($error) && $song) {
   <div id="chordTooltip" class="chord-tooltip" aria-hidden="true"></div>
 
   <script>
+
     window.FRETNOTES = {
       songId: <?php echo isset($song_id) ? (int) $song_id : 0; ?>,
       loggedIn: <?php echo $logged_in ? 'true' : 'false'; ?>,
