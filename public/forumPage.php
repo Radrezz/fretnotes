@@ -1290,6 +1290,7 @@ if (isset($_GET['edit_id'])) {
         }
 
         // ===== Delete Thread Functions =====
+        // ===== Delete Thread Functions =====
         function openDeleteThreadModal(threadId, threadTitle) {
             console.log('Opening delete modal for thread:', { threadId, threadTitle });
 
@@ -1301,17 +1302,13 @@ if (isset($_GET['edit_id'])) {
             // Set thread ID in form
             threadIdInput.value = threadId;
 
-            // Update text dengan judul thread
+            // PERBAIKAN: Hanya update teks, jangan ganti struktur HTML
             if (threadTitle) {
                 threadTitleSpan.textContent = `"${threadTitle}"`;
-                deleteConfirmationText.innerHTML = `Are you sure you want to delete the thread <strong>"${threadTitle}"</strong>?<br>
-                                                   <span class="delete-warning">All comments will also be deleted.</span><br>
-                                                   This action cannot be undone.`;
+                // Gunakan struktur HTML yang sudah ada di file
+                // Tidak perlu mengganti innerHTML
             } else {
                 threadTitleSpan.textContent = 'this thread';
-                deleteConfirmationText.innerHTML = `Are you sure you want to delete this thread?<br>
-                                                   <span class="delete-warning">All comments will also be deleted.</span><br>
-                                                   This action cannot be undone.`;
             }
 
             // Show modal

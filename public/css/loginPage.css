@@ -213,32 +213,6 @@ body::after {
   }
 }
 
-/* ====== SOCIAL ICONS ====== */
-.social-icons {
-  margin: 10px 0;
-  display: flex;
-  gap: 6px;
-  align-items: center;
-  justify-content: center;
-}
-.social-icons a {
-  border: 1px solid var(--input-border);
-  background: var(--bg-cream);
-  border-radius: 10px;
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  width: 36px;
-  height: 36px;
-  color: var(--ink);
-  transition: all 0.15s ease;
-}
-.social-icons a:hover {
-  transform: translateY(-1px);
-  border-color: var(--brand);
-  box-shadow: 0 4px 10px rgba(177, 116, 87, 0.18);
-  background: #fff;
-}
 
 /* ====== TOGGLE AREA ====== */
 .toggle-container {

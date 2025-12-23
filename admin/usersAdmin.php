@@ -156,7 +156,7 @@ if (isset($_GET['export_csv'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Manage Users - FretNotes Admin</title>
+    <title>Manage Users - Admin Panel</title>
 
     <!-- Favicon -->
     <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png">
