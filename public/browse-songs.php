@@ -147,9 +147,15 @@ if ($sort === 'oldest') {
         </ul>
 
         <div class="menu-account">
-            <a href="public/account.php" class="cta-btn account-icon">
-                <span class="material-icons">account_circle</span>
-            </a>
+            <?php if ($logged_in): ?>
+                <a href="public/account.php" class="cta-btn account-icon">
+                    <span class="material-icons">account_circle</span>
+                </a>
+            <?php else: ?>
+                <a href="account.php" class="cta-btn account-icon">
+                    <span class="material-icons">account_circle</span>
+                </a>
+            <?php endif; ?>
         </div>
 
         <div class="menu-toggle" id="mobile-menu">
